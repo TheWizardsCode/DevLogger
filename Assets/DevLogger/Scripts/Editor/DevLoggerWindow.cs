@@ -13,59 +13,98 @@ namespace WizardsCode.DevLogger.Editor {
         public const string VERSION = "0.1";
 
         string[] suggestedHashTags = {  "#IndieGameDev", "#MadeWithUnity" };
-        
-        [MenuItem("Window/Wizards Code/Dev Logger")]
+        string tweetText = "";
+        string messageText = "Welcome to DevLogger " + VERSION;
+        string mediaFilePath;
+
+        [UnityEditor.MenuItem("Window/Wizards Code/Dev Logger")]
         public static void ShowWindow()
         {
             EditorWindow.GetWindow(typeof(DevLoggerWindow), false, "Dev Logger " + VERSION, true);
         }
 
-        string tweetText = "";
         void OnGUI()
         {
+            EditorGUILayout.LabelField("Welcome to DevLogger " + VERSION);
+
             if (!Twitter.IsAuthenticated)
             {
                 OnAuthorizeTwitterGUI();
                 return;
             } else
             {
-                GUILayout.Label("Tweet", EditorStyles.boldLabel);
+                StartSection("Log Entry", false);
                 TweetGUI();
+                EndSection();
 
-                GUILayout.Label("Media", EditorStyles.boldLabel);
-                MediaUploadGUI();
+                StartSection("Media");
+                MediaGUI();
+                EndSection();
+
+                StartSection("Actions");
+                ActionButtonsGUI();
+                EndSection();
             }
         }
 
-        string mediaFilePath;
-        private void MediaUploadGUI()
+        private static void StartSection(string title, bool withSpace = true)
         {
-            if (GUILayout.Button("Tweet with image"))
+            if (withSpace)
             {
-                string directory = "D:\\images";
-                string mediaFilePath = EditorUtility.OpenFilePanel("Select an Image", directory, "gif");
-                Twitter.PublishTweetWithMedia(GetFullTweetText(), mediaFilePath, out string response);
+                EditorGUILayout.Space();
             }
+            EditorGUILayout.BeginVertical("Box");
+            EditorGUILayout.LabelField(title, EditorStyles.boldLabel);
+        }
+
+        private static void EndSection()
+        {
+            EditorGUILayout.EndVertical();
+        }
+
+        private void ActionButtonsGUI()
+        {
+
+            if (!string.IsNullOrEmpty(tweetText) && GetFullTweetText().Length <= 140)
+            {
+                EditorGUILayout.BeginHorizontal();
+                if (GUILayout.Button("Tweet text only"))
+                {
+                    if (Twitter.PublishTweet(GetFullTweetText(), out string response))
+                    {
+                        tweetText = "";
+                        messageText = "Tweet sent succesfully";
+                    }
+                }
+
+                if (GUILayout.Button("Tweet with image"))
+                {
+                    string directory = "D:\\images";
+                    string mediaFilePath = EditorUtility.OpenFilePanel("Select an Image", directory, "gif");
+                    Twitter.PublishTweetWithMedia(GetFullTweetText(), mediaFilePath, out string response);
+                }
+                EditorGUILayout.EndHorizontal();
+            }
+            else
+            {
+                EditorGUILayout.LabelField("No valid actions at this time.");
+            }
+        }
+
+        private void MediaGUI()
+        {
+            if (GUILayout.Button("Capture Image from Game Window"))
+            {
+                CaptureGIF.Capture();
+            } 
         }
 
         private void TweetGUI()
         {
             EditorStyles.textField.wordWrap = true;
             tweetText = EditorGUILayout.TextArea(tweetText, GUILayout.Height(35));
-            GUILayout.Label("Hashtags: " + GetSelectedHashTags());
-            GUILayout.Label(string.Format("Tweet ({0} chars + {1} for selected hashtags = {2} chars)", tweetText.Length, GetSelectedHashtagLength(), GetFullTweetText().Length));
-
-            if (!string.IsNullOrEmpty(tweetText) && GetFullTweetText().Length <= 140)
-            {
-                if (GUILayout.Button("Send Tweet"))
-                {
-                    Twitter.PublishTweet(GetFullTweetText(), out string response);
-                }
-            }
-            else
-            {
-                GUILayout.Label("Enter a valid tweet.");
-            }
+            EditorGUILayout.LabelField("Hashtags: " + GetSelectedHashTags());
+            EditorGUILayout.LabelField(string.Format("Tweet ({0} chars + {1} for selected hashtags = {2} chars)", tweetText.Length, GetSelectedHashtagLength(), GetFullTweetText().Length));
         }
 
         private int GetSelectedHashtagLength()
