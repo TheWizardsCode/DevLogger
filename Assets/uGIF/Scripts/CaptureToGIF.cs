@@ -12,7 +12,7 @@ namespace uGIF
 		public float frameRate = 15;
 		public bool capture;
 		public int downscale = 1;
-		public float captureTime = 10;
+		public float duration = 10;
 		public bool useBilinearScaling = true;
 		public string filepath = "test.gif";
 
@@ -21,14 +21,27 @@ namespace uGIF
 
 		void Start ()
 		{
+			InitializeCapture();
+		}
+
+		private void InitializeCapture()
+		{
 			period = 1f / frameRate;
-			colorBuffer = new Texture2D (Screen.width, Screen.height, TextureFormat.RGB24, false);
+			colorBuffer = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, false);
+			frames = new List<Image>();
 			startTime = Time.time;
 		}
 
 		public void StartCapturing()
 		{
+			InitializeCapture();
 			capture = true;
+		}
+
+		public void HiResScreenShot()
+		{
+			InitializeCapture();
+			StartCoroutine(RecordFrame(true));
 		}
 
 		public bool IsDone
@@ -79,18 +92,35 @@ namespace uGIF
 			stream.Close ();
 		}
 
+		/// <summary>
+		/// Capture a single frame including all cameras. Optionally encode this as a give and save
+		/// it to a file.
+		/// </summary>
+		/// <param name="encode">If set to true the frame will be immediately encoded and saved as a GIF.</param>
+		/// <returns></returns>
+		IEnumerator RecordFrame(bool encode = false)
+		{
+			yield return new WaitForEndOfFrame();
+			frames.Add(new Image(ScreenCapture.CaptureScreenshotAsTexture()));
+			if (encode)
+			{
+				Encode();
+			}
+		}
+
 		void OnPostRender ()
 		{
 			if (capture) {
 				T += Time.deltaTime;
-				if (T >= period) {
+				if (T >= period)
+				{
 					T = 0;
-					colorBuffer.ReadPixels (new Rect (0, 0, colorBuffer.width, colorBuffer.height), 0, 0, false);
-					frames.Add (new Image (colorBuffer));
+					StartCoroutine(RecordFrame(false));
 				}
-				if (Time.time > (startTime + captureTime)) {
+				if (Time.time > (startTime + duration))
+				{
 					capture = false;
-					Encode ();
+					Encode();
 				}
 			}
 		}

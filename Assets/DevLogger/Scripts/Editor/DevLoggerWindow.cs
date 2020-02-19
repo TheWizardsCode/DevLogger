@@ -92,23 +92,44 @@ namespace WizardsCode.DevLogger.Editor {
             }
         }
 
+        CaptureToGIF _capture;
+        public CaptureToGIF Capture
+        {
+            get
+            {
+                if (_capture == null)
+                {
+                    _capture = Camera.main.gameObject.GetComponent<CaptureToGIF>();
+                    if (_capture == null)
+                    {
+                        _capture = Camera.main.gameObject.AddComponent<CaptureToGIF>();
+                    }
+                }
+                return _capture;
+            }
+        }
+
         private void MediaGUI()
         {
+            if (GUILayout.Button("HiRes Screenshot"))
+            {
+                Capture.HiResScreenShot();
+            }
+
             if (EditorApplication.isPlaying)
             {
-                if (GUILayout.Button("Capture Image from Game Window"))
-                {
-                    CaptureToGIF capture = Camera.main.gameObject.GetComponent<CaptureToGIF>();
-                    if (capture == null)
-                    {
-                        capture = Camera.main.gameObject.AddComponent<CaptureToGIF>();
-                    }
 
-                    capture.StartCapturing();
+                if (GUILayout.Button("Capture Animated Gif"))
+                {
+                    Capture.frameRate = 30;
+                    Capture.downscale = 4;
+                    Capture.duration = 10;
+                    Capture.StartCapturing();
                 }
-            } else
+            }
+            else
             {
-                EditorGUILayout.LabelField("Enter play mode to enable Capture mode");
+                EditorGUILayout.LabelField("Enter play mode to capture an animated GIF.");
             }
         }
 
