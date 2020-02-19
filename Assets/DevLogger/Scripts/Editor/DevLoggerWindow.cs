@@ -11,7 +11,7 @@ namespace WizardsCode.DevLogger.Editor {
     /// </summary>
     public class DevLoggerWindow : EditorWindow
     {
-        public const string VERSION = "0.1";
+        public const string VERSION = "0.1.1";
 
         string[] suggestedHashTags = {  "#IndieGameDev", "#MadeWithUnity" };
         string tweetText = "";
@@ -69,7 +69,7 @@ namespace WizardsCode.DevLogger.Editor {
             if (!string.IsNullOrEmpty(tweetText) && GetFullTweetText().Length <= 140)
             {
                 EditorGUILayout.BeginHorizontal();
-                if (GUILayout.Button("Tweet text only"))
+                if (GUILayout.Button("Tweet with text only"))
                 {
                     if (Twitter.PublishTweet(GetFullTweetText(), out string response))
                     {
@@ -78,7 +78,7 @@ namespace WizardsCode.DevLogger.Editor {
                     }
                 }
 
-                if (GUILayout.Button("Tweet with image"))
+                if (GUILayout.Button("Tweet with image and text"))
                 {
                     string directory = "D:\\images";
                     string mediaFilePath = EditorUtility.OpenFilePanel("Select an Image", directory, "gif");
@@ -111,7 +111,7 @@ namespace WizardsCode.DevLogger.Editor {
 
         private void MediaGUI()
         {
-            if (GUILayout.Button("HiRes Screenshot"))
+            if (GUILayout.Button("Capture Screenshot"))
             {
                 Capture.HiResScreenShot();
             }
@@ -119,7 +119,7 @@ namespace WizardsCode.DevLogger.Editor {
             if (EditorApplication.isPlaying)
             {
 
-                if (GUILayout.Button("Capture Animated Gif"))
+                if (GUILayout.Button("Capture Animated GIF"))
                 {
                     Capture.frameRate = 30;
                     Capture.downscale = 4;

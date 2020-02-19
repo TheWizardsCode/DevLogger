@@ -4,6 +4,9 @@ using System.IO;
 using System.Collections.Generic;
 
 using System.Threading;
+using System.Text;
+using UnityEngine.SceneManagement;
+using System;
 
 namespace uGIF
 {
@@ -14,13 +17,15 @@ namespace uGIF
 		public int downscale = 1;
 		public float duration = 10;
 		public bool useBilinearScaling = true;
-		public string filepath = "test.gif";
+		public string filepath = "Screenshots/";
 
 		[System.NonSerialized]
 		public byte[] bytes = null;
 
 		void Start ()
 		{
+			filepath = "Screenshots/";
+			Directory.CreateDirectory(filepath);
 			InitializeCapture();
 		}
 
@@ -59,7 +64,19 @@ namespace uGIF
 
 		IEnumerator WaitForBytes() {
 			while(bytes == null) yield return null;
-			System.IO.File.WriteAllBytes (filepath, bytes);
+			
+			StringBuilder filename = new StringBuilder();
+			filename.Append(Application.productName);
+			filename.Append("_");
+			filename.Append(SceneManager.GetActiveScene().name);
+			filename.Append("_v");
+			filename.Append(Application.version);
+			filename.Append("_");
+			filename.Append(DateTime.Now.ToFileTime());
+			filename.Append(".gif");
+
+
+			System.IO.File.WriteAllBytes (filepath + filename, bytes);
 			bytes = null;
 		}
 
