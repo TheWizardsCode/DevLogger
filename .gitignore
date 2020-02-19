@@ -69,4 +69,5 @@ Install/
 Assets/*
 !Assets/3DTBD
 !Assets/DevLogger
+!Assets/uGIF
 ProjectSettings

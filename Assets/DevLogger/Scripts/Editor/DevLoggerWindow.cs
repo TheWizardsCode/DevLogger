@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using uGIF;
 using UnityEditor;
 using UnityEngine;
 using WizardsCode.Social;
@@ -37,7 +38,7 @@ namespace WizardsCode.DevLogger.Editor {
                 TweetGUI();
                 EndSection();
 
-                StartSection("Media");
+                StartSection("Media Capture");
                 MediaGUI();
                 EndSection();
 
@@ -93,10 +94,22 @@ namespace WizardsCode.DevLogger.Editor {
 
         private void MediaGUI()
         {
-            if (GUILayout.Button("Capture Image from Game Window"))
+            if (EditorApplication.isPlaying)
             {
-                CaptureGIF.Capture();
-            } 
+                if (GUILayout.Button("Capture Image from Game Window"))
+                {
+                    CaptureToGIF capture = Camera.main.gameObject.GetComponent<CaptureToGIF>();
+                    if (capture == null)
+                    {
+                        capture = Camera.main.gameObject.AddComponent<CaptureToGIF>();
+                    }
+
+                    capture.StartCapturing();
+                }
+            } else
+            {
+                EditorGUILayout.LabelField("Enter play mode to enable Capture mode");
+            }
         }
 
         private void TweetGUI()
