@@ -11,22 +11,28 @@ namespace WizardsCode.DevLogger.Editor {
     /// </summary>
     public class DevLoggerWindow : EditorWindow
     {
-        public const string VERSION = "0.1.1";
-
         string[] suggestedHashTags = {  "#IndieGameDev", "#MadeWithUnity" };
         string tweetText = "";
-        string messageText = "Welcome to DevLogger " + VERSION;
+        string messageText = "";
         string mediaFilePath;
 
         [UnityEditor.MenuItem("Window/Wizards Code/Dev Logger")]
         public static void ShowWindow()
         {
-            EditorWindow.GetWindow(typeof(DevLoggerWindow), false, "Dev Logger " + VERSION, true);
+            EditorWindow.GetWindow(typeof(DevLoggerWindow), false, Application.productName, true);
         }
 
+        #region GUI
         void OnGUI()
         {
-            EditorGUILayout.LabelField("Welcome to DevLogger " + VERSION);
+            if (string.IsNullOrEmpty(messageText))
+            {
+                EditorGUILayout.LabelField("Welcome to " + Application.productName + " v" + Application.version);
+            }
+            else
+            {
+                EditorGUILayout.LabelField(messageText);
+            }
 
             if (!Twitter.IsAuthenticated)
             {
@@ -35,15 +41,15 @@ namespace WizardsCode.DevLogger.Editor {
             } else
             {
                 StartSection("Log Entry", false);
-                TweetGUI();
+                LogEntryGUI();
                 EndSection();
 
                 StartSection("Media Capture");
                 MediaGUI();
                 EndSection();
 
-                StartSection("Actions");
-                ActionButtonsGUI();
+                StartSection("Twitter");
+                TwitterGUI();
                 EndSection();
             }
         }
@@ -62,10 +68,13 @@ namespace WizardsCode.DevLogger.Editor {
         {
             EditorGUILayout.EndVertical();
         }
+        #endregion
 
-        private void ActionButtonsGUI()
+        #region Twitter
+        private void TwitterGUI()
         {
-
+            EditorGUILayout.LabelField(GetFullTweetText());
+            EditorGUILayout.LabelField(string.Format("Tweet ({0} chars + {1} for selected hashtags = {2} chars)", tweetText.Length, GetSelectedHashtagLength(), GetFullTweetText().Length));
             if (!string.IsNullOrEmpty(tweetText) && GetFullTweetText().Length <= 140)
             {
                 EditorGUILayout.BeginHorizontal();
@@ -90,55 +99,6 @@ namespace WizardsCode.DevLogger.Editor {
             {
                 EditorGUILayout.LabelField("No valid actions at this time.");
             }
-        }
-
-        CaptureToGIF _capture;
-        public CaptureToGIF Capture
-        {
-            get
-            {
-                if (_capture == null)
-                {
-                    _capture = Camera.main.gameObject.GetComponent<CaptureToGIF>();
-                    if (_capture == null)
-                    {
-                        _capture = Camera.main.gameObject.AddComponent<CaptureToGIF>();
-                    }
-                }
-                return _capture;
-            }
-        }
-
-        private void MediaGUI()
-        {
-            if (GUILayout.Button("Capture Screenshot"))
-            {
-                Capture.HiResScreenShot();
-            }
-
-            if (EditorApplication.isPlaying)
-            {
-
-                if (GUILayout.Button("Capture Animated GIF"))
-                {
-                    Capture.frameRate = 30;
-                    Capture.downscale = 4;
-                    Capture.duration = 10;
-                    Capture.StartCapturing();
-                }
-            }
-            else
-            {
-                EditorGUILayout.LabelField("Enter play mode to capture an animated GIF.");
-            }
-        }
-
-        private void TweetGUI()
-        {
-            EditorStyles.textField.wordWrap = true;
-            tweetText = EditorGUILayout.TextArea(tweetText, GUILayout.Height(35));
-            EditorGUILayout.LabelField("Hashtags: " + GetSelectedHashTags());
-            EditorGUILayout.LabelField(string.Format("Tweet ({0} chars + {1} for selected hashtags = {2} chars)", tweetText.Length, GetSelectedHashtagLength(), GetFullTweetText().Length));
         }
 
         private int GetSelectedHashtagLength()
@@ -178,5 +138,58 @@ namespace WizardsCode.DevLogger.Editor {
             EditorPrefs.SetString(Twitter.EDITOR_PREFS_TWITTER_ACCESS_TOKEN, EditorGUILayout.TextField("Acess Token", EditorPrefs.GetString(Twitter.EDITOR_PREFS_TWITTER_ACCESS_TOKEN)));
             EditorPrefs.SetString(Twitter.EDITOR_PREFS_TWITTER_ACCESS_SECRET, EditorGUILayout.TextField("Access Secret", EditorPrefs.GetString(Twitter.EDITOR_PREFS_TWITTER_ACCESS_SECRET)));
         }
+        #endregion
+
+        #region Media
+        CaptureToGIF _capture;
+        public CaptureToGIF Capture
+        {
+            get
+            {
+                if (_capture == null)
+                {
+                    _capture = Camera.main.gameObject.GetComponent<CaptureToGIF>();
+                    if (_capture == null)
+                    {
+                        _capture = Camera.main.gameObject.AddComponent<CaptureToGIF>();
+                    }
+                }
+                return _capture;
+            }
+        }
+
+        private void MediaGUI()
+        {
+            if (GUILayout.Button("Save Screenshot"))
+            {
+                Capture.HiResScreenShot();
+            }
+
+            if (EditorApplication.isPlaying)
+            {
+
+                if (GUILayout.Button("Save Animated GIF"))
+                {
+                    Capture.frameRate = 30;
+                    Capture.downscale = 4;
+                    Capture.duration = 10;
+                    Capture.StartCapturing();
+                }
+            }
+            else
+            {
+                EditorGUILayout.LabelField("Enter play mode to capture an animated GIF.");
+            }
+        }
+        #endregion
+
+        #region Log Entry
+        private void LogEntryGUI()
+        {
+            EditorStyles.textField.wordWrap = true;
+            tweetText = EditorGUILayout.TextArea(tweetText, GUILayout.Height(35));
+            EditorGUILayout.LabelField("Hashtags: " + GetSelectedHashTags());
+        }
+        #endregion
     }
 }
