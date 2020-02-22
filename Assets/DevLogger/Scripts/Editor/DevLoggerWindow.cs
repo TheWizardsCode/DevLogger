@@ -160,10 +160,16 @@ namespace WizardsCode.DevLogger.Editor {
             {
                 if (_capture == null)
                 {
-                    _capture = Camera.main.gameObject.GetComponent<CaptureScreen>();
+                    Camera camera = Camera.main;
+                    if (camera == null)
+                    {
+                        camera = Camera.current;
+                    }
+
+                    _capture = camera.gameObject.GetComponent<CaptureScreen>();
                     if (_capture == null)
                     {
-                        _capture = Camera.main.gameObject.AddComponent<CaptureScreen>();
+                        _capture = camera.gameObject.AddComponent<CaptureScreen>();
                     }
                 }
                 return _capture;
