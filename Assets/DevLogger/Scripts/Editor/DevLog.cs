@@ -25,7 +25,7 @@ namespace WizardsCode.DevLogger
 
             Directory.CreateDirectory(STORAGE_DIRECTORY);
 
-            if (!File.Exists(GetCurrentFilePath()))
+            if (!File.Exists(GetRelativeCurrentFilePath()))
             {
                 entry.Append(GetDevLogIntro());
             }
@@ -41,7 +41,7 @@ namespace WizardsCode.DevLogger
                 entry.AppendLine();
             }
 
-            using (StreamWriter file = File.AppendText(GetCurrentFilePath()))
+            using (StreamWriter file = File.AppendText(GetRelativeCurrentFilePath()))
             {
                 file.Write(entry.ToString());
                 file.Close();
@@ -70,7 +70,32 @@ namespace WizardsCode.DevLogger
             return sb.ToString();
         }
 
-        public static string GetCurrentFilePath()
+        /// <summary>
+        /// Get the path to the folder in which the project is stored
+        /// </summary>
+        /// <returns></returns>
+        public static string GetAbsoluteProjectDirectory()
+        {
+            string projectPath = Application.dataPath;
+            projectPath = projectPath.Replace("Assets", "");
+            return projectPath;
+        }
+
+        /// <summary>
+        /// Get the Absolute directory (including the full path) to the
+        /// directory in which the DevLog is stored.
+        /// </summary>
+        /// <returns></returns>
+        public static string GetAbsoluteDirectory()
+        {
+            return GetAbsoluteProjectDirectory() + STORAGE_DIRECTORY;
+        }
+
+        /// <summary>
+        /// Get the current file path (including filename) relative to the project directory root.
+        /// </summary>
+        /// <returns></returns>
+        public static string GetRelativeCurrentFilePath()
         {
             StringBuilder sb = new StringBuilder(STORAGE_DIRECTORY);
             sb.Append("Devlog for ");

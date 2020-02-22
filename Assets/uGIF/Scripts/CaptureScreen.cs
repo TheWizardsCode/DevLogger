@@ -11,7 +11,8 @@ namespace WizardsCode.uGIF
 {
 	public class CaptureScreen : MonoBehaviour
 	{
-		public float frameRate = 15;
+        private const string ImageFirectoryName = "DevLog/";
+        public float frameRate = 15;
 		public bool capture;
 		public int downscale = 1;
 		public float duration = 10;
@@ -27,7 +28,7 @@ namespace WizardsCode.uGIF
 
 		void Start ()
 		{
-            Directory.CreateDirectory("DevLog/");
+            Directory.CreateDirectory(ImageFirectoryName);
 
             if (latestImages == null)
             {
@@ -92,7 +93,7 @@ namespace WizardsCode.uGIF
 		}
 
 		/// <summary>
-		/// Get the path to the folder in which images and GIFs will be stored.
+		/// Get the path to the folder in which the project is stored
 		/// </summary>
 		/// <returns></returns>
 		public string GetProjectFilepath()
@@ -102,10 +103,19 @@ namespace WizardsCode.uGIF
 			return projectPath;
 		}
 
-		/// <summary>
-		/// Encode all frames into an animated GIF.
+        /// <summary>
+		/// Get the path to the folder in which images and GIFs will be stored.
 		/// </summary>
-		public void EncodeAsAnimatedGIF ()
+		/// <returns></returns>
+		public string GetImagesFilepath()
+        {
+            return GetProjectFilepath() + ImageFirectoryName;
+        }
+
+        /// <summary>
+        /// Encode all frames into an animated GIF.
+        /// </summary>
+        public void EncodeAsAnimatedGIF ()
 		{
 			bytes = null;
 			Thread thread = new Thread(_Encode);
@@ -128,7 +138,7 @@ namespace WizardsCode.uGIF
 		private void GenerateFilepath()
 		{
 			StringBuilder sb = new StringBuilder();
-			sb.Append(GetProjectFilepath());
+			sb.Append(GetImagesFilepath());
 			sb.Append("DevLog/");
 			sb.Append(Application.productName);
 			sb.Append("_");

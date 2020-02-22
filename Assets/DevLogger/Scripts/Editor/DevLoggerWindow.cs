@@ -94,7 +94,7 @@ namespace WizardsCode.DevLogger.Editor {
                     string mediaFilePath = EditorUtility.OpenFilePanelWithFilters("Select an Image", directory, extensions);
     **/
                     string mediaFilePath = Capture.GetLatestImagePath(imageSelection);
-                    mediaFilePath = mediaFilePath.Substring(Capture.GetProjectFilepath().Length);
+                    mediaFilePath = mediaFilePath.Substring(Capture.GetImagesFilepath().Length);
                     if (!string.IsNullOrEmpty(mediaFilePath))
                         if (!string.IsNullOrEmpty(mediaFilePath))
                     {
@@ -232,6 +232,12 @@ namespace WizardsCode.DevLogger.Editor {
             {
                 EditorGUILayout.LabelField("No valid actions at this time.");
             }
+
+            if (GUILayout.Button("Open Devlog"))
+            {
+                string filepath = DevLog.GetAbsoluteProjectDirectory() + DevLog.GetRelativeCurrentFilePath();
+                System.Diagnostics.Process.Start(filepath);
+            }
         }
 
         private void AppendDevlog(bool withImage, bool withTweet)
@@ -245,7 +251,7 @@ namespace WizardsCode.DevLogger.Editor {
             if (withImage)
             {
                 string mediaFilePath = Capture.GetLatestImagePath(imageSelection);
-                mediaFilePath = mediaFilePath.Substring(Capture.GetProjectFilepath().Length);
+                mediaFilePath = mediaFilePath.Substring(Capture.GetImagesFilepath().Length);
                 if (!string.IsNullOrEmpty(mediaFilePath))
                 {
                     DevLog.Append(entry, mediaFilePath);
