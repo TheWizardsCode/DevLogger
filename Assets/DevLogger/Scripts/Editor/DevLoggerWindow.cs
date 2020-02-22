@@ -1,12 +1,8 @@
-﻿using MogulTech.Utilities;
-using System.Collections;
-using System.IO;
-using System.Text;
-using System.Threading;
-using uGIF;
+﻿using System.Text;
 using UnityEditor;
 using UnityEngine;
 using WizardsCode.Social;
+using WizardsCode.uGIF;
 
 namespace WizardsCode.DevLogger.Editor {
 

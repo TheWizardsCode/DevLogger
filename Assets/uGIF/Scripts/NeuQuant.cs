@@ -23,7 +23,7 @@
 using System;
 using UnityEngine;
 
-namespace uGIF
+namespace WizardsCode.uGIF
 {
 	public class NeuQuant
 	{

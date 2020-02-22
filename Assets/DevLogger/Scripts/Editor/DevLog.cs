@@ -12,6 +12,8 @@ namespace WizardsCode.DevLogger
     /// </summary>
     public class DevLog
     {
+        public const string STORAGE_DIRECTORY = "DevLog/";
+
         /// <summary>
         /// Append an entry to the current DevLog.
         /// </summary>
@@ -20,6 +22,8 @@ namespace WizardsCode.DevLogger
         public static void Append(string shortText, string mediaFilePath = null)
         {
             StringBuilder entry = new StringBuilder();
+
+            Directory.CreateDirectory(STORAGE_DIRECTORY);
 
             if (!File.Exists(GetCurrentFilePath()))
             {
@@ -68,7 +72,8 @@ namespace WizardsCode.DevLogger
 
         public static string GetCurrentFilePath()
         {
-            StringBuilder sb = new StringBuilder("DevLog/Devlog for ");
+            StringBuilder sb = new StringBuilder(STORAGE_DIRECTORY);
+            sb.Append("Devlog for ");
             sb.Append(Application.productName);
             sb.Append(" v");
             sb.Append(Application.version);

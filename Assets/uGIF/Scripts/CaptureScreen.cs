@@ -2,13 +2,12 @@
 using System.Collections;
 using System.IO;
 using System.Collections.Generic;
-
 using System.Threading;
 using System.Text;
 using UnityEngine.SceneManagement;
 using System;
 
-namespace uGIF
+namespace WizardsCode.uGIF
 {
 	public class CaptureScreen : MonoBehaviour
 	{
@@ -28,8 +27,18 @@ namespace uGIF
 
 		void Start ()
 		{
-			Directory.CreateDirectory(GetProjectFilepath());
-			InitializeCapture();
+            Directory.CreateDirectory("DevLog/");
+
+            if (latestImages == null)
+            {
+                latestImages = new List<Texture2D>();
+            }
+            if (latestImageFilepaths == null)
+            {
+                latestImageFilepaths = new List<string>();
+            }
+
+            InitializeCapture();
 		}
 
 		/// <summary>

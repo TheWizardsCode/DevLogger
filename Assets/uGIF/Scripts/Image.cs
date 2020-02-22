@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace uGIF
+namespace WizardsCode.uGIF
 {
 	public class Image
 	{

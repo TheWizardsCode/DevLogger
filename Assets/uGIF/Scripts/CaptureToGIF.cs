@@ -8,7 +8,7 @@ using System.Text;
 using UnityEngine.SceneManagement;
 using System;
 
-namespace uGIF
+namespace WizardsCode.uGIF
 {
 	public class CaptureToGIF : MonoBehaviour
 	{

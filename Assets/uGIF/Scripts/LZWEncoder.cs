@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace uGIF
+namespace WizardsCode.uGIF
 {
 	public class LZWEncoder
 	{

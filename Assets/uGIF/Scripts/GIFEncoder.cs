@@ -3,7 +3,7 @@ using System.IO;
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace uGIF
+namespace WizardsCode.uGIF
 {
 	public class GIFEncoder
 	{
