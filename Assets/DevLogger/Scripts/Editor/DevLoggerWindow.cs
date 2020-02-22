@@ -1,4 +1,8 @@
-﻿using System.Text;
+﻿using MogulTech.Utilities;
+using System.Collections;
+using System.IO;
+using System.Text;
+using System.Threading;
 using uGIF;
 using UnityEditor;
 using UnityEngine;
@@ -12,9 +16,8 @@ namespace WizardsCode.DevLogger.Editor {
     public class DevLoggerWindow : EditorWindow
     {
         string[] suggestedHashTags = {  "#IndieGameDev", "#MadeWithUnity" };
-        string tweetText = "";
+        string logText = "";
         string messageText = "";
-        string mediaFilePath;
 
         [UnityEditor.MenuItem("Window/Wizards Code/Dev Logger")]
         public static void ShowWindow()
@@ -44,12 +47,12 @@ namespace WizardsCode.DevLogger.Editor {
                 LogEntryGUI();
                 EndSection();
 
-                StartSection("Media Capture");
-                MediaGUI();
-                EndSection();
-
                 StartSection("Twitter");
                 TwitterGUI();
+                EndSection();
+
+                StartSection("Media Capture");
+                MediaGUI();
                 EndSection();
             }
         }
@@ -74,24 +77,32 @@ namespace WizardsCode.DevLogger.Editor {
         private void TwitterGUI()
         {
             EditorGUILayout.LabelField(GetFullTweetText());
-            EditorGUILayout.LabelField(string.Format("Tweet ({0} chars + {1} for selected hashtags = {2} chars)", tweetText.Length, GetSelectedHashtagLength(), GetFullTweetText().Length));
-            if (!string.IsNullOrEmpty(tweetText) && GetFullTweetText().Length <= 140)
+            EditorGUILayout.LabelField(string.Format("Tweet ({0} chars + {1} for selected hashtags = {2} chars)", logText.Length, GetSelectedHashtagLength(), GetFullTweetText().Length));
+            if (!string.IsNullOrEmpty(logText) && GetFullTweetText().Length <= 140)
             {
                 EditorGUILayout.BeginHorizontal();
-                if (GUILayout.Button("Tweet with text only"))
+                if (GUILayout.Button("Tweet (and DevLog) with text only"))
                 {
                     if (Twitter.PublishTweet(GetFullTweetText(), out string response))
                     {
-                        tweetText = "";
                         messageText = "Tweet sent succesfully";
                     }
+                    AppendDevlog(false, true);
                 }
 
-                if (GUILayout.Button("Tweet with image and text"))
+                if (GUILayout.Button("Tweet (and DevLog) with selected image and text"))
                 {
-                    string directory = "D:\\images";
-                    string mediaFilePath = EditorUtility.OpenFilePanel("Select an Image", directory, "gif");
-                    Twitter.PublishTweetWithMedia(GetFullTweetText(), mediaFilePath, out string response);
+                    string directory = Capture.GetProjectFilepath(); ;
+                    string[] extensions = { "Image files", "png, jpg, gif" };
+                    string mediaFilePath = EditorUtility.OpenFilePanelWithFilters("Select an Image", directory, extensions);
+                    if (!string.IsNullOrEmpty(mediaFilePath))
+                    {
+                        if (Twitter.PublishTweetWithMedia(GetFullTweetText(), mediaFilePath, out string response))
+                        {
+                            messageText = "Tweet with image sent succesfully";
+                        }
+                    }
+                    AppendDevlog(false, true);
                 }
                 EditorGUILayout.EndHorizontal();
             }
@@ -127,7 +138,7 @@ namespace WizardsCode.DevLogger.Editor {
         /// <returns>The tweet as it will be sent.</returns>
         private string GetFullTweetText()
         {
-            return tweetText + GetSelectedHashTags();
+            return logText + GetSelectedHashTags();
         }
 
         private void OnAuthorizeTwitterGUI()
@@ -141,28 +152,33 @@ namespace WizardsCode.DevLogger.Editor {
         #endregion
 
         #region Media
-        CaptureToGIF _capture;
-        public CaptureToGIF Capture
+        CaptureScreen _capture;
+        public CaptureScreen Capture
         {
             get
             {
                 if (_capture == null)
                 {
-                    _capture = Camera.main.gameObject.GetComponent<CaptureToGIF>();
+                    _capture = Camera.main.gameObject.GetComponent<CaptureScreen>();
                     if (_capture == null)
                     {
-                        _capture = Camera.main.gameObject.AddComponent<CaptureToGIF>();
+                        _capture = Camera.main.gameObject.AddComponent<CaptureScreen>();
                     }
                 }
                 return _capture;
             }
         }
 
+        int imageSelection;
         private void MediaGUI()
         {
+            imageSelection = GUILayout.SelectionGrid(imageSelection, Capture.latestImages.ToArray(), 2, GUILayout.Height(160));
+
+            EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Save Screenshot"))
             {
-                Capture.HiResScreenShot();
+                string filename = Capture.SaveScreenshot();
+                messageText = "Saving Screenshot to " + filename;
             }
 
             if (EditorApplication.isPlaying)
@@ -173,13 +189,14 @@ namespace WizardsCode.DevLogger.Editor {
                     Capture.frameRate = 30;
                     Capture.downscale = 4;
                     Capture.duration = 10;
-                    Capture.StartCapturing();
+                    Capture.CaptureAnimatedGIF();
                 }
             }
             else
             {
                 EditorGUILayout.LabelField("Enter play mode to capture an animated GIF.");
             }
+            EditorGUILayout.EndHorizontal();
         }
         #endregion
 
@@ -187,8 +204,52 @@ namespace WizardsCode.DevLogger.Editor {
         private void LogEntryGUI()
         {
             EditorStyles.textField.wordWrap = true;
-            tweetText = EditorGUILayout.TextArea(tweetText, GUILayout.Height(35));
+            logText = EditorGUILayout.TextArea(logText, GUILayout.Height(35));
             EditorGUILayout.LabelField("Hashtags: " + GetSelectedHashTags());
+
+            if (!string.IsNullOrEmpty(logText))
+            {
+                EditorGUILayout.BeginHorizontal();
+                if (GUILayout.Button("DevLog (no Tweet) with text only"))
+                {
+                    AppendDevlog(false, false);
+                }
+
+                if (GUILayout.Button("Devlog (no Tweet) with selected image and text"))
+                {
+                    AppendDevlog(true, false);
+                }
+                EditorGUILayout.EndHorizontal();
+            }
+            else
+            {
+                EditorGUILayout.LabelField("No valid actions at this time.");
+            }
+        }
+
+        private void AppendDevlog(bool withImage, bool withTweet)
+        {
+            string entry = logText;
+            if (withTweet)
+            {
+                entry += "\n\n[This DevLog entry was Tweeted.]";
+            }
+
+            if (withImage)
+            {
+                string mediaFilePath = Capture.GetLatestImagePath(imageSelection);
+                mediaFilePath = mediaFilePath.Substring(Capture.GetProjectFilepath().Length);
+                if (!string.IsNullOrEmpty(mediaFilePath))
+                {
+                    DevLog.Append(entry, mediaFilePath);
+                }
+            }
+            else
+            {
+                DevLog.Append(entry);
+            }
+
+            logText = "";
         }
         #endregion
     }

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -80,6 +81,13 @@ namespace WizardsCode.Social
 
         public static bool PublishTweetWithMedia(string status, string filePath, out string response)
         {
+            if (!ValidateMediaFile(filePath))
+            {
+                response = "Invalid media file : " + filePath;
+                Debug.LogError(response);
+                return false;
+            }
+
             bool success = UploadMedia(filePath, out response);
             if (!success)
             {
@@ -100,6 +108,43 @@ namespace WizardsCode.Social
 
             Hashtable headers = GetHeaders(PostTweetURL, parameters);
             return ApiRequest(PostTweetURL, form, headers, out response);
+        }
+
+        /// <summary>
+        /// Checks to ensure a media file is valid for posting to Twitter.
+        /// This will check that the file exists and that it is not currently being
+        /// accessed by another process. If the file does not exist yet or if there 
+        /// is another process acessing the file
+        /// this method will wait for a period before returning false. The idea is that
+        /// the process may still be writing the file.
+        /// </summary>
+        /// <param name="filename">The file to validate</param>
+        /// <param name="timeout">The number of seconds to wait before returning false. Defaults to 10 seconds.</param>
+        /// <returns>True if this is a valid file otherwise false.</returns>
+        private static bool ValidateMediaFile(string filename, int timeout = 10)
+        {
+            bool isValid = false;
+            long endTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds() + timeout;
+            while (!File.Exists(filename) && DateTimeOffset.UtcNow.ToUnixTimeSeconds() <= endTime)
+            {
+                // Waiting for file to be created
+            }
+
+            while (!isValid && DateTimeOffset.UtcNow.ToUnixTimeSeconds() <= endTime)
+            {
+                try
+                {
+                    Stream stream = new FileStream(filename, FileMode.Open);
+                    isValid = true;
+                    stream.Close();
+                }
+                catch
+                {
+                    isValid = false;
+                }
+            }
+
+            return isValid;
         }
 
         /// <summary>
