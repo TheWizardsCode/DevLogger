@@ -8,6 +8,7 @@ using UnityEngine;
 
 namespace WizardsCode.Social
 {
+    [ExecuteInEditMode]
     public class Twitter
     {
         public const string EDITOR_PREFS_TWITTER_USER_ID = "TwitterUserID";
@@ -19,6 +20,9 @@ namespace WizardsCode.Social
 
         private const string PostTweetURL = "https://api.twitter.com/1.1/statuses/update.json";
         private const string UploadMediaURL = "https://upload.twitter.com/1.1/media/upload.json";
+        private const string VerifyCredentialsURL = "https://api.twitter.com/1.1/account/verify_credentials.json";
+
+        private static float verifyCredentialsTime = 0;
 
         /// <summary>
         /// Test to see if the correvt API key and Access tokens have been provided.
@@ -49,6 +53,35 @@ namespace WizardsCode.Social
                 {
                     return false;
                 }
+
+                return true;
+            }
+        }
+
+        private static bool VerifyCredentials()
+        {
+#if UNITY_EDITOR
+            float time = (float)EditorApplication.timeSinceStartup;
+#else
+                float time = Time.time;
+#endif
+            if (time > verifyCredentialsTime)
+            {
+                verifyCredentialsTime = time + 2;
+                Hashtable headers = GetHeaders(VerifyCredentialsURL, new Dictionary<string, string>());
+                if (ApiRequest(VerifyCredentialsURL, new WWWForm(), headers, out string response))
+                {
+                    EditorPrefs.SetString(EDITOR_PREFS_TWITTER_ACCESS_TOKEN, "");
+                    EditorPrefs.SetString(EDITOR_PREFS_TWITTER_ACCESS_SECRET, "");
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            else
+            {
                 return true;
             }
         }
@@ -65,6 +98,13 @@ namespace WizardsCode.Social
                 response = string.Format("Text of tweet too long or too short at {0} chars.", status.Length);
                 Debug.LogError(response);
 
+                return false;
+            }
+
+            if (!VerifyCredentials())
+            {
+                response = "Twitter credentials are invalid.";
+                Debug.LogError(response);
                 return false;
             }
 

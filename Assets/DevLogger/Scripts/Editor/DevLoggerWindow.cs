@@ -88,10 +88,15 @@ namespace WizardsCode.DevLogger.Editor {
 
                 if (GUILayout.Button("Tweet (and DevLog) with selected image and text"))
                 {
+                    /**
                     string directory = Capture.GetProjectFilepath(); ;
-                    string[] extensions = { "Image files", "png, jpg, gif" };
+                    string[] extensions = { "Image files", "png,jpg,gif" };
                     string mediaFilePath = EditorUtility.OpenFilePanelWithFilters("Select an Image", directory, extensions);
+    **/
+                    string mediaFilePath = Capture.GetLatestImagePath(imageSelection);
+                    mediaFilePath = mediaFilePath.Substring(Capture.GetProjectFilepath().Length);
                     if (!string.IsNullOrEmpty(mediaFilePath))
+                        if (!string.IsNullOrEmpty(mediaFilePath))
                     {
                         if (Twitter.PublishTweetWithMedia(GetFullTweetText(), mediaFilePath, out string response))
                         {
