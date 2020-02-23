@@ -163,6 +163,11 @@ namespace WizardsCode.DevLogger.Editor {
                     Camera camera = Camera.main;
                     if (camera == null)
                     {
+                        camera = Camera.allCameras[0];
+                    }
+
+                    if (camera == null)
+                    {
                         camera = Camera.current;
                     }
 
