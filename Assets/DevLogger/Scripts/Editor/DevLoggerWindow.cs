@@ -77,33 +77,39 @@ namespace WizardsCode.DevLogger.Editor {
             if (!string.IsNullOrEmpty(logText) && GetFullTweetText().Length <= 140)
             {
                 EditorGUILayout.BeginHorizontal();
-                if (GUILayout.Button("Tweet (and DevLog) with text only"))
+                if (Capture.latestImages != null)
                 {
-                    if (Twitter.PublishTweet(GetFullTweetText(), out string response))
+                    if (GUILayout.Button("Tweet (and DevLog) with text only"))
                     {
-                        messageText = "Tweet sent succesfully";
+                        if (Twitter.PublishTweet(GetFullTweetText(), out string response))
+                        {
+                            messageText = "Tweet sent succesfully";
+                        }
+                        AppendDevlog(false, true);
                     }
-                    AppendDevlog(false, true);
                 }
 
-                if (GUILayout.Button("Tweet (and DevLog) with selected image and text"))
+                if (Capture.latestImages != null)
                 {
-                    /**
-                    string directory = Capture.GetProjectFilepath(); ;
-                    string[] extensions = { "Image files", "png,jpg,gif" };
-                    string mediaFilePath = EditorUtility.OpenFilePanelWithFilters("Select an Image", directory, extensions);
-    **/
-                    string mediaFilePath = Capture.GetLatestImagePath(imageSelection);
-                    mediaFilePath = mediaFilePath.Substring(Capture.GetImagesFilepath().Length);
-                    if (!string.IsNullOrEmpty(mediaFilePath))
-                        if (!string.IsNullOrEmpty(mediaFilePath))
+                    if (GUILayout.Button("Tweet (and DevLog) with selected image and text"))
                     {
-                        if (Twitter.PublishTweetWithMedia(GetFullTweetText(), mediaFilePath, out string response))
-                        {
-                            messageText = "Tweet with image sent succesfully";
-                        }
+                        /**
+                        string directory = Capture.GetProjectFilepath(); ;
+                        string[] extensions = { "Image files", "png,jpg,gif" };
+                        string mediaFilePath = EditorUtility.OpenFilePanelWithFilters("Select an Image", directory, extensions);
+        **/
+                        string mediaFilePath = Capture.GetLatestImagePath(imageSelection);
+                        mediaFilePath = mediaFilePath.Substring(Capture.GetImagesFilepath().Length);
+                        if (!string.IsNullOrEmpty(mediaFilePath))
+                            if (!string.IsNullOrEmpty(mediaFilePath))
+                            {
+                                if (Twitter.PublishTweetWithMedia(GetFullTweetText(), mediaFilePath, out string response))
+                                {
+                                    messageText = "Tweet with image sent succesfully";
+                                }
+                            }
+                        AppendDevlog(false, true);
                     }
-                    AppendDevlog(false, true);
                 }
                 EditorGUILayout.EndHorizontal();
             }
@@ -184,7 +190,10 @@ namespace WizardsCode.DevLogger.Editor {
         int imageSelection;
         private void MediaGUI()
         {
-            imageSelection = GUILayout.SelectionGrid(imageSelection, Capture.latestImages.ToArray(), 2, GUILayout.Height(160));
+            if (Capture.latestImages != null)
+            {
+                imageSelection = GUILayout.SelectionGrid(imageSelection, Capture.latestImages.ToArray(), 2, GUILayout.Height(160));
+            }
 
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Save Screenshot"))
