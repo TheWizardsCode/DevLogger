@@ -11,7 +11,7 @@ namespace WizardsCode.uGIF
 {
 	public class CaptureScreen : MonoBehaviour
 	{
-        private const string ImageFirectoryName = "DevLog/";
+        private const string ImageDirectoryName = "DevLog/";
         public float frameRate = 15;
 		public bool capture;
 		public int downscale = 1;
@@ -28,7 +28,7 @@ namespace WizardsCode.uGIF
 
 		void Start ()
 		{
-            Directory.CreateDirectory(ImageFirectoryName);
+            Directory.CreateDirectory(ImageDirectoryName);
 
             if (latestImages == null)
             {
@@ -109,7 +109,7 @@ namespace WizardsCode.uGIF
 		/// <returns></returns>
 		public string GetImagesFilepath()
         {
-            return GetProjectFilepath() + ImageFirectoryName;
+            return GetProjectFilepath() + ImageDirectoryName;
         }
 
         /// <summary>
@@ -139,7 +139,6 @@ namespace WizardsCode.uGIF
 		{
 			StringBuilder sb = new StringBuilder();
 			sb.Append(GetImagesFilepath());
-			sb.Append("DevLog/");
 			sb.Append(Application.productName);
 			sb.Append("_");
 			sb.Append(SceneManager.GetActiveScene().name);
