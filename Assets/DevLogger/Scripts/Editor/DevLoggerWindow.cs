@@ -12,25 +12,26 @@ namespace WizardsCode.DevLogger.Editor {
     public class DevLoggerWindow : EditorWindow
     {
         string[] suggestedHashTags = {  "#IndieGameDev", "#MadeWithUnity" };
-        string logText = "";
-        string messageText = "";
+        string shortText = "";
+        string detailText = "";
+        string uiMageText = "";
 
         [UnityEditor.MenuItem("Window/Wizards Code/Dev Logger")]
         public static void ShowWindow()
         {
-            EditorWindow.GetWindow(typeof(DevLoggerWindow), false, Application.productName, true);
+            EditorWindow.GetWindow(typeof(DevLoggerWindow), false, "DevLog: " + Application.productName, true);
         }
 
         #region GUI
         void OnGUI()
         {
-            if (string.IsNullOrEmpty(messageText))
+            if (string.IsNullOrEmpty(uiMageText))
             {
                 EditorGUILayout.LabelField("Welcome to " + Application.productName + " v" + Application.version);
             }
             else
             {
-                EditorGUILayout.LabelField(messageText);
+                EditorGUILayout.LabelField(uiMageText);
             }
 
             if (!Twitter.IsAuthenticated)
@@ -73,8 +74,8 @@ namespace WizardsCode.DevLogger.Editor {
         private void TwitterGUI()
         {
             EditorGUILayout.LabelField(GetFullTweetText());
-            EditorGUILayout.LabelField(string.Format("Tweet ({0} chars + {1} for selected hashtags = {2} chars)", logText.Length, GetSelectedHashtagLength(), GetFullTweetText().Length));
-            if (!string.IsNullOrEmpty(logText) && GetFullTweetText().Length <= 140)
+            EditorGUILayout.LabelField(string.Format("Tweet ({0} chars + {1} for selected hashtags = {2} chars)", shortText.Length, GetSelectedHashtagLength(), GetFullTweetText().Length));
+            if (!string.IsNullOrEmpty(shortText) && GetFullTweetText().Length <= 140)
             {
                 EditorGUILayout.BeginHorizontal();
                 if (Capture.latestImages != null)
@@ -83,7 +84,7 @@ namespace WizardsCode.DevLogger.Editor {
                     {
                         if (Twitter.PublishTweet(GetFullTweetText(), out string response))
                         {
-                            messageText = "Tweet sent succesfully";
+                            uiMageText = "Tweet sent succesfully";
                         }
                         AppendDevlog(false, true);
                     }
@@ -105,7 +106,7 @@ namespace WizardsCode.DevLogger.Editor {
                             {
                                 if (Twitter.PublishTweetWithMedia(GetFullTweetText(), mediaFilePath, out string response))
                                 {
-                                    messageText = "Tweet with image sent succesfully";
+                                    uiMageText = "Tweet with image sent succesfully";
                                 }
                             }
                         AppendDevlog(false, true);
@@ -145,7 +146,7 @@ namespace WizardsCode.DevLogger.Editor {
         /// <returns>The tweet as it will be sent.</returns>
         private string GetFullTweetText()
         {
-            return logText + GetSelectedHashTags();
+            return shortText + GetSelectedHashTags();
         }
 
         private void OnAuthorizeTwitterGUI()
@@ -199,7 +200,7 @@ namespace WizardsCode.DevLogger.Editor {
             if (GUILayout.Button("Save Screenshot"))
             {
                 string filename = Capture.SaveScreenshot();
-                messageText = "Saving Screenshot to " + filename;
+                uiMageText = "Saving Screenshot to " + filename;
             }
 
             if (EditorApplication.isPlaying)
@@ -225,10 +226,15 @@ namespace WizardsCode.DevLogger.Editor {
         private void LogEntryGUI()
         {
             EditorStyles.textField.wordWrap = true;
-            logText = EditorGUILayout.TextArea(logText, GUILayout.Height(35));
+            EditorGUILayout.LabelField("Short Entry (required)");
+            shortText = EditorGUILayout.TextArea(shortText, GUILayout.Height(35));
+
+            EditorGUILayout.LabelField("Long Entry (optional)"); 
+            detailText = EditorGUILayout.TextArea(detailText, GUILayout.Height(100)); ;
+
             EditorGUILayout.LabelField("Hashtags: " + GetSelectedHashTags());
 
-            if (!string.IsNullOrEmpty(logText))
+            if (!string.IsNullOrEmpty(shortText))
             {
                 EditorGUILayout.BeginHorizontal();
                 if (GUILayout.Button("DevLog (no Tweet) with text only"))
@@ -256,10 +262,10 @@ namespace WizardsCode.DevLogger.Editor {
 
         private void AppendDevlog(bool withImage, bool withTweet)
         {
-            string entry = logText;
+            StringBuilder entry = new StringBuilder(shortText);
             if (withTweet)
             {
-                entry += "\n\n[This DevLog entry was Tweeted.]";
+                entry.Append("\n\n[This DevLog entry was Tweeted.]");
             }
 
             if (withImage)
@@ -268,15 +274,16 @@ namespace WizardsCode.DevLogger.Editor {
                 mediaFilePath = mediaFilePath.Substring(Capture.GetImagesFilepath().Length);
                 if (!string.IsNullOrEmpty(mediaFilePath))
                 {
-                    DevLog.Append(entry, mediaFilePath);
+                    DevLog.Append(entry.ToString(), detailText, mediaFilePath);
                 }
             }
             else
             {
-                DevLog.Append(entry);
+                DevLog.Append(entry.ToString(), detailText);
             }
 
-            logText = "";
+            shortText = "";
+            detailText = "";
         }
         #endregion
     }

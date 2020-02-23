@@ -19,7 +19,7 @@ namespace WizardsCode.DevLogger
         /// </summary>
         /// <param name="shortText">The short text content of this log entry.</param>
         /// <param name="mediaFilePath">The path to a media file to include as an image. If null no image will be included.</param>
-        public static void Append(string shortText, string mediaFilePath = null)
+        public static void Append(string shortText, string detailText, string mediaFilePath = null)
         {
             StringBuilder entry = new StringBuilder();
 
@@ -33,6 +33,13 @@ namespace WizardsCode.DevLogger
             entry.Append(GetNewEntryHeading());
             entry.AppendLine(shortText);
             entry.AppendLine();
+
+            if (!string.IsNullOrEmpty(detailText))
+            {
+                entry.AppendLine("### Details");
+                entry.AppendLine(detailText);
+                entry.AppendLine();
+            }
 
             if (mediaFilePath != null) {
                 entry.Append("![Screenshot](");
@@ -51,7 +58,6 @@ namespace WizardsCode.DevLogger
         private static string GetDevLogIntro()
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine();
             sb.Append("# Devlog for ");
             sb.Append(Application.productName);
             sb.Append(" Version ");
