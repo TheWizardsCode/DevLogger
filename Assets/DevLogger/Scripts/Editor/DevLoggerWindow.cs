@@ -16,7 +16,7 @@ namespace WizardsCode.DevLogger.Editor {
         string detailText = "";
         string uiMageText = "";
 
-        [UnityEditor.MenuItem("Window/Wizards Code/Dev Logger")]
+        [UnityEditor.MenuItem("Tools/Wizards Code/Dev Logger")]
         public static void ShowWindow()
         {
             EditorWindow.GetWindow(typeof(DevLoggerWindow), false, "DevLog: " + Application.productName, true);

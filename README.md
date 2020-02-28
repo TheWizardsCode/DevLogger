@@ -10,7 +10,7 @@ In preparation...
   2. Register DevLogger at http://dev.twitter.com/apps/new
   3. Get the Consumer Token and Secret for the app
   4. Generate an Access Token and Access Token Secret
-  5. Window -> Wizards Code -> Dev Logger
+  5. Tools -> Wizards Code -> Dev Logger
   6. Enter the consumer key and secret as well as the Access token and secret
  
 # Using DevLogger
