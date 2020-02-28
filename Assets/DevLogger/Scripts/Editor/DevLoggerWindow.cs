@@ -1,10 +1,12 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Text;
 using UnityEditor;
 using UnityEngine;
+using WizardsCode.DevLog;
 using WizardsCode.Social;
 using WizardsCode.uGIF;
 
-namespace WizardsCode.DevLogger.Editor {
+namespace WizardsCode.DevLogger {
 
     /// <summary>
     /// The main DevLogger control window.
@@ -14,7 +16,9 @@ namespace WizardsCode.DevLogger.Editor {
         string[] suggestedHashTags = {  "#IndieGameDev", "#MadeWithUnity" };
         string shortText = "";
         string detailText = "";
-        string uiMageText = "";
+        string uiImageText = "";
+
+        private int maxImagesToRemember = 4;
 
         [UnityEditor.MenuItem("Tools/Wizards Code/Dev Logger")]
         public static void ShowWindow()
@@ -22,16 +26,48 @@ namespace WizardsCode.DevLogger.Editor {
             EditorWindow.GetWindow(typeof(DevLoggerWindow), false, "DevLog: " + Application.productName, true);
         }
 
+        [SerializeField]
+        private List<int> _latestCaptures;
+        public List<int> LatestCaptures
+        {
+            get
+            {
+                if (_latestCaptures == null)
+                {
+                    _latestCaptures = new List<int>();
+                }
+                return _latestCaptures;
+            }
+            set { _latestCaptures = value; }
+        }
+
+        void Awake()
+        {
+            Debug.Log("Awake");
+            EditorApplication.playModeStateChanged += PlayModeStateChanged;
+        }
+
+        void OnDestroy()
+        {
+            Debug.Log("Disabled");
+            EditorApplication.playModeStateChanged -= PlayModeStateChanged;
+        }
+
+        private static void PlayModeStateChanged(PlayModeStateChange state)
+        {
+            Debug.Log(state);
+        }
+
         #region GUI
         void OnGUI()
         {
-            if (string.IsNullOrEmpty(uiMageText))
+            if (string.IsNullOrEmpty(uiImageText))
             {
                 EditorGUILayout.LabelField("Welcome to " + Application.productName + " v" + Application.version);
             }
             else
             {
-                EditorGUILayout.LabelField(uiMageText);
+                EditorGUILayout.LabelField(uiImageText);
             }
 
             if (!Twitter.IsAuthenticated)
@@ -40,6 +76,13 @@ namespace WizardsCode.DevLogger.Editor {
                 return;
             } else
             {
+                StartSection("Debug");
+                if (GUILayout.Button("Reset"))
+                {
+                    LatestCaptures = new List<int>();
+                }
+                EndSection();
+
                 StartSection("Log Entry", false);
                 LogEntryGUI();
                 EndSection();
@@ -78,35 +121,27 @@ namespace WizardsCode.DevLogger.Editor {
             if (!string.IsNullOrEmpty(shortText) && GetFullTweetText().Length <= 140)
             {
                 EditorGUILayout.BeginHorizontal();
-                if (Capture.LatestImages != null)
+                if (GUILayout.Button("Tweet (and DevLog) with text only"))
                 {
-                    if (GUILayout.Button("Tweet (and DevLog) with text only"))
+                    if (Twitter.PublishTweet(GetFullTweetText(), out string response))
                     {
-                        if (Twitter.PublishTweet(GetFullTweetText(), out string response))
-                        {
-                            uiMageText = "Tweet sent succesfully";
-                        }
-                        AppendDevlog(false, true);
+                        uiImageText = "Tweet sent succesfully";
                     }
+                    AppendDevlog(false, true);
                 }
 
-                if (Capture.LatestImages != null)
+                if (LatestCaptures != null && LatestCaptures.Count > 0)
                 {
                     if (GUILayout.Button("Tweet (and DevLog) with selected image and text"))
                     {
-                        /**
-                        string directory = Capture.GetProjectFilepath(); ;
-                        string[] extensions = { "Image files", "png,jpg,gif" };
-                        string mediaFilePath = EditorUtility.OpenFilePanelWithFilters("Select an Image", directory, extensions);
-        **/
-                        string mediaFilePath = Capture.GetLatestImagePath(imageSelection);
-                        mediaFilePath = mediaFilePath.Substring(Capture.GetImagesFilepath().Length);
+                        DevLogScreenCapture capture = EditorUtility.InstanceIDToObject(LatestCaptures[imageSelection]) as DevLogScreenCapture;
+                        string mediaFilePath = capture.GetRelativeImagePath();
                         if (!string.IsNullOrEmpty(mediaFilePath))
                             if (!string.IsNullOrEmpty(mediaFilePath))
                             {
                                 if (Twitter.PublishTweetWithMedia(GetFullTweetText(), mediaFilePath, out string response))
                                 {
-                                    uiMageText = "Tweet with image sent succesfully";
+                                    uiImageText = "Tweet with image sent succesfully";
                                 }
                             }
                         AppendDevlog(false, true);
@@ -191,34 +226,150 @@ namespace WizardsCode.DevLogger.Editor {
         int imageSelection;
         private void MediaGUI()
         {
-            if (Capture.LatestImages != null)
+            if (LatestCaptures != null && LatestCaptures.Count > 0)
             {
-                imageSelection = GUILayout.SelectionGrid(imageSelection, Capture.LatestImages.ToArray(), 2, GUILayout.Height(160));
+                Texture2D[] imageTextures = new Texture2D[LatestCaptures.Count];
+                for (int i = 0; i < LatestCaptures.Count; i++)
+                {
+                    DevLogScreenCapture capture = EditorUtility.InstanceIDToObject(LatestCaptures[i]) as DevLogScreenCapture;
+                    imageTextures[i] = capture.Texture;
+                }
+                imageSelection = GUILayout.SelectionGrid(imageSelection, imageTextures, 2, GUILayout.Height(160));
             }
 
             EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("Save Screenshot"))
+            if (Application.isPlaying)
             {
-                string filename = Capture.SaveScreenshot();
-                uiMageText = "Saving Screenshot to " + filename;
-            }
-
-            if (EditorApplication.isPlaying)
-            {
-
-                if (GUILayout.Button("Save Animated GIF"))
+                if (GUILayout.Button("Game View"))
                 {
+                    CaptureScreen(DevLogScreenCapture.ImageEncoding.png);
+                }
+
+                if (GUILayout.Button("Animated GIF"))
+                {
+                    CaptureScreen(DevLogScreenCapture.ImageEncoding.gif);
+                }
+            } else
+            {
+                if (GUILayout.Button("Inspector"))
+                {
+                    CaptureWindowScreenshot("UnityEditor.InspectorWindow");
+                }
+
+                if (GUILayout.Button("Scene View"))
+                {
+                    CaptureWindowScreenshot("UnityEditor.SceneView");
+                }
+
+                if (GUILayout.Button("Game View"))
+                {
+                    //CaptureScreen(DevLogScreenCapture.ImageEncoding.png);
+                    CaptureWindowScreenshot("UnityEditor.GameView");
+                }
+            }
+            EditorGUILayout.EndHorizontal();
+        }
+
+
+
+        /// <summary>
+        /// Captures a screenshot of the desired editor window. To get a list of all the
+        /// windows available in the editor use:
+        /// ```
+        /// EditorWindow[] allWindows = Resources.FindObjectsOfTypeAll<EditorWindow>();
+        ///        foreach (EditorWindow window in allWindows)
+        ///        {
+        ///          Debug.Log(window);
+        ///        }
+        ///```
+        /// </summary>
+        /// <param name="windowName">The name of the window to be captured, for example:
+        /// UnityEditor.DevLoggerWindow
+        /// UnityEditor.GameView
+        /// UnityEditor.SceneView
+        /// UnityEditor.AssetStoreWindow
+        /// UnityEditor.TimelineWindow
+        /// UnityEditor.ConsoleWindow
+        /// UnityEditor.AnimationWindow
+        /// UnityEditor.Graphs.AnimatorControllerTool
+        /// UnityEditor.InspectorWindow
+        /// UnityEditor.NavMeshEditorWindow
+        /// UnityEditor.LightingWindow
+        /// UnityEditor.SceneHierarchyWindow
+        /// UnityEditor.InspectorWindow
+        /// UnityEditor.ProjectBrowser
+        /// </param>
+        private void CaptureWindowScreenshot(string windowName)
+        {
+            DevLogScreenCapture screenCapture = ScriptableObject.CreateInstance<DevLogScreenCapture>();
+            screenCapture.Encoding = DevLogScreenCapture.ImageEncoding.png;
+            screenCapture.name = windowName;
+
+            EditorWindow window = EditorWindow.GetWindow(typeof(Editor).Assembly.GetType(windowName));
+            window.Focus();
+
+            EditorApplication.delayCall += () =>
+            {
+                int inspectorWidth = (int)window.position.width;
+                int inspectorHeight = (int)window.position.height;
+
+                Color[] pixels = UnityEditorInternal.InternalEditorUtility.ReadScreenPixel(window.position.position, inspectorWidth, inspectorHeight);
+
+                Texture2D windowTexture = new Texture2D(inspectorWidth, inspectorHeight, TextureFormat.RGB24, false);
+                windowTexture.SetPixels(pixels);
+                screenCapture.Texture = windowTexture;
+
+                byte[] bytes = windowTexture.EncodeToPNG();
+                System.IO.File.WriteAllBytes(screenCapture.GetRelativeImagePath(), bytes);
+                screenCapture.IsImageSaved = true;
+                AddToLatestCaptures(screenCapture);
+            };
+
+            AssetDatabase.AddObjectToAsset(screenCapture, "Assets/Screen Captures.asset");
+            AssetDatabase.SaveAssets();
+        }
+
+        private void CaptureScreen(DevLogScreenCapture.ImageEncoding encoding)
+        {
+            DevLogScreenCapture screenCapture = ScriptableObject.CreateInstance<DevLogScreenCapture>();
+            screenCapture.Encoding = encoding;
+            screenCapture.name = "Game";
+
+            switch (encoding)
+            {
+                case DevLogScreenCapture.ImageEncoding.png:
+                    Capture.SaveScreenshot(ref screenCapture);
+                    break;
+                case DevLogScreenCapture.ImageEncoding.gif:
+                    // FIXME: this information should be passed in using the screenCapture object
                     Capture.frameRate = 30;
                     Capture.downscale = 4;
                     Capture.duration = 10;
-                    Capture.CaptureAnimatedGIF();
+                    Capture.CaptureAnimatedGIF(ref screenCapture);
+                    break;
+            }
+
+            AddToLatestCaptures(screenCapture);
+
+            AssetDatabase.AddObjectToAsset(screenCapture, "Assets/Screen Captures.asset");
+            AssetDatabase.SaveAssets();
+        }
+
+        private void AddToLatestCaptures(DevLogScreenCapture screenCapture)
+        {
+            if (screenCapture != null)
+            {
+                LatestCaptures.Insert(0, screenCapture.GetInstanceID());
+                if (LatestCaptures.Count > maxImagesToRemember)
+                {
+                    LatestCaptures.RemoveAt(LatestCaptures.Count - 1);
                 }
+                uiImageText = "Captured as " + screenCapture.GetRelativeImagePath();
             }
             else
             {
-                EditorGUILayout.LabelField("Enter play mode to capture an animated GIF.");
+                uiImageText = "Error capturing screen";
             }
-            EditorGUILayout.EndHorizontal();
         }
         #endregion
 
@@ -270,8 +421,8 @@ namespace WizardsCode.DevLogger.Editor {
 
             if (withImage)
             {
-                string mediaFilePath = Capture.GetLatestImagePath(imageSelection);
-                mediaFilePath = mediaFilePath.Substring(Capture.GetImagesFilepath().Length);
+                DevLogScreenCapture capture = EditorUtility.InstanceIDToObject(LatestCaptures[imageSelection]) as DevLogScreenCapture;
+                string mediaFilePath = capture.Filename;
                 if (!string.IsNullOrEmpty(mediaFilePath))
                 {
                     DevLog.Append(entry.ToString(), detailText, mediaFilePath);
