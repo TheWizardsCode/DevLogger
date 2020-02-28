@@ -17,8 +17,6 @@ namespace WizardsCode.uGIF
 		public int downscale = 1;
 		public float duration = 10;
 		public bool useBilinearScaling = true;
-		public List<Texture2D> latestImages;
-		public List<string> latestImageFilepaths;
 
 		public enum Format {  gif, png }
 
@@ -26,20 +24,37 @@ namespace WizardsCode.uGIF
 		public byte[] bytes = null;
 		private int maxImagesToRemember = 4;
 
+		private List<Texture2D> _latestImages;
+		public List<Texture2D> LatestImages
+		{
+			get { 
+				if (_latestImages == null)
+				{
+					_latestImages = new List<Texture2D>();
+				}
+				return _latestImages; 
+			}
+			set { _latestImages = value; }
+		}
+
+		private List<string> _latestImageFilepaths;
+		public List<string> LatestImageFilepaths
+		{
+			get
+			{
+				if (_latestImageFilepaths == null)
+				{
+					_latestImageFilepaths = new List<string>();
+				}
+				return _latestImageFilepaths;
+			}
+			set { _latestImageFilepaths = value; }
+		}
+
 		void Start ()
+
 		{
             Directory.CreateDirectory(ImageDirectoryName);
-
-            if (latestImages == null)
-            {
-                latestImages = new List<Texture2D>();
-            }
-            if (latestImageFilepaths == null)
-            {
-                latestImageFilepaths = new List<string>();
-            }
-
-            InitializeCapture();
 		}
 
 		/// <summary>
@@ -49,12 +64,12 @@ namespace WizardsCode.uGIF
 		private void InitializeCapture()
 		{
 			// make space in the latestImage arrays
-			latestImages.Insert(0, null);
-			latestImageFilepaths.Insert(0, null);
-			if (latestImages.Count > maxImagesToRemember)
+			LatestImages.Insert(0, null);
+			LatestImageFilepaths.Insert(0, null);
+			if (LatestImages.Count > maxImagesToRemember)
 			{
-				latestImages.RemoveAt(latestImages.Count - 1);
-				latestImageFilepaths.RemoveAt(latestImageFilepaths.Count - 1);
+				LatestImages.RemoveAt(LatestImages.Count - 1);
+				LatestImageFilepaths.RemoveAt(LatestImageFilepaths.Count - 1);
 			}
 
 			GenerateFilepath();
@@ -157,7 +172,7 @@ namespace WizardsCode.uGIF
 		/// <returns></returns>
 		public string GetLatestImagePath(int idx)
 		{
-			return latestImageFilepaths[idx];
+			return LatestImageFilepaths[idx];
 		}
 
 		public void _Encode ()
@@ -209,8 +224,8 @@ namespace WizardsCode.uGIF
 		private void StorePreProcessedFrame(Texture2D texture, Format format)
 		{
 			frames.Add(new Image(texture));
-			latestImages[0] =  texture;
-			latestImageFilepaths[0] = currentFilepath + "." + format;
+			LatestImages[0] =  texture;
+			LatestImageFilepaths[0] = currentFilepath + "." + format;
 		}
 
 		void OnPostRender ()

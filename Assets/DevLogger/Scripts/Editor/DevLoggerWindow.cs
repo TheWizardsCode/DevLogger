@@ -78,7 +78,7 @@ namespace WizardsCode.DevLogger.Editor {
             if (!string.IsNullOrEmpty(shortText) && GetFullTweetText().Length <= 140)
             {
                 EditorGUILayout.BeginHorizontal();
-                if (Capture.latestImages != null)
+                if (Capture.LatestImages != null)
                 {
                     if (GUILayout.Button("Tweet (and DevLog) with text only"))
                     {
@@ -90,7 +90,7 @@ namespace WizardsCode.DevLogger.Editor {
                     }
                 }
 
-                if (Capture.latestImages != null)
+                if (Capture.LatestImages != null)
                 {
                     if (GUILayout.Button("Tweet (and DevLog) with selected image and text"))
                     {
@@ -191,9 +191,9 @@ namespace WizardsCode.DevLogger.Editor {
         int imageSelection;
         private void MediaGUI()
         {
-            if (Capture.latestImages != null)
+            if (Capture.LatestImages != null)
             {
-                imageSelection = GUILayout.SelectionGrid(imageSelection, Capture.latestImages.ToArray(), 2, GUILayout.Height(160));
+                imageSelection = GUILayout.SelectionGrid(imageSelection, Capture.LatestImages.ToArray(), 2, GUILayout.Height(160));
             }
 
             EditorGUILayout.BeginHorizontal();
