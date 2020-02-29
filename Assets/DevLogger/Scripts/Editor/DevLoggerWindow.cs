@@ -310,12 +310,12 @@ namespace WizardsCode.DevLogger {
 
             EditorApplication.delayCall += () =>
             {
-                int inspectorWidth = (int)window.position.width;
-                int inspectorHeight = (int)window.position.height;
+                int width = (int)window.position.width;
+                int height = (int)window.position.height;
 
-                Color[] pixels = UnityEditorInternal.InternalEditorUtility.ReadScreenPixel(window.position.position, inspectorWidth, inspectorHeight);
+                Color[] pixels = UnityEditorInternal.InternalEditorUtility.ReadScreenPixel(window.position.position, width, height);
 
-                Texture2D windowTexture = new Texture2D(inspectorWidth, inspectorHeight, TextureFormat.RGB24, false);
+                Texture2D windowTexture = new Texture2D(width, height, TextureFormat.RGB24, false);
                 windowTexture.SetPixels(pixels);
                 screenCapture.Texture = windowTexture;
 
@@ -338,13 +338,14 @@ namespace WizardsCode.DevLogger {
             switch (encoding)
             {
                 case DevLogScreenCapture.ImageEncoding.png:
-                    Capture.SaveScreenshot(ref screenCapture);
+                    Capture.CaptureScreenshot(ref screenCapture);
                     break;
                 case DevLogScreenCapture.ImageEncoding.gif:
                     // FIXME: this information should be passed in using the screenCapture object
                     Capture.frameRate = 30;
-                    Capture.downscale = 4;
+                    Capture.width = 320;
                     Capture.duration = 10;
+                    Capture.useBilinearScaling = true;
                     Capture.CaptureAnimatedGIF(ref screenCapture);
                     break;
             }

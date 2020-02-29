@@ -14,7 +14,7 @@ namespace WizardsCode.uGIF
 	{
         public float frameRate = 15;
 		public bool isCapturing;
-		public int downscale = 1;
+		public int width = 320; // the width of the final image. The height will be adjust to maintain aspect ratio
 		public float duration = 10;
 		public bool useBilinearScaling = true;
 
@@ -24,11 +24,11 @@ namespace WizardsCode.uGIF
 		public byte[] bytes = null;
 
 		List<Image> frames = new List<Image>();
-		Texture2D colorBuffer;
 		float period;
 		float T = 0;
 		float startTime = 0;
 		DevLogScreenCapture currentScreenCapture;
+		private Texture2D gameViewColorBuffer;
 
 		/// <summary>
 		/// Configure the capture device ready for the next capture.
@@ -37,9 +37,9 @@ namespace WizardsCode.uGIF
 		private void InitializeCapture(ref DevLogScreenCapture screenCapture)
 		{
 			currentScreenCapture = screenCapture;
+			gameViewColorBuffer = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, false);
 
 			period = 1f / frameRate;
-			colorBuffer = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, false);
 			frames = new List<Image>();
 			startTime = Time.time;
 		}
@@ -63,7 +63,7 @@ namespace WizardsCode.uGIF
 		/// Capture the game camera at this moment in time and save it to a PNG file.
 		/// </summary>
 		/// <returns>The full path to the saved file.</returns>
-		public void SaveScreenshot(ref DevLogScreenCapture screenCapture)
+		public void CaptureScreenshot(ref DevLogScreenCapture screenCapture)
 		{
 			InitializeCapture(ref screenCapture);
 			StartCoroutine(CaptureFrame());
@@ -89,13 +89,14 @@ namespace WizardsCode.uGIF
 		{
 			if (currentScreenCapture.Encoding == DevLogScreenCapture.ImageEncoding.gif)
 			{
-				while (bytes == null) yield return new WaitForSeconds(0.25f);
+				while (bytes == null) yield return null;
 				System.IO.File.WriteAllBytes(currentScreenCapture.GetAbsoluteImagePath(), bytes);
 			}
 
-			while (currentScreenCapture.Texture == null) yield return new WaitForSeconds(0.25f);
+			while (currentScreenCapture.Texture == null) yield return null;
 			System.IO.File.WriteAllBytes(currentScreenCapture.GetAbsoluteImagePathForPreview(),
 				currentScreenCapture.Texture.EncodeToPNG());
+
 			bytes = null;
 			currentScreenCapture.IsImageSaved = true;
 		}
@@ -116,11 +117,12 @@ namespace WizardsCode.uGIF
 			Image f;
 			for (int i = 0; i < frames.Count; i++) {
 				f = frames[i];
-				if (downscale != 1) {
+				if (width != f.width) {
+					int scale = width / f.width;
 					if(useBilinearScaling) {
-						f.ResizeBilinear(f.width/downscale, f.height/downscale);
+						f.ResizeBilinear(f.width * scale, f.height * scale);
 					} else {
-						f.Resize (downscale);
+						f.Resize (width);
 					}
 				}
 				f.Flip ();
@@ -157,6 +159,5 @@ namespace WizardsCode.uGIF
 				}
 			}
 		}
-
 	}
 }
