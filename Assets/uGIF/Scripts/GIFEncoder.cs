@@ -7,7 +7,6 @@ namespace WizardsCode.uGIF
 {
 	public class GIFEncoder
 	{
-
 		public bool useGlobalColorTable = false;
 		public Color32? transparent = null;
 		public int repeat = -1;

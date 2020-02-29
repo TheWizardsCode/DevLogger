@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using UnityEditor;
 using UnityEngine;
@@ -41,23 +42,6 @@ namespace WizardsCode.DevLogger {
             set { _latestCaptures = value; }
         }
 
-        void Awake()
-        {
-            Debug.Log("Awake");
-            EditorApplication.playModeStateChanged += PlayModeStateChanged;
-        }
-
-        void OnDestroy()
-        {
-            Debug.Log("Disabled");
-            EditorApplication.playModeStateChanged -= PlayModeStateChanged;
-        }
-
-        private static void PlayModeStateChanged(PlayModeStateChange state)
-        {
-            Debug.Log(state);
-        }
-
         #region GUI
         void OnGUI()
         {
@@ -77,10 +61,23 @@ namespace WizardsCode.DevLogger {
             } else
             {
                 StartSection("Debug");
+                EditorGUILayout.BeginHorizontal();
                 if (GUILayout.Button("Reset"))
                 {
                     LatestCaptures = new List<int>();
                 }
+                if (GUILayout.Button("Capture DevLogger"))
+                {
+                    CaptureWindowScreenshot("WizardsCode.DevLogger.DevLoggerWindow");
+                }
+                if (GUILayout.Button("Dump Window Names")) {
+                    EditorWindow[] allWindows = Resources.FindObjectsOfTypeAll<EditorWindow>();
+                    foreach (EditorWindow window in allWindows)
+                    {
+                        Debug.Log("Window name: " + window);
+                    }
+                }
+                EditorGUILayout.EndHorizontal();
                 EndSection();
 
                 StartSection("Log Entry", false);
@@ -284,7 +281,7 @@ namespace WizardsCode.DevLogger {
         ///```
         /// </summary>
         /// <param name="windowName">The name of the window to be captured, for example:
-        /// UnityEditor.DevLoggerWindow
+        /// WizardsCode.DevLogger.DevLoggerWindow
         /// UnityEditor.GameView
         /// UnityEditor.SceneView
         /// UnityEditor.AssetStoreWindow
@@ -305,15 +302,26 @@ namespace WizardsCode.DevLogger {
             screenCapture.Encoding = DevLogScreenCapture.ImageEncoding.png;
             screenCapture.name = windowName;
 
-            EditorWindow window = EditorWindow.GetWindow(typeof(Editor).Assembly.GetType(windowName));
+            EditorWindow window;
+            if (windowName.StartsWith("UnityEditor."))
+            {
+                window = EditorWindow.GetWindow(typeof(Editor).Assembly.GetType(windowName));
+            }
+            else
+            {
+                Type t = Type.GetType(windowName);
+                window = EditorWindow.GetWindow(t);
+            }
             window.Focus();
 
             EditorApplication.delayCall += () =>
             {
                 int width = (int)window.position.width;
                 int height = (int)window.position.height;
+                Vector2 position = window.position.position;
+                position.y += 18;
 
-                Color[] pixels = UnityEditorInternal.InternalEditorUtility.ReadScreenPixel(window.position.position, width, height);
+                Color[] pixels = UnityEditorInternal.InternalEditorUtility.ReadScreenPixel(position, width, height);
 
                 Texture2D windowTexture = new Texture2D(width, height, TextureFormat.RGB24, false);
                 windowTexture.SetPixels(pixels);
@@ -343,7 +351,7 @@ namespace WizardsCode.DevLogger {
                 case DevLogScreenCapture.ImageEncoding.gif:
                     // FIXME: this information should be passed in using the screenCapture object
                     Capture.frameRate = 30;
-                    Capture.width = 320;
+                    Capture.downscale = 2;
                     Capture.duration = 10;
                     Capture.useBilinearScaling = true;
                     Capture.CaptureAnimatedGIF(ref screenCapture);

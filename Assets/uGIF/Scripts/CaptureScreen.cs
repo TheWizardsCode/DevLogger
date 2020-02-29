@@ -7,6 +7,9 @@ using System.Text;
 using UnityEngine.SceneManagement;
 using System;
 using WizardsCode.DevLog;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace WizardsCode.uGIF
 {
@@ -14,7 +17,7 @@ namespace WizardsCode.uGIF
 	{
         public float frameRate = 15;
 		public bool isCapturing;
-		public int width = 320; // the width of the final image. The height will be adjust to maintain aspect ratio
+		public int downscale = 1;
 		public float duration = 10;
 		public bool useBilinearScaling = true;
 
@@ -29,6 +32,7 @@ namespace WizardsCode.uGIF
 		float startTime = 0;
 		DevLogScreenCapture currentScreenCapture;
 		private Texture2D gameViewColorBuffer;
+		private bool isEncoding;
 
 		/// <summary>
 		/// Configure the capture device ready for the next capture.
@@ -76,6 +80,7 @@ namespace WizardsCode.uGIF
         public void EncodeAsAnimatedGIF ()
 		{
 			bytes = null;
+			isEncoding = true;
 			Thread thread = new Thread(_Encode);
 			thread.Start ();
 			StartCoroutine(WriteToDisk());
@@ -87,9 +92,9 @@ namespace WizardsCode.uGIF
 		/// </summary>
 		IEnumerator WriteToDisk()
 		{
+			while (bytes == null && isEncoding) yield return null;
 			if (currentScreenCapture.Encoding == DevLogScreenCapture.ImageEncoding.gif)
 			{
-				while (bytes == null) yield return null;
 				System.IO.File.WriteAllBytes(currentScreenCapture.GetAbsoluteImagePath(), bytes);
 			}
 
@@ -103,7 +108,7 @@ namespace WizardsCode.uGIF
 
 		public void _Encode ()
 		{
-			isCapturing = false;
+			isEncoding = true;
 
 			var ge = new GIFEncoder ();
 			ge.useGlobalColorTable = true;
@@ -117,12 +122,15 @@ namespace WizardsCode.uGIF
 			Image f;
 			for (int i = 0; i < frames.Count; i++) {
 				f = frames[i];
-				if (width != f.width) {
-					int scale = width / f.width;
-					if(useBilinearScaling) {
-						f.ResizeBilinear(f.width * scale, f.height * scale);
-					} else {
-						f.Resize (width);
+				if (downscale != 1)
+				{
+					if (useBilinearScaling)
+					{
+						f.ResizeBilinear(f.width / downscale, f.height / downscale);
+					}
+					else
+					{
+						f.Resize(downscale);
 					}
 				}
 				f.Flip ();
@@ -131,6 +139,8 @@ namespace WizardsCode.uGIF
 			ge.Finish ();
 			bytes = stream.GetBuffer ();
 			stream.Close ();
+
+			isEncoding = false;
 		}
 
 		/// <summary>
@@ -145,12 +155,15 @@ namespace WizardsCode.uGIF
 
 		void OnPostRender ()
 		{
+#if UNITY_EDITOR
+			
 			if (isCapturing) {
 				T += Time.deltaTime;
 				if (T >= period)
 				{
 					T = 0;
-					StartCoroutine(CaptureFrame());
+					//StartCoroutine(CaptureFrame());
+					CaptureGameWindow();
 				}
 				if (Time.time > (startTime + duration))
 				{
@@ -159,5 +172,27 @@ namespace WizardsCode.uGIF
 				}
 			}
 		}
+
+		private void CaptureGameWindow()
+		{
+			EditorWindow window = EditorWindow.GetWindow(typeof(Editor).Assembly.GetType("UnityEditor.GameView"));
+			int heightOffset = 18;
+			int width = (int)window.position.width;
+			int height = (int)window.position.height - 18;
+			Vector2 position = window.position.position;
+			position.y += heightOffset;
+
+			//Color[] pixels = UnityEditorInternal.InternalEditorUtility.ReadScreenPixel(position, width, height);
+
+			Texture2D windowTexture = new Texture2D(width, height, TextureFormat.RGB24, false);
+			windowTexture.Apply();
+			//windowTexture.SetPixels(pixels);
+
+			windowTexture.ReadPixels(new Rect(0, 0, width, height), 0, 0, false);
+
+			currentScreenCapture.Texture = windowTexture;
+			frames.Add(new Image(windowTexture));
+		}
+#endif
 	}
 }
