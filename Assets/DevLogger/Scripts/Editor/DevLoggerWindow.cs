@@ -372,7 +372,7 @@ namespace WizardsCode.DevLogger {
                 case DevLogScreenCapture.ImageEncoding.gif:
                     // FIXME: this information should be passed in using the screenCapture object
                     Capture.frameRate = 24;
-                    Capture.downscale = 2; // downscaling really messes with the colors we need a better encoding mechanism
+                    Capture.downscale = 2; // downscaling really messes with the colors if the resulting image size is too small (not sure what that is yet)
                     Capture.duration = 10;
                     Capture.useBilinearScaling = true;
                     Capture.CaptureAnimatedGIF(ref screenCapture);

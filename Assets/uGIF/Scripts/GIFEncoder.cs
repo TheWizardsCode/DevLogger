@@ -11,7 +11,7 @@ namespace WizardsCode.uGIF
 		public Color32? transparent = null;
 		public int repeat = -1;
 		public int dispose = -1; // disposal code (-1 = use default)
-		public int quality = 10; // default sample interval for quantizer
+		public int quality = 5; 
 
 		public float FPS {
 			set {
