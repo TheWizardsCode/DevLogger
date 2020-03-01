@@ -45,14 +45,9 @@ namespace WizardsCode.DevLogger {
         #region GUI
         void OnGUI()
         {
-            if (string.IsNullOrEmpty(uiImageText))
-            {
-                EditorGUILayout.LabelField("Welcome to " + Application.productName + " v" + Application.version);
-            }
-            else
-            {
-                EditorGUILayout.LabelField(uiImageText);
-            }
+            StartSection("Debug");
+            DebugGUI();
+            EndSection();
 
             if (!Twitter.IsAuthenticated)
             {
@@ -60,26 +55,6 @@ namespace WizardsCode.DevLogger {
                 return;
             } else
             {
-                StartSection("Debug");
-                EditorGUILayout.BeginHorizontal();
-                if (GUILayout.Button("Reset"))
-                {
-                    LatestCaptures = new List<int>();
-                }
-                if (GUILayout.Button("Capture DevLogger"))
-                {
-                    CaptureWindowScreenshot("WizardsCode.DevLogger.DevLoggerWindow");
-                }
-                if (GUILayout.Button("Dump Window Names")) {
-                    EditorWindow[] allWindows = Resources.FindObjectsOfTypeAll<EditorWindow>();
-                    foreach (EditorWindow window in allWindows)
-                    {
-                        Debug.Log("Window name: " + window);
-                    }
-                }
-                EditorGUILayout.EndHorizontal();
-                EndSection();
-
                 StartSection("Log Entry", false);
                 LogEntryGUI();
                 EndSection();
@@ -91,6 +66,39 @@ namespace WizardsCode.DevLogger {
                 StartSection("Media Capture");
                 MediaGUI();
                 EndSection();
+            }
+        }
+
+        private void DebugGUI()
+        {
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("Reset"))
+            {
+                LatestCaptures = new List<int>();
+            }
+
+            if (GUILayout.Button("Capture DevLogger"))
+            {
+                CaptureWindowScreenshot("WizardsCode.DevLogger.DevLoggerWindow");
+            }
+
+            if (GUILayout.Button("Dump Window Names"))
+            {
+                EditorWindow[] allWindows = Resources.FindObjectsOfTypeAll<EditorWindow>();
+                foreach (EditorWindow window in allWindows)
+                {
+                    Debug.Log("Window name: " + window);
+                }
+            }
+            EditorGUILayout.EndHorizontal();
+
+            if (string.IsNullOrEmpty(uiImageText))
+            {
+                EditorGUILayout.LabelField("Welcome to " + Application.productName + " v" + Application.version);
+            }
+            else
+            {
+                EditorGUILayout.LabelField(uiImageText);
             }
         }
 
