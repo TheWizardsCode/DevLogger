@@ -42,9 +42,26 @@ namespace WizardsCode.DevLogger {
             set { _latestCaptures = value; }
         }
 
+        private void OnEnable()
+        {
+            EditorApplication.update += Update;
+        }
+
+        void Update()
+        {
+            if (Capture.isCapturing)
+            {
+                Repaint();
+            }
+        }
+
         #region GUI
         void OnGUI()
         {
+            StartSection("Debug");
+            DebugGUI();
+            EndSection();
+
             if (!Twitter.IsAuthenticated)
             {
                 OnAuthorizeTwitterGUI();
@@ -63,10 +80,6 @@ namespace WizardsCode.DevLogger {
                 MediaGUI();
                 EndSection();
             }
-
-            StartSection("Debug");
-            DebugGUI();
-            EndSection();
         }
 
         private void DebugGUI()
@@ -358,8 +371,8 @@ namespace WizardsCode.DevLogger {
                     break;
                 case DevLogScreenCapture.ImageEncoding.gif:
                     // FIXME: this information should be passed in using the screenCapture object
-                    Capture.frameRate = 30;
-                    Capture.downscale = 2;
+                    Capture.frameRate = 24;
+                    Capture.downscale = 2; // downscaling really messes with the colors we need a better encoding mechanism
                     Capture.duration = 10;
                     Capture.useBilinearScaling = true;
                     Capture.CaptureAnimatedGIF(ref screenCapture);

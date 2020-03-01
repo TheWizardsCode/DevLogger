@@ -150,7 +150,7 @@ namespace WizardsCode.uGIF
 		{
 			yield return new WaitForEndOfFrame();
 			currentScreenCapture.Texture = ScreenCapture.CaptureScreenshotAsTexture();
-			frames.Add(new Image(currentScreenCapture.Texture));
+            frames.Add(new Image(currentScreenCapture.Texture));
 		}
 
 		void OnPostRender ()
@@ -162,8 +162,8 @@ namespace WizardsCode.uGIF
 				if (T >= period)
 				{
 					T = 0;
-					//StartCoroutine(CaptureFrame());
-					CaptureGameWindow();
+					StartCoroutine(CaptureFrame());
+					//CaptureGameWindow();
 				}
 				if (Time.time > (startTime + duration))
 				{
@@ -176,18 +176,13 @@ namespace WizardsCode.uGIF
 		private void CaptureGameWindow()
 		{
 			EditorWindow window = EditorWindow.GetWindow(typeof(Editor).Assembly.GetType("UnityEditor.GameView"));
-			int heightOffset = 18;
+			int heightOffset = 17;
 			int width = (int)window.position.width;
-			int height = (int)window.position.height - 18;
+			int height = (int)window.position.height - heightOffset;
 			Vector2 position = window.position.position;
 			position.y += heightOffset;
-
-			//Color[] pixels = UnityEditorInternal.InternalEditorUtility.ReadScreenPixel(position, width, height);
-
-			Texture2D windowTexture = new Texture2D(width, height, TextureFormat.RGB24, false);
-			windowTexture.Apply();
-			//windowTexture.SetPixels(pixels);
-
+            
+            Texture2D windowTexture = new Texture2D(width, height, TextureFormat.RGB24, false);
 			windowTexture.ReadPixels(new Rect(0, 0, width, height), 0, 0, false);
 
 			currentScreenCapture.Texture = windowTexture;
