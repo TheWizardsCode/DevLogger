@@ -45,10 +45,6 @@ namespace WizardsCode.DevLogger {
         #region GUI
         void OnGUI()
         {
-            StartSection("Debug");
-            DebugGUI();
-            EndSection();
-
             if (!Twitter.IsAuthenticated)
             {
                 OnAuthorizeTwitterGUI();
@@ -67,6 +63,10 @@ namespace WizardsCode.DevLogger {
                 MediaGUI();
                 EndSection();
             }
+
+            StartSection("Debug");
+            DebugGUI();
+            EndSection();
         }
 
         private void DebugGUI()
