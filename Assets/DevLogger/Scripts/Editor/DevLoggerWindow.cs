@@ -19,6 +19,7 @@ namespace WizardsCode.DevLogger {
         string detailText = "";
         string uiImageText = "";
 
+        [SerializeField]
         private List<bool> selectedImages = new List<bool>();
         private int maxImagesToRemember = 4;
 
