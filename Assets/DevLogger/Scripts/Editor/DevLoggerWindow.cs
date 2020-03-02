@@ -412,7 +412,7 @@ namespace WizardsCode.DevLogger {
 
             AddToLatestCaptures(screenCapture);
 
-            AssetDatabase.AddObjectToAsset(screenCapture, "Assets/Screen Captures.asset");
+            AssetDatabase.AddObjectToAsset(screenCapture, "Assets/ScreenCaptures.asset");
             AssetDatabase.SaveAssets();
         }
 
