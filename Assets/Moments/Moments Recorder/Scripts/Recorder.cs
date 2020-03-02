@@ -83,6 +83,12 @@ namespace Moments
 		/// </summary>
 		public string SaveFolder { get; set; }
 
+
+		/// <summary>
+		/// The filename to save the gif to. If null a filename will be generated.
+		/// </summary>
+		public string Filename { get; set; }
+
 		/// <summary>
 		/// Sets the worker threads priority. This will only affect newly created threads (on save).
 		/// </summary>
@@ -376,14 +382,19 @@ namespace Moments
 		// Gets a filename : GifCapture-yyyyMMddHHmmssffff
 		string GenerateFileName()
 		{
+			//REFACTOR: This method should not exist, move into Filename property.
+			if (Filename != null) {
+				return Filename;
+			}
+			
 			string timestamp = DateTime.Now.ToString("yyyyMMddHHmmssffff");
-			return "GifCapture-" + timestamp;
+			return "GifCapture-" + timestamp + ".gif";
 		}
 
 		// Pre-processing coroutine to extract frame data and send everything to a separate worker thread
 		IEnumerator PreProcess(string filename)
 		{
-			string filepath = SaveFolder + "/" + filename + ".gif";
+			string filepath = SaveFolder.TrimEnd('/') + "/" + filename; 
 			List<GifFrame> frames = new List<GifFrame>(m_Frames.Count);
 
 			// Get a temporary texture to read RenderTexture data

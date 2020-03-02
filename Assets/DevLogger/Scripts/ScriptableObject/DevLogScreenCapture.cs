@@ -52,7 +52,7 @@ namespace WizardsCode.DevLog
 
         private void LoadPreviewTexture()
         {
-            Uri uri = new Uri(GetAbsoluteImagePathForPreview());
+            Uri uri = new Uri(GetAbsoluteImagePath());
             string absoluteUri = uri.AbsoluteUri;
             WWW www = new WWW(absoluteUri);
             do { } while (!www.isDone && string.IsNullOrEmpty(www.error));
@@ -81,29 +81,25 @@ namespace WizardsCode.DevLog
         /// <returns></returns>
         public string GetAbsoluteImagePath()
         {
-            return GetProjectFilepath() + GetRelativeImagePath();
-        }
-
-        /// <summary>
-        /// Get the absolute filepath and filename to the preview image for this capture.
-        /// For animated GIFs this will be a single frame PNG. For PNGs it will be the
-        /// same file as the Image itself.
-        /// </summary>
-        /// <returns></returns>
-        public string GetAbsoluteImagePathForPreview()
-        {
-            return GetProjectFilepath() + GetRelativeImagePathForPreview();
+            return GetAbsoluteImageFolder() + Filename;
         }
 
         /// <summary>
         /// Get the path to the folder in which the project is stored
         /// </summary>
         /// <returns></returns>
-        private string GetProjectFilepath()
+        public string GetAbsoluteImageFolder()
         {
             string projectPath = Application.dataPath;
             projectPath = projectPath.Replace("Assets", "");
-            return projectPath;
+            return projectPath + GetRelativeImageFolder();
+        }
+
+        public string GetRelativeImageFolder()
+        {
+            string relativePath = "DevLog/";
+            Directory.CreateDirectory(relativePath);
+            return relativePath;
         }
 
         /// <summary>
@@ -112,27 +108,7 @@ namespace WizardsCode.DevLog
         /// <returns></returns>
         public string GetRelativeImagePath()
         {
-            string relativePath = "DevLog/";
-            Directory.CreateDirectory(relativePath);
-            return relativePath + Filename;
-        }
-
-
-        /// <summary>
-        /// Get the relative filepath and filename to the image preview for this capture.
-        /// </summary>
-        /// <returns></returns>
-        public string GetRelativeImagePathForPreview()
-        {
-            string relativePath = "DevLog/";
-            Directory.CreateDirectory(relativePath);
-            if (Encoding == ImageEncoding.gif)
-            {
-                return relativePath + Filename.Replace(".gif", ".png");
-            } else
-            {
-                return relativePath + Filename;
-            }
+            return GetRelativeImageFolder() + Filename;
         }
 
         public string Filename

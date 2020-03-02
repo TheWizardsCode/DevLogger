@@ -8,13 +8,15 @@ using UnityEngine.Rendering.PostProcessing;
 using WizardsCode.DevLog;
 using WizardsCode.Social;
 
-namespace WizardsCode.DevLogger {
+namespace WizardsCode.DevLogger
+{
 
     /// <summary>
     /// The main DevLogger control window.
     /// </summary>
     public class DevLoggerWindow : EditorWindow
     {
+        private const string DATABASE_PATH = "Assets/ScreenCaptures.asset";
         string[] suggestedHashTags = {  "#IndieGameDev", "#MadeWithUnity" };
         string shortText = "";
         string detailText = "";
@@ -25,6 +27,14 @@ namespace WizardsCode.DevLogger {
         private int maxImagesToRemember = 4;
 
         private Vector2 scrollPos;
+
+        // Animated GIF setup
+        bool preserveAspect = true; // Automatically compute height from the current aspect ratio
+        int width = 640; // Width in pixels
+        int fps = 24; // Height in pixels
+        int bufferSize = 10; // Number of seconds to record
+        int repeat = 0; // -1: no repeat, 0: infinite, >0: repeat count
+        int quality = 10; // Quality of color quantization, lower = better but slower (min 1, max 100)
 
 
         [UnityEditor.MenuItem("Tools/Wizards Code/Dev Logger")]
@@ -49,19 +59,9 @@ namespace WizardsCode.DevLogger {
                     _recorder = Camera.main.GetComponent<Recorder>();
                     if (_recorder == null)
                     {
-                        bool preserveAspect = true; // Automatically compute height from the current aspect ratio
-                        int width = 420; // Width in pixels
-                        int fps = 24; // Height in pixels
-                        int bufferSize = 10; // Number of seconds to record
-                        int repeat = 0; // -1: no repeat, 0: infinite, >0: repeat count
-                        int quality = 10; // Quality of color quantization, lower = better but slower (min 1, max 100)
-
                         _recorder = Camera.main.gameObject.AddComponent<Recorder>();
                         _recorder.Init();
                         _recorder.Setup(preserveAspect, width, width/2, fps,bufferSize, repeat, quality);
-
-                        _recorder.OnPreProcessingDone = OnProcessingDone;
-                        _recorder.OnFileSaved = OnFileSaved;
 
                         PostProcessLayer pp = Camera.main.GetComponent<PostProcessLayer>();
                         if (pp != null)
@@ -127,11 +127,22 @@ namespace WizardsCode.DevLogger {
             }
         }
 
+        DevLogScreenCapture currentScreenCapture;
         void Update()
         {
-            if (Recorder.State != RecorderState.Paused)
+            if (_recorder.State == RecorderState.PreProcessing)
             {
-                Repaint();
+                return;
+            }
+
+            if (currentScreenCapture != null && !m_IsSaving && !currentScreenCapture.IsImageSaved)
+            {
+                AddToLatestCaptures(currentScreenCapture);
+
+                AssetDatabase.AddObjectToAsset(currentScreenCapture, DATABASE_PATH);
+                AssetDatabase.SaveAssets();
+
+                currentScreenCapture.IsImageSaved = true;
             }
         }
 
@@ -326,6 +337,15 @@ namespace WizardsCode.DevLogger {
                     case RecorderState.Recording:
                         if (GUILayout.Button("Save Animated GIF"))
                         {
+                            _recorder.OnPreProcessingDone = OnProcessingDone;
+                            _recorder.OnFileSaved = OnFileSaved;
+                            
+                            currentScreenCapture = ScriptableObject.CreateInstance<DevLogScreenCapture>();
+                            currentScreenCapture.Encoding = DevLogScreenCapture.ImageEncoding.gif;
+                            currentScreenCapture.name = "In Game Footage";
+                            _recorder.SaveFolder = currentScreenCapture.GetAbsoluteImageFolder();
+                            _recorder.Filename = currentScreenCapture.Filename;
+
                             Recorder.Save();
                         }
                         break;
@@ -441,7 +461,7 @@ namespace WizardsCode.DevLogger {
 
                 AddToLatestCaptures(screenCapture);
 
-                AssetDatabase.AddObjectToAsset(screenCapture, "Assets/ScreenCaptures.asset");
+                AssetDatabase.AddObjectToAsset(screenCapture, DATABASE_PATH);
                 AssetDatabase.SaveAssets();
 
                 this.Focus();
