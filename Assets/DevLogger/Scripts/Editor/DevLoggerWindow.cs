@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Moments;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEditor;
 using UnityEngine;
 using WizardsCode.DevLog;
 using WizardsCode.Social;
-using WizardsCode.uGIF;
 
 namespace WizardsCode.DevLogger {
 
@@ -34,6 +34,29 @@ namespace WizardsCode.DevLogger {
 
         [SerializeField]
         private List<int> _latestCaptures;
+        private Recorder _recorder;
+        private bool removeRecorder;
+        private Recorder Recorder
+        {
+            get
+            {
+                if (_recorder == null)
+                {
+                    _recorder = Camera.main.GetComponent<Recorder>();
+                    if (_recorder == null)
+                    {
+                        _recorder = Camera.main.gameObject.AddComponent<Recorder>();
+                        removeRecorder = true;
+                    }
+                    else
+                    {
+                        removeRecorder = false;
+                    }
+                }
+                return _recorder;
+            }
+        }
+
         public List<int> LatestCaptures
         {
             get
@@ -52,12 +75,21 @@ namespace WizardsCode.DevLogger {
             EditorApplication.update += Update;
         }
 
+        private void OnDisable()
+        {
+            EditorApplication.update -= Update;
+        }
+
+        private void OnDestroy()
+        {
+            if (removeRecorder)
+            {
+                DestroyImmediate(_recorder);
+            }
+        }
+
         void Update()
         {
-            if (Capture.isCapturing)
-            {
-                Repaint();
-            }
         }
 
         #region GUI
@@ -227,36 +259,9 @@ namespace WizardsCode.DevLogger {
         #endregion
 
         #region Media
-        CaptureScreen _capture;
-        public CaptureScreen Capture
-        {
-            get
-            {
-                if (_capture == null)
-                {
-                    Camera camera = Camera.main;
-                    if (camera == null)
-                    {
-                        camera = Camera.allCameras[0];
-                    }
-
-                    if (camera == null)
-                    {
-                        camera = Camera.current;
-                    }
-
-                    _capture = camera.gameObject.GetComponent<CaptureScreen>();
-                    if (_capture == null)
-                    {
-                        _capture = camera.gameObject.AddComponent<CaptureScreen>();
-                    }
-                }
-                return _capture;
-            }
-        }
-
+        
         private void MediaGUI()
-        {
+        {   
             if (LatestCaptures != null && LatestCaptures.Count > 0)
             {
                 ImageSelectionGUI();
@@ -267,12 +272,26 @@ namespace WizardsCode.DevLogger {
             {
                 if (GUILayout.Button("Game View"))
                 {
-                    CaptureScreen(DevLogScreenCapture.ImageEncoding.png);
+                    CaptureWindowScreenshot("UnityEditor.GameView");
                 }
 
-                if (GUILayout.Button("Animated GIF"))
+                switch (Recorder.State)
                 {
-                    CaptureScreen(DevLogScreenCapture.ImageEncoding.gif);
+                    case RecorderState.Paused:
+                        if (GUILayout.Button("Start Recording"))
+                        {
+                            Recorder.Record();
+                        }
+                        break;
+                    case RecorderState.Recording:
+                        if (GUILayout.Button("Save Animated GIF"))
+                        {
+                            Recorder.Save();
+                        }
+                        break;
+                    case RecorderState.PreProcessing:
+                        EditorGUILayout.LabelField("Pre-Processing");
+                        break;
                 }
             } else
             {
@@ -382,38 +401,11 @@ namespace WizardsCode.DevLogger {
 
                 AddToLatestCaptures(screenCapture);
 
-                AssetDatabase.AddObjectToAsset(screenCapture, "Assets/Screen Captures.asset");
+                AssetDatabase.AddObjectToAsset(screenCapture, "Assets/ScreenCaptures.asset");
                 AssetDatabase.SaveAssets();
 
                 this.Focus();
             };
-        }
-
-        private void CaptureScreen(DevLogScreenCapture.ImageEncoding encoding)
-        {
-            DevLogScreenCapture screenCapture = ScriptableObject.CreateInstance<DevLogScreenCapture>();
-            screenCapture.Encoding = encoding;
-            screenCapture.name = "Game";
-
-            switch (encoding)
-            {
-                case DevLogScreenCapture.ImageEncoding.png:
-                    Capture.CaptureScreenshot(ref screenCapture);
-                    break;
-                case DevLogScreenCapture.ImageEncoding.gif:
-                    // FIXME: this information should be passed in using the screenCapture object
-                    Capture.frameRate = 24;
-                    Capture.downscale = 2; // downscaling really messes with the colors if the resulting image size is too small (not sure what that is yet)
-                    Capture.duration = 10;
-                    Capture.useBilinearScaling = true;
-                    Capture.CaptureAnimatedGIF(ref screenCapture);
-                    break;
-            }
-
-            AddToLatestCaptures(screenCapture);
-
-            AssetDatabase.AddObjectToAsset(screenCapture, "Assets/ScreenCaptures.asset");
-            AssetDatabase.SaveAssets();
         }
 
         private void AddToLatestCaptures(DevLogScreenCapture screenCapture)
