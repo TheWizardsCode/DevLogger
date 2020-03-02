@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Rendering.PostProcessing;
 using WizardsCode.DevLog;
 using WizardsCode.Social;
 
@@ -36,6 +37,9 @@ namespace WizardsCode.DevLogger {
         private List<int> _latestCaptures;
         private Recorder _recorder;
         private bool removeRecorder;
+        private bool originalFinalBlitToCameraTarget;
+        private bool m_IsSaving;
+
         private Recorder Recorder
         {
             get
@@ -45,7 +49,26 @@ namespace WizardsCode.DevLogger {
                     _recorder = Camera.main.GetComponent<Recorder>();
                     if (_recorder == null)
                     {
+                        bool preserveAspect = true; // Automatically compute height from the current aspect ratio
+                        int width = 420; // Width in pixels
+                        int fps = 24; // Height in pixels
+                        int bufferSize = 10; // Number of seconds to record
+                        int repeat = 0; // -1: no repeat, 0: infinite, >0: repeat count
+                        int quality = 10; // Quality of color quantization, lower = better but slower (min 1, max 100)
+
                         _recorder = Camera.main.gameObject.AddComponent<Recorder>();
+                        _recorder.Init();
+                        _recorder.Setup(preserveAspect, width, width/2, fps,bufferSize, repeat, quality);
+
+                        _recorder.OnPreProcessingDone = OnProcessingDone;
+                        _recorder.OnFileSaved = OnFileSaved;
+
+                        PostProcessLayer pp = Camera.main.GetComponent<PostProcessLayer>();
+                        if (pp != null)
+                        {
+                            originalFinalBlitToCameraTarget = pp.finalBlitToCameraTarget;
+                            pp.finalBlitToCameraTarget = false;
+                        }
                         removeRecorder = true;
                     }
                     else
@@ -55,6 +78,17 @@ namespace WizardsCode.DevLogger {
                 }
                 return _recorder;
             }
+        }
+
+        private void OnFileSaved(int arg1, string arg2)
+        {
+            m_IsSaving = false;
+            _recorder.Record();
+        }
+
+        private void OnProcessingDone()
+        {
+            m_IsSaving = true;
         }
 
         public List<int> LatestCaptures
@@ -86,10 +120,19 @@ namespace WizardsCode.DevLogger {
             {
                 DestroyImmediate(_recorder);
             }
+            PostProcessLayer pp = Camera.main.GetComponent<PostProcessLayer>();
+            if (pp != null)
+            {
+                pp.finalBlitToCameraTarget = originalFinalBlitToCameraTarget;
+            }
         }
 
         void Update()
         {
+            if (Recorder.State != RecorderState.Paused)
+            {
+                Repaint();
+            }
         }
 
         #region GUI
@@ -278,10 +321,7 @@ namespace WizardsCode.DevLogger {
                 switch (Recorder.State)
                 {
                     case RecorderState.Paused:
-                        if (GUILayout.Button("Start Recording"))
-                        {
-                            Recorder.Record();
-                        }
+                        _recorder.Record();
                         break;
                     case RecorderState.Recording:
                         if (GUILayout.Button("Save Animated GIF"))
@@ -290,7 +330,7 @@ namespace WizardsCode.DevLogger {
                         }
                         break;
                     case RecorderState.PreProcessing:
-                        EditorGUILayout.LabelField("Pre-Processing");
+                        EditorGUILayout.LabelField("Processing");
                         break;
                 }
             } else

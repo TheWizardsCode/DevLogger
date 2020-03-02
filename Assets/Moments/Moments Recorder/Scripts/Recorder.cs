@@ -331,8 +331,10 @@ namespace Moments
 		#region Methods
 
 		// Used to reset internal values, called on Start(), Setup() and FlushMemory()
-		void Init()
+		public void Init()
 		{
+			m_ReflectionUtils = new ReflectionUtils<Recorder>(this);
+			m_Frames = new Queue<RenderTexture>();
 			State = RecorderState.Paused;
 			ComputeHeight();
 			m_MaxFrameCount = Mathf.RoundToInt(m_BufferSize * m_FramePerSecond);
