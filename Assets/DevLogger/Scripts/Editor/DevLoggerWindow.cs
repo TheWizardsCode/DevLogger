@@ -375,11 +375,11 @@ namespace WizardsCode.DevLogger {
 
                 Texture2D windowTexture = new Texture2D(width, height, TextureFormat.RGB24, false);
                 windowTexture.SetPixels(pixels);
-                screenCapture.Texture = windowTexture;
 
                 byte[] bytes = windowTexture.EncodeToPNG();
                 System.IO.File.WriteAllBytes(screenCapture.GetRelativeImagePath(), bytes);
                 screenCapture.IsImageSaved = true;
+
                 AddToLatestCaptures(screenCapture);
 
                 AssetDatabase.AddObjectToAsset(screenCapture, "Assets/Screen Captures.asset");
