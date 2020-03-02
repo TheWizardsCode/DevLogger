@@ -300,6 +300,13 @@ namespace WizardsCode.DevLogger {
             for (int i = 0; i < LatestCaptures.Count; i++)
             {
                 DevLogScreenCapture capture = EditorUtility.InstanceIDToObject(LatestCaptures[i]) as DevLogScreenCapture;
+                if (capture == null)
+                {
+                    LatestCaptures.RemoveAt(i);
+                    selectedImages.RemoveAt(i);
+                    i--;
+                    continue;
+                }
                 if (GUILayout.Button(capture.Texture, GUILayout.Width(100), GUILayout.Height(100)))
                 {
                     selectedImages[i] = !selectedImages[i];
