@@ -119,34 +119,54 @@ namespace WizardsCode.Social
             return ApiRequest(PostTweetURL, form, headers, out response);
         }
 
-        public static bool PublishTweetWithMedia(string status, string filePath, out string response)
+        static string mediaIDs;
+        public static bool PublishTweetWithMedia(string status, List<string> filePaths, out string response)
         {
-            if (!ValidateMediaFile(filePath))
+            if (filePaths.Count > 4)
             {
-                response = "Invalid media file : " + filePath;
+                response = "Error sending Tweet: Can only attach four images to a tweet.";
                 Debug.LogError(response);
                 return false;
             }
 
-            bool success = UploadMedia(filePath, out response);
-            if (!success)
+            mediaIDs = "";
+            for (int i = 0; i < filePaths.Count; i++)
             {
-                response = "Failed to upload media: " + response;
-                Debug.LogError(response);
-                return false;
-            }
+                if (!ValidateMediaFile(filePaths[i]))
+                {
+                    response = "Invalid media file : " + filePaths;
+                    Debug.LogError(response);
+                    return false;
+                }
 
-            string mediaID = Regex.Match(response, @"(\Dmedia_id\D\W)(\d*)").Groups[2].Value;
+                bool success = UploadMedia(filePaths[i], out response);
+                if (!success)
+                {
+                    response = "Failed to upload media: " + response;
+                    Debug.LogError(response);
+                    return false;
+                }
+
+                if (string.IsNullOrEmpty(mediaIDs))
+                {
+                    mediaIDs = Regex.Match(response, @"(\Dmedia_id\D\W)(\d*)").Groups[2].Value;
+                }
+                else
+                {
+                    mediaIDs += "," + Regex.Match(response, @"(\Dmedia_id\D\W)(\d*)").Groups[2].Value;
+                }
+            }
 
             Dictionary<string, string> parameters = new Dictionary<string, string>();
             parameters.Add("status", status);
-            parameters.Add("media_ids", mediaID);
+            parameters.Add("media_ids", mediaIDs);
 
             WWWForm form = new WWWForm();
             form.AddField("status", status);
-            form.AddField("media_ids", mediaID);
+            form.AddField("media_ids", mediaIDs);
 
             Hashtable headers = GetHeaders(PostTweetURL, parameters);
+
             return ApiRequest(PostTweetURL, form, headers, out response);
         }
 
@@ -218,6 +238,9 @@ namespace WizardsCode.Social
             else
             {
                 response = string.Format("Twitter API request failed: {0} {1}", www.error, www.text);
+                response += "\n\n";
+                response += "headers:\n " + headers;
+                response += "form: \n" + form.ToString();
                 Debug.LogError(response);
                 return false;
             }
@@ -254,11 +277,11 @@ namespace WizardsCode.Social
             Dictionary<string, string> mediaParameters = new Dictionary<string, string>();
             string mediaString = System.Convert.ToBase64String(File.ReadAllBytes(filePath));
             mediaParameters.Add("media_data", mediaString);
-            //mediaParameters.Add("status", status);
-
+            //mediaParameters.Add("media_type", "image/png");
+            
             WWWForm mediaForm = new WWWForm();
             mediaForm.AddField("media_data", mediaString);
-            //mediaForm.AddField("status", status);
+            //mediaForm.AddField("media_type", "image/png");
             
             Hashtable mediaHeaders = GetHeaders(UploadMediaURL, mediaParameters);
             mediaHeaders.Add("Content-Transfer-Encoding", "base64");

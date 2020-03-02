@@ -19,7 +19,11 @@ namespace WizardsCode.DevLogger {
         string detailText = "";
         string uiImageText = "";
 
+        private List<bool> selectedImages = new List<bool>();
         private int maxImagesToRemember = 4;
+
+        private Vector2 scrollPos;
+
 
         [UnityEditor.MenuItem("Tools/Wizards Code/Dev Logger")]
         public static void ShowWindow()
@@ -68,6 +72,7 @@ namespace WizardsCode.DevLogger {
                 return;
             } else
             {
+                scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
                 StartSection("Log Entry", false);
                 LogEntryGUI();
                 EndSection();
@@ -79,6 +84,7 @@ namespace WizardsCode.DevLogger {
                 StartSection("Media Capture");
                 MediaGUI();
                 EndSection();
+                EditorGUILayout.EndScrollView();
             }
         }
 
@@ -150,18 +156,25 @@ namespace WizardsCode.DevLogger {
 
                 if (LatestCaptures != null && LatestCaptures.Count > 0)
                 {
-                    if (GUILayout.Button("Tweet (and DevLog) with selected image and text"))
+                    if (GUILayout.Button("Tweet (and DevLog) with image(s)s and text"))
                     {
-                        DevLogScreenCapture capture = EditorUtility.InstanceIDToObject(LatestCaptures[imageSelection]) as DevLogScreenCapture;
-                        string mediaFilePath = capture.GetRelativeImagePath();
-                        if (!string.IsNullOrEmpty(mediaFilePath))
-                            if (!string.IsNullOrEmpty(mediaFilePath))
+                        List<string> mediaFilePaths = new List<string>();
+                        for (int i = 0; i < selectedImages.Count; i++)
+                        {
+                            if (selectedImages[i])
                             {
-                                if (Twitter.PublishTweetWithMedia(GetFullTweetText(), mediaFilePath, out string response))
-                                {
-                                    uiImageText = "Tweet with image sent succesfully";
-                                }
+                                DevLogScreenCapture capture = EditorUtility.InstanceIDToObject(LatestCaptures[i]) as DevLogScreenCapture;
+                                mediaFilePaths.Add(capture.GetRelativeImagePath());
                             }
+                        }
+
+                        if (Twitter.PublishTweetWithMedia(GetFullTweetText(), mediaFilePaths, out string response))
+                        {
+                            uiImageText = "Tweet with image(s) sent succesfully";
+                        } else
+                        {
+                            uiImageText = response;
+                        }
                         AppendDevlog(false, true);
                     }
                 }
@@ -241,18 +254,11 @@ namespace WizardsCode.DevLogger {
             }
         }
 
-        int imageSelection;
         private void MediaGUI()
         {
             if (LatestCaptures != null && LatestCaptures.Count > 0)
             {
-                Texture2D[] imageTextures = new Texture2D[LatestCaptures.Count];
-                for (int i = 0; i < LatestCaptures.Count; i++)
-                {
-                    DevLogScreenCapture capture = EditorUtility.InstanceIDToObject(LatestCaptures[i]) as DevLogScreenCapture;
-                    imageTextures[i] = capture.Texture;
-                }
-                imageSelection = GUILayout.SelectionGrid(imageSelection, imageTextures, 2, GUILayout.Height(160));
+                ImageSelectionGUI();
             }
 
             EditorGUILayout.BeginHorizontal();
@@ -288,7 +294,22 @@ namespace WizardsCode.DevLogger {
             EditorGUILayout.EndHorizontal();
         }
 
+        private void ImageSelectionGUI()
+        {
+            EditorGUILayout.BeginHorizontal();
+            for (int i = 0; i < LatestCaptures.Count; i++)
+            {
+                DevLogScreenCapture capture = EditorUtility.InstanceIDToObject(LatestCaptures[i]) as DevLogScreenCapture;
+                if (GUILayout.Button(capture.Texture, GUILayout.Width(100), GUILayout.Height(100)))
+                {
+                    selectedImages[i] = !selectedImages[i];
+                }
 
+                selectedImages[i] = EditorGUILayout.Toggle(selectedImages[i]);
+            }
+            EditorGUILayout.EndHorizontal();
+
+        }
 
         /// <summary>
         /// Captures a screenshot of the desired editor window. To get a list of all the
@@ -352,10 +373,12 @@ namespace WizardsCode.DevLogger {
                 System.IO.File.WriteAllBytes(screenCapture.GetRelativeImagePath(), bytes);
                 screenCapture.IsImageSaved = true;
                 AddToLatestCaptures(screenCapture);
-            };
 
-            AssetDatabase.AddObjectToAsset(screenCapture, "Assets/Screen Captures.asset");
-            AssetDatabase.SaveAssets();
+                AssetDatabase.AddObjectToAsset(screenCapture, "Assets/Screen Captures.asset");
+                AssetDatabase.SaveAssets();
+
+                this.Focus();
+            };
         }
 
         private void CaptureScreen(DevLogScreenCapture.ImageEncoding encoding)
@@ -390,8 +413,10 @@ namespace WizardsCode.DevLogger {
             if (screenCapture != null)
             {
                 LatestCaptures.Insert(0, screenCapture.GetInstanceID());
+                selectedImages.Insert(0, false);
                 if (LatestCaptures.Count > maxImagesToRemember)
                 {
+                    selectedImages.RemoveAt(LatestCaptures.Count - 1);
                     LatestCaptures.RemoveAt(LatestCaptures.Count - 1);
                 }
                 uiImageText = "Captured as " + screenCapture.GetRelativeImagePath();
@@ -451,12 +476,17 @@ namespace WizardsCode.DevLogger {
 
             if (withImage)
             {
-                DevLogScreenCapture capture = EditorUtility.InstanceIDToObject(LatestCaptures[imageSelection]) as DevLogScreenCapture;
-                string mediaFilePath = capture.Filename;
-                if (!string.IsNullOrEmpty(mediaFilePath))
+                List<string> mediaFilePaths = new List<string>();
+                for (int i = 0; i < selectedImages.Count; i++)
                 {
-                    DevLog.Append(entry.ToString(), detailText, mediaFilePath);
+                    if (selectedImages[i])
+                    {
+                        DevLogScreenCapture capture = EditorUtility.InstanceIDToObject(LatestCaptures[i]) as DevLogScreenCapture;
+                        mediaFilePaths.Add(capture.GetRelativeImagePath());
+                    }
                 }
+
+                DevLog.Append(entry.ToString(), detailText, mediaFilePaths);
             }
             else
             {

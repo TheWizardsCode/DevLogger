@@ -19,7 +19,7 @@ namespace WizardsCode.DevLogger
         /// </summary>
         /// <param name="shortText">The short text content of this log entry.</param>
         /// <param name="mediaFilePath">The path to a media file to include as an image. If null no image will be included.</param>
-        public static void Append(string shortText, string detailText, string mediaFilePath = null)
+        public static void Append(string shortText, string detailText, List<string> mediaFilePaths = null)
         {
             StringBuilder entry = new StringBuilder();
 
@@ -41,11 +41,14 @@ namespace WizardsCode.DevLogger
                 entry.AppendLine();
             }
 
-            if (mediaFilePath != null) {
-                entry.Append("![Screenshot](");
-                entry.Append(mediaFilePath);
-                entry.AppendLine(")");
-                entry.AppendLine();
+            if (mediaFilePaths != null) {
+                for (int i = 0; i < mediaFilePaths.Count; i++)
+                {
+                    entry.Append("![Screenshot](");
+                    entry.Append(mediaFilePaths[i]);
+                    entry.AppendLine(")");
+                    entry.AppendLine();
+                }
             }
 
             using (StreamWriter file = File.AppendText(GetRelativeCurrentFilePath()))
