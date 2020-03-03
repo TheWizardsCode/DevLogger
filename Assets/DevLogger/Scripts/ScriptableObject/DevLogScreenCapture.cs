@@ -52,7 +52,7 @@ namespace WizardsCode.DevLog
 
         private void LoadPreviewTexture()
         {
-            Uri uri = new Uri(GetAbsoluteImagePath());
+            Uri uri = new Uri(GetAbsolutePreviewImagePath());
             string absoluteUri = uri.AbsoluteUri;
             WWW www = new WWW(absoluteUri);
             do { } while (!www.isDone && string.IsNullOrEmpty(www.error));
@@ -82,6 +82,15 @@ namespace WizardsCode.DevLog
         public string GetAbsoluteImagePath()
         {
             return GetAbsoluteImageFolder() + Filename;
+        }
+
+        /// <summary>
+        /// Get the absolute filepath and filename to the preview image for this capture.
+        /// </summary>
+        /// <returns></returns>
+        public string GetAbsolutePreviewImagePath()
+        {
+            return GetAbsoluteImageFolder() + Filename.Replace(".gif", ".png");
         }
 
         /// <summary>

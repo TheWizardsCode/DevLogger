@@ -72,7 +72,7 @@ public class Record : MonoBehaviour
 			// of the Recorder before saving, but for the sake of this example we won't, so
 			// you'll see a warning in the console if you try saving while the Recorder is
 			// processing another gif.
-			m_Recorder.Save();
+			m_Recorder.Save(false);
 			m_Progress = 0f;
 		}
 	}

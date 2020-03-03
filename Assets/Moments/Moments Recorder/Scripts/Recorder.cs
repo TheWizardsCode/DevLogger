@@ -262,9 +262,10 @@ namespace Moments
 		/// <code>OnPreProcessingDone</code> callback to be notified when the pre-processing
 		/// step has finished.
 		/// </summary>
-		public void Save()
+		/// <param name="withPreview">If true save a preview file with the same filename but in png format (and with .png extension).</param>
+		public void Save(bool withPreview)
 		{
-			Save(GenerateFileName());
+			Save(Filename, withPreview);
 		}
 
 		/// <summary>
@@ -274,8 +275,14 @@ namespace Moments
 		/// callback to be notified when the pre-processing step has finished.
 		/// </summary>
 		/// <param name="filename">File name without extension</param>
-		public void Save(string filename)
+		/// /// <param name="withPreview">If true save a preview file with the same filename but in png format (and with .png extension).</param>
+		public void Save(string filename, bool withPreview)
 		{
+			if (string.IsNullOrEmpty(filename))
+			{
+				throw new ArgumentException("Filename cannot be null or empty");
+			}
+
 			if (State == RecorderState.PreProcessing)
 			{
 				Debug.LogWarning("Attempting to save during the pre-processing step.");
@@ -284,16 +291,37 @@ namespace Moments
 
 			if (m_Frames.Count == 0)
 			{
-				Debug.LogWarning("Nothing to save. Maybe you forgot to start the recorder ?");
+				Debug.LogWarning("Nothing to save. Maybe you forgot to start the recorder?");
 				return;
 			}
 
 			State = RecorderState.PreProcessing;
-
-			if (string.IsNullOrEmpty(filename))
-				filename = GenerateFileName();
+			SavePreview(SaveFolder.TrimEnd('/') + "/" + filename);
 
 			StartCoroutine(PreProcess(filename));
+		}
+
+		private void SavePreview(string filename)
+		{
+			RenderTexture oldRT = RenderTexture.active;
+
+			RenderTexture[] frames = m_Frames.ToArray();
+			RenderTexture.active = frames[(int)frames.Length / 2];
+			
+			Texture2D target = new Texture2D(m_Width, m_Height, TextureFormat.ARGB32, false);
+			target.hideFlags = HideFlags.HideAndDontSave;
+			target.wrapMode = TextureWrapMode.Clamp;
+			target.filterMode = FilterMode.Bilinear;
+			target.anisoLevel = 0;
+
+			target.ReadPixels(new Rect(0, 0, m_Width, m_Height), 0, 0);
+			target.Apply();
+
+			RenderTexture.active = oldRT;
+
+			byte[] bytes = target.EncodeToPNG();
+			System.IO.File.WriteAllBytes(filename.Replace(".gif", ".png"), bytes);
+			Flush(target);
 		}
 
 		#endregion
