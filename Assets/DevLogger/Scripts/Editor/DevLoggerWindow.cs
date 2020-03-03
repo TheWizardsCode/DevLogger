@@ -244,7 +244,7 @@ namespace WizardsCode.DevLogger
                     {
                         uiImageText = "Tweet sent succesfully";
                     }
-                    AppendDevlog(false, true);
+                    AppendDevlog(true, true);
                 }
 
                 if (LatestCaptures != null && LatestCaptures.Count > 0)
@@ -362,6 +362,11 @@ namespace WizardsCode.DevLogger
                 }
             } else
             {
+                if (GUILayout.Button("Hierarchy"))
+                {
+                    CaptureWindowScreenshot("UnityEditor.SceneHierarchyWindow");
+                }
+
                 if (GUILayout.Button("Inspector"))
                 {
                     CaptureWindowScreenshot("UnityEditor.InspectorWindow");
