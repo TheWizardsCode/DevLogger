@@ -83,13 +83,30 @@ namespace Moments
 		/// </summary>
 		public string SaveFolder { get; set; }
 
-
+		string _filename;
 		/// <summary>
 		/// The filename to save the gif to. If null a filename will be generated.
 		/// </summary>
-		public string Filename { get; set; }
+		public string Filename
+		{
+			get
+			{
+				if (_filename == null)
+				{
+					string timestamp = DateTime.Now.ToString("yyyyMMddHHmmssffff");
+					_filename = "GifCapture-" + timestamp + ".gif";
+				}
 
-		/// <summary>
+				return _filename;
+			}
+			set
+			{
+				_filename = value;
+			}
+		}
+
+		/// <
+		/// summary>
 		/// Sets the worker threads priority. This will only affect newly created threads (on save).
 		/// </summary>
 		public ThreadPriority WorkerPriority = ThreadPriority.BelowNormal;
@@ -377,18 +394,6 @@ namespace Moments
 			#else
             UnityObject.Destroy(obj);
 			#endif
-		}
-
-		// Gets a filename : GifCapture-yyyyMMddHHmmssffff
-		string GenerateFileName()
-		{
-			//REFACTOR: This method should not exist, move into Filename property.
-			if (Filename != null) {
-				return Filename;
-			}
-			
-			string timestamp = DateTime.Now.ToString("yyyyMMddHHmmssffff");
-			return "GifCapture-" + timestamp + ".gif";
 		}
 
 		// Pre-processing coroutine to extract frame data and send everything to a separate worker thread
