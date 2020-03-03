@@ -130,7 +130,7 @@ namespace WizardsCode.DevLogger
         DevLogScreenCapture currentScreenCapture;
         void Update()
         {
-            if (_recorder.State == RecorderState.PreProcessing)
+            if (Recorder.State == RecorderState.PreProcessing)
             {
                 return;
             }
