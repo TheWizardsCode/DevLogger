@@ -20,7 +20,7 @@ namespace WizardsCode.DevLogger
         string[] suggestedHashTags = {  "#IndieGame", "#MadeWithUnity" };
         string shortText = "";
         string detailText = "";
-        string uiImageText = "";
+        string uiStatusText = "";
 
         [SerializeField]
         private List<bool> selectedImages = new List<bool>();
@@ -204,13 +204,13 @@ namespace WizardsCode.DevLogger
             }
             EditorGUILayout.EndHorizontal();
 
-            if (string.IsNullOrEmpty(uiImageText))
+            if (string.IsNullOrEmpty(uiStatusText))
             {
                 EditorGUILayout.LabelField("Welcome to " + Application.productName + " v" + Application.version);
             }
             else
             {
-                EditorGUILayout.LabelField(uiImageText);
+                EditorGUILayout.LabelField(uiStatusText);
             }
         }
 
@@ -242,7 +242,7 @@ namespace WizardsCode.DevLogger
                 {
                     if (Twitter.PublishTweet(GetFullTweetText(), out string response))
                     {
-                        uiImageText = "Tweet sent succesfully";
+                        uiStatusText = "Tweet sent succesfully";
                     }
                     AppendDevlog(true, true);
                 }
@@ -263,10 +263,10 @@ namespace WizardsCode.DevLogger
 
                         if (Twitter.PublishTweetWithMedia(GetFullTweetText(), mediaFilePaths, out string response))
                         {
-                            uiImageText = "Tweet with image(s) sent succesfully";
+                            uiStatusText = "Tweet with image(s) sent succesfully";
                         } else
                         {
-                            uiImageText = response;
+                            uiStatusText = response;
                         }
                         AppendDevlog(false, true);
                     }
@@ -491,11 +491,11 @@ namespace WizardsCode.DevLogger
                     selectedImages.RemoveAt(LatestCaptures.Count - 1);
                     LatestCaptures.RemoveAt(LatestCaptures.Count - 1);
                 }
-                uiImageText = "Captured as " + screenCapture.GetRelativeImagePath();
+                uiStatusText = "Captured as " + screenCapture.GetRelativeImagePath();
             }
             else
             {
-                uiImageText = "Error capturing screen";
+                uiStatusText = "Error capturing screen";
             }
         }
         #endregion
