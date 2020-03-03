@@ -1,19 +1,22 @@
-﻿using System;
+﻿using Moments;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Rendering.PostProcessing;
 using WizardsCode.DevLog;
 using WizardsCode.Social;
-using WizardsCode.uGIF;
 
-namespace WizardsCode.DevLogger {
+namespace WizardsCode.DevLogger
+{
 
     /// <summary>
     /// The main DevLogger control window.
     /// </summary>
     public class DevLoggerWindow : EditorWindow
     {
+        private const string DATABASE_PATH = "Assets/ScreenCaptures.asset";
         string[] suggestedHashTags = {  "#IndieGameDev", "#MadeWithUnity" };
         string shortText = "";
         string detailText = "";
@@ -25,6 +28,14 @@ namespace WizardsCode.DevLogger {
 
         private Vector2 scrollPos;
 
+        // Animated GIF setup
+        bool preserveAspect = true; // Automatically compute height from the current aspect ratio
+        int width = 640; // Width in pixels
+        int fps = 24; // Height in pixels
+        int bufferSize = 10; // Number of seconds to record
+        int repeat = 0; // -1: no repeat, 0: infinite, >0: repeat count
+        int quality = 10; // Quality of color quantization, lower = better but slower (min 1, max 100)
+
 
         [UnityEditor.MenuItem("Tools/Wizards Code/Dev Logger")]
         public static void ShowWindow()
@@ -34,6 +45,52 @@ namespace WizardsCode.DevLogger {
 
         [SerializeField]
         private List<int> _latestCaptures;
+        private Recorder _recorder;
+        private bool removeRecorder;
+        private bool originalFinalBlitToCameraTarget;
+        private bool m_IsSaving;
+
+        private Recorder Recorder
+        {
+            get
+            {
+                if (_recorder == null)
+                {
+                    _recorder = Camera.main.GetComponent<Recorder>();
+                    if (_recorder == null)
+                    {
+                        _recorder = Camera.main.gameObject.AddComponent<Recorder>();
+                        _recorder.Init();
+                        _recorder.Setup(preserveAspect, width, width/2, fps,bufferSize, repeat, quality);
+
+                        PostProcessLayer pp = Camera.main.GetComponent<PostProcessLayer>();
+                        if (pp != null)
+                        {
+                            originalFinalBlitToCameraTarget = pp.finalBlitToCameraTarget;
+                            pp.finalBlitToCameraTarget = false;
+                        }
+                        removeRecorder = true;
+                    }
+                    else
+                    {
+                        removeRecorder = false;
+                    }
+                }
+                return _recorder;
+            }
+        }
+
+        private void OnFileSaved(int arg1, string arg2)
+        {
+            m_IsSaving = false;
+            _recorder.Record();
+        }
+
+        private void OnProcessingDone()
+        {
+            m_IsSaving = true;
+        }
+
         public List<int> LatestCaptures
         {
             get
@@ -52,11 +109,40 @@ namespace WizardsCode.DevLogger {
             EditorApplication.update += Update;
         }
 
+        private void OnDisable()
+        {
+            EditorApplication.update -= Update;
+        }
+
+        private void OnDestroy()
+        {
+            if (removeRecorder)
+            {
+                DestroyImmediate(_recorder);
+            }
+            PostProcessLayer pp = Camera.main.GetComponent<PostProcessLayer>();
+            if (pp != null)
+            {
+                pp.finalBlitToCameraTarget = originalFinalBlitToCameraTarget;
+            }
+        }
+
+        DevLogScreenCapture currentScreenCapture;
         void Update()
         {
-            if (Capture.isCapturing)
+            if (_recorder.State == RecorderState.PreProcessing)
             {
-                Repaint();
+                return;
+            }
+
+            if (currentScreenCapture != null && !m_IsSaving && !currentScreenCapture.IsImageSaved)
+            {
+                AddToLatestCaptures(currentScreenCapture);
+
+                AssetDatabase.AddObjectToAsset(currentScreenCapture, DATABASE_PATH);
+                AssetDatabase.SaveAssets();
+
+                currentScreenCapture.IsImageSaved = true;
             }
         }
 
@@ -95,6 +181,12 @@ namespace WizardsCode.DevLogger {
             if (GUILayout.Button("Reset"))
             {
                 LatestCaptures = new List<int>();
+                selectedImages = new List<bool>();
+                if (EditorUtility.DisplayDialog("Reset Twitter OAuth Tokens?",
+                    "Do you also want to clear the Twitter access tokens?",
+                    "Yes", "Do Not Clear Them")) {
+                    Twitter.ClearAccessTokens();
+                }
             }
 
             if (GUILayout.Button("Capture DevLogger"))
@@ -227,36 +319,9 @@ namespace WizardsCode.DevLogger {
         #endregion
 
         #region Media
-        CaptureScreen _capture;
-        public CaptureScreen Capture
-        {
-            get
-            {
-                if (_capture == null)
-                {
-                    Camera camera = Camera.main;
-                    if (camera == null)
-                    {
-                        camera = Camera.allCameras[0];
-                    }
-
-                    if (camera == null)
-                    {
-                        camera = Camera.current;
-                    }
-
-                    _capture = camera.gameObject.GetComponent<CaptureScreen>();
-                    if (_capture == null)
-                    {
-                        _capture = camera.gameObject.AddComponent<CaptureScreen>();
-                    }
-                }
-                return _capture;
-            }
-        }
-
+        
         private void MediaGUI()
-        {
+        {   
             if (LatestCaptures != null && LatestCaptures.Count > 0)
             {
                 ImageSelectionGUI();
@@ -267,12 +332,33 @@ namespace WizardsCode.DevLogger {
             {
                 if (GUILayout.Button("Game View"))
                 {
-                    CaptureScreen(DevLogScreenCapture.ImageEncoding.png);
+                    CaptureWindowScreenshot("UnityEditor.GameView");
                 }
 
-                if (GUILayout.Button("Animated GIF"))
+                switch (Recorder.State)
                 {
-                    CaptureScreen(DevLogScreenCapture.ImageEncoding.gif);
+                    case RecorderState.Paused:
+                        _recorder.Record();
+                        break;
+                    case RecorderState.Recording:
+                        if (GUILayout.Button("Save Animated GIF"))
+                        {
+                            currentScreenCapture = ScriptableObject.CreateInstance<DevLogScreenCapture>();
+                            currentScreenCapture.Encoding = DevLogScreenCapture.ImageEncoding.gif;
+                            currentScreenCapture.name = "In Game Footage";
+                            
+                            _recorder.OnPreProcessingDone = OnProcessingDone;
+                            _recorder.OnFileSaved = OnFileSaved;
+                            
+                            _recorder.SaveFolder = currentScreenCapture.GetAbsoluteImageFolder();
+                            _recorder.Filename = currentScreenCapture.Filename;
+
+                            Recorder.Save(true);
+                        }
+                        break;
+                    case RecorderState.PreProcessing:
+                        EditorGUILayout.LabelField("Processing");
+                        break;
                 }
             } else
             {
@@ -382,38 +468,11 @@ namespace WizardsCode.DevLogger {
 
                 AddToLatestCaptures(screenCapture);
 
-                AssetDatabase.AddObjectToAsset(screenCapture, "Assets/Screen Captures.asset");
+                AssetDatabase.AddObjectToAsset(screenCapture, DATABASE_PATH);
                 AssetDatabase.SaveAssets();
 
                 this.Focus();
             };
-        }
-
-        private void CaptureScreen(DevLogScreenCapture.ImageEncoding encoding)
-        {
-            DevLogScreenCapture screenCapture = ScriptableObject.CreateInstance<DevLogScreenCapture>();
-            screenCapture.Encoding = encoding;
-            screenCapture.name = "Game";
-
-            switch (encoding)
-            {
-                case DevLogScreenCapture.ImageEncoding.png:
-                    Capture.CaptureScreenshot(ref screenCapture);
-                    break;
-                case DevLogScreenCapture.ImageEncoding.gif:
-                    // FIXME: this information should be passed in using the screenCapture object
-                    Capture.frameRate = 24;
-                    Capture.downscale = 2; // downscaling really messes with the colors if the resulting image size is too small (not sure what that is yet)
-                    Capture.duration = 10;
-                    Capture.useBilinearScaling = true;
-                    Capture.CaptureAnimatedGIF(ref screenCapture);
-                    break;
-            }
-
-            AddToLatestCaptures(screenCapture);
-
-            AssetDatabase.AddObjectToAsset(screenCapture, "Assets/ScreenCaptures.asset");
-            AssetDatabase.SaveAssets();
         }
 
         private void AddToLatestCaptures(DevLogScreenCapture screenCapture)
