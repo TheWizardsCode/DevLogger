@@ -549,7 +549,7 @@ namespace WizardsCode.DevLogger
                     if (selectedImages[i])
                     {
                         DevLogScreenCapture capture = EditorUtility.InstanceIDToObject(LatestCaptures[i]) as DevLogScreenCapture;
-                        mediaFilePaths.Add(capture.GetRelativeImagePath());
+                        mediaFilePaths.Add(capture.Filename);
                     }
                 }
 
