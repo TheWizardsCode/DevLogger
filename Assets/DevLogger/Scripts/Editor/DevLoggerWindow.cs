@@ -149,10 +149,6 @@ namespace WizardsCode.DevLogger
         #region GUI
         void OnGUI()
         {
-            StartSection("Debug");
-            DebugGUI();
-            EndSection();
-
             if (!Twitter.IsAuthenticated)
             {
                 OnAuthorizeTwitterGUI();
@@ -160,6 +156,10 @@ namespace WizardsCode.DevLogger
             } else
             {
                 scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
+                StartSection("Setup");
+                SetupGUI();
+                EndSection();
+
                 StartSection("Log Entry", false);
                 LogEntryGUI();
                 EndSection();
@@ -175,7 +175,7 @@ namespace WizardsCode.DevLogger
             }
         }
 
-        private void DebugGUI()
+        private void SetupGUI()
         {
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Reset"))
