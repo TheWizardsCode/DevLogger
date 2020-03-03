@@ -17,7 +17,7 @@ namespace WizardsCode.DevLogger
     public class DevLoggerWindow : EditorWindow
     {
         private const string DATABASE_PATH = "Assets/ScreenCaptures.asset";
-        string[] suggestedHashTags = {  "#IndieGameDev", "#MadeWithUnity" };
+        string[] suggestedHashTags = {  "#IndieGame", "#MadeWithUnity" };
         string shortText = "";
         string detailText = "";
         string uiImageText = "";
