@@ -28,10 +28,12 @@ In preparation...
  
 # Using DevLogger
 
-## Capture an in-game ScreenShots and Animated GIFs
+## Capture an in-game ScreenShot or Animated GIFs
 
-When in play mode you can capture screenshots and animated GIFs right from within
-the editor.
+When in play mode you can capture screenshots or animated GIFs right from within
+the editor. GIFs will capture a portion of the most recent gameplay together with
+a still from the middle of that segment. Stills will be captured at the point the
+button is pressed.
 
   1. Setup the view that you want to capture in the game window
   2. Click the "Game View" or "Animated GIF" button
@@ -47,6 +49,7 @@ When not on play mode you can capture shots of editor windows and then use those
 DevLog entries.
 
   1. Simply hit one of the buttons in the "Media Capture"
+
 ## Record a Log Entry
 
 Log entries are stored in files in the `DevLog` folder in the root of your project.
@@ -82,7 +85,7 @@ animated GIF.
   3. If tweeting with an image select the desired image in the file selection dialog
 
 The text entered must be shorter than the 140 chars minus the length of 
-the selected hastags. If it is too long the tweet buttons will not be 
+the selected hashtags. If it is too long the tweet buttons will not be 
 available to you.
 
 
@@ -93,8 +96,7 @@ If you are facing an issue that is not in this list but it blocking work please 
 and report it - preferably with a patch to fix it, but don't worry, just telling us it is important
 to you is helpful.
 
-  * Media Capture previews are incomplete when captured in the editor, though they will complete when switching to/from play mode
-  * Animated GIFs have incorrect coloring
+  * No known breaking bugs at this time (of course there are bugs)
 
 # TODO
 
@@ -102,8 +104,6 @@ This is a loose collection of things that are on the immediate roadmap. Nothing 
 promised. If you really want one of these items please implement it and issue a pull
 request, same goes for other features not listed here.
 
-  * Animated GIFs
-	  - Takes a long time to encode make it impossible to press a capture button until finished
   * Tweeting
 	  - Make the hashtags used configurable on a per tweet basis
 	  - Automatically append a link to any tweet
