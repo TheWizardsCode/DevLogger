@@ -181,6 +181,12 @@ namespace WizardsCode.DevLogger
             if (GUILayout.Button("Reset"))
             {
                 LatestCaptures = new List<int>();
+                selectedImages = new List<bool>();
+                if (EditorUtility.DisplayDialog("Reset Twitter OAuth Tokens?",
+                    "Do you also want to clear the Twitter access tokens?",
+                    "Yes", "Do Not Clear Them")) {
+                    Twitter.ClearAccessTokens();
+                }
             }
 
             if (GUILayout.Button("Capture DevLogger"))

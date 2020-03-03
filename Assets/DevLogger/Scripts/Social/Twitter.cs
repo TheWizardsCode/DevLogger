@@ -58,6 +58,12 @@ namespace WizardsCode.Social
             }
         }
 
+        public static void ClearAccessTokens()
+        {
+            EditorPrefs.SetString(EDITOR_PREFS_TWITTER_ACCESS_TOKEN, null);
+            EditorPrefs.SetString(EDITOR_PREFS_TWITTER_ACCESS_SECRET, null);
+        }
+
         private static bool VerifyCredentials()
         {
 #if UNITY_EDITOR
@@ -238,10 +244,9 @@ namespace WizardsCode.Social
             else
             {
                 response = string.Format("Twitter API request failed: {0} {1}", www.error, www.text);
-                response += "\n\n";
-                response += "headers:\n " + headers;
-                response += "form: \n" + form.ToString();
                 Debug.LogError(response);
+                // TODO: Handle errors more gracefully:
+                // 413 Payload Too Large (occurred when GIF upload was too large)
                 return false;
             }
         }
@@ -277,11 +282,9 @@ namespace WizardsCode.Social
             Dictionary<string, string> mediaParameters = new Dictionary<string, string>();
             string mediaString = System.Convert.ToBase64String(File.ReadAllBytes(filePath));
             mediaParameters.Add("media_data", mediaString);
-            //mediaParameters.Add("media_type", "image/png");
             
             WWWForm mediaForm = new WWWForm();
             mediaForm.AddField("media_data", mediaString);
-            //mediaForm.AddField("media_type", "image/png");
             
             Hashtable mediaHeaders = GetHeaders(UploadMediaURL, mediaParameters);
             mediaHeaders.Add("Content-Transfer-Encoding", "base64");
