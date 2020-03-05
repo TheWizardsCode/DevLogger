@@ -5,6 +5,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace WizardsCode.Social
 {
@@ -75,7 +76,7 @@ namespace WizardsCode.Social
             {
                 verifyCredentialsTime = time + 2;
                 Hashtable headers = GetHeaders(VerifyCredentialsURL, new Dictionary<string, string>());
-                if (ApiRequest(VerifyCredentialsURL, new WWWForm(), headers, out string response))
+                if (ApiPostRequest(VerifyCredentialsURL, new WWWForm(), headers, out string response))
                 {
                     EditorPrefs.SetString(EDITOR_PREFS_TWITTER_ACCESS_TOKEN, "");
                     EditorPrefs.SetString(EDITOR_PREFS_TWITTER_ACCESS_SECRET, "");
@@ -122,7 +123,7 @@ namespace WizardsCode.Social
 
             Hashtable headers = GetHeaders(PostTweetURL, parameters);
             
-            return ApiRequest(PostTweetURL, form, headers, out response);
+            return ApiPostRequest(PostTweetURL, form, headers, out response);
         }
 
         static string mediaIDs;
@@ -173,7 +174,7 @@ namespace WizardsCode.Social
 
             Hashtable headers = GetHeaders(PostTweetURL, parameters);
 
-            return ApiRequest(PostTweetURL, form, headers, out response);
+            return ApiPostRequest(PostTweetURL, form, headers, out response);
         }
 
         /// <summary>
@@ -214,40 +215,40 @@ namespace WizardsCode.Social
         }
 
         /// <summary>
-        /// Handle a request to the API.
+        /// Handle a POST request to the Twitter API.
         /// </summary>
         /// <param name="url">The URL to make the request to.</param>
         /// <param name="form">The form data to submit.</param>
         /// <param name="headers">The headers to submit.</param>
         /// <param name="response">The response from the request.</param>
         /// <returns>True if no error was returned.</returns>
-        private static bool ApiRequest(string url, WWWForm form, Hashtable headers, out string response)
+        private static bool ApiPostRequest(string url, WWWForm form, Hashtable headers, out string response)
         {
-            WWW www = new WWW(url, form.data, headers);
-            do { } while (!www.isDone);
-
-            if (string.IsNullOrEmpty(www.error))
+            using (UnityWebRequest www = UnityWebRequest.Post(url, form))
             {
-                string error = Regex.Match(www.text, @"<error>([^&]+)</error>").Groups[1].Value;
-                if (!string.IsNullOrEmpty(error))
+                foreach (DictionaryEntry header in headers)
                 {
-                    response = string.Format("Twitter API request failed: {0}", error);
-                    Debug.LogError(response);
+                    www.SetRequestHeader((string)header.Key, (string)header.Value);
+                }
+                AsyncOperation asyncOperation = www.SendWebRequest();
+
+                while (!www.isDone)
+                {
+                    Debug.Log("POSTing data: " + asyncOperation.progress + "% complete.");
+                }
+
+                if (www.isNetworkError || www.isHttpError)
+                {
+                    response = string.Format("Twitter API request failed: {0} {1}", www.error, www.downloadHandler.text);
+                    // TODO: Handle errors more gracefully:
+                    // 413 Payload Too Large (occurred when GIF upload was too large)
                     return false;
                 }
                 else
                 {
-                    response = www.text;
+                    response = www.downloadHandler.text;
                     return true;
                 }
-            }
-            else
-            {
-                response = string.Format("Twitter API request failed: {0} {1}", www.error, www.text);
-                Debug.LogError(response);
-                // TODO: Handle errors more gracefully:
-                // 413 Payload Too Large (occurred when GIF upload was too large)
-                return false;
             }
         }
 
@@ -289,7 +290,7 @@ namespace WizardsCode.Social
             Hashtable mediaHeaders = GetHeaders(UploadMediaURL, mediaParameters);
             mediaHeaders.Add("Content-Transfer-Encoding", "base64");
 
-            return ApiRequest(UploadMediaURL, mediaForm, mediaHeaders, out response);
+            return ApiPostRequest(UploadMediaURL, mediaForm, mediaHeaders, out response);
         }
     }
 }
