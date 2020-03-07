@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
@@ -80,6 +81,7 @@ namespace WizardsCode.Social
                 {
                     EditorPrefs.SetString(EDITOR_PREFS_TWITTER_ACCESS_TOKEN, "");
                     EditorPrefs.SetString(EDITOR_PREFS_TWITTER_ACCESS_SECRET, "");
+                    Debug.LogError(response);
                     return false;
                 }
                 else
@@ -146,21 +148,27 @@ namespace WizardsCode.Social
                     return false;
                 }
 
-                bool success = UploadMedia(filePaths[i], out response);
-                if (!success)
+                string mediaID;
+                if (filePaths[i].EndsWith(".png"))
+                {
+                    mediaID = UploadSmallMedia(filePaths[i], out response);
+                } else
+                {
+                    mediaID = UploadLargeMedia(filePaths[i], out response);
+                }
+                if (string.IsNullOrEmpty(mediaID))
                 {
                     response = "Failed to upload media: " + response;
-                    Debug.LogError(response);
                     return false;
                 }
 
                 if (string.IsNullOrEmpty(mediaIDs))
                 {
-                    mediaIDs = Regex.Match(response, @"(\Dmedia_id\D\W)(\d*)").Groups[2].Value;
+                    mediaIDs = mediaID;
                 }
                 else
                 {
-                    mediaIDs += "," + Regex.Match(response, @"(\Dmedia_id\D\W)(\d*)").Groups[2].Value;
+                    mediaIDs += "," + mediaID;
                 }
             }
 
@@ -169,8 +177,7 @@ namespace WizardsCode.Social
             parameters.Add("media_ids", mediaIDs);
 
             WWWForm form = new WWWForm();
-            form.AddField("status", status);
-            form.AddField("media_ids", mediaIDs);
+            AddParametersToForm(parameters, form);
 
             Hashtable headers = GetHeaders(PostTweetURL, parameters);
 
@@ -234,7 +241,7 @@ namespace WizardsCode.Social
 
                 while (!www.isDone)
                 {
-                    Debug.Log("POSTing data: " + asyncOperation.progress + "% complete.");
+                    float progress = asyncOperation.progress;
                 }
 
                 if (www.isNetworkError || www.isHttpError)
@@ -253,15 +260,69 @@ namespace WizardsCode.Social
         }
 
         /// <summary>
+        /// Handle a GETT request to the Twitter API.
+        /// </summary>
+        /// <param name="url">The URL to make the request to.</param>
+        /// <param name="headers">The headers to submit.</param>
+        /// <param name="response">The response from the request.</param>
+        /// <returns>True if no error was returned.</returns>
+        private static bool ApiGetRequest(string url, Dictionary<string, string> parameters, out string response)
+        {
+            for (int i = 0; i < parameters.Count; i++)
+            {
+                KeyValuePair<string, string> param = parameters.ElementAt(i);
+                if (!param.Key.StartsWith("oauth"))
+                {
+                    if (i == 0)
+                    {
+                        url += "?";
+                    }
+                    else
+                    {
+                        url += "&";
+                    }
+                    url += param.Key + "=" + param.Value;
+                }
+            }
+
+            Hashtable headers = GetHeaders(url, parameters, "GET");
+
+            using (UnityWebRequest www = UnityWebRequest.Get(url))
+            {
+                foreach (DictionaryEntry header in headers)
+                {
+                    www.SetRequestHeader((string)header.Key, (string)header.Value);
+                }
+                AsyncOperation asyncOperation = www.SendWebRequest();
+
+                while (!www.isDone)
+                {
+                    float progress = asyncOperation.progress;
+                }
+
+                if (www.isNetworkError || www.isHttpError)
+                {
+                    response = string.Format("Twitter API request failed: {0} {1}", www.error, www.downloadHandler.text);
+                    return false;
+                }
+                else
+                {
+                    response = www.downloadHandler.text;
+                    return true;
+                }
+            }
+        }
+
+        /// <summary>
         /// Get the required headers for accesing the API.
         /// </summary>
         /// <param name="url">The URL we want to access</param>
         /// <param name="parameters">The parameters to go into the headers</param>
         /// <returns>A Hashtable of the headers.</returns>
-        private static Hashtable GetHeaders(string url, Dictionary<string, string> parameters)
+        private static Hashtable GetHeaders(string url, Dictionary<string, string> parameters, string method = "POST")
         {
             var headers = new Hashtable();
-            headers["Authorization"] = OAuthHelper.GetHeaderWithAccessToken("POST",
+            headers["Authorization"] = OAuthHelper.GetHeaderWithAccessToken(method,
                 url,
                 EditorPrefs.GetString(EDITOR_PREFS_TWITTER_API_KEY),
                 EditorPrefs.GetString(EDITOR_PREFS_TWITTER_API_SECRET),
@@ -272,25 +333,219 @@ namespace WizardsCode.Social
         }
 
         /// <summary>
-        /// Upload a media file to twitter.
+        /// Upload a large media file to twitter, e.g. a GIF or MPG.
         /// </summary>
         /// <param name="filePath">The fully qualified path to the media file to upload.</param>
         /// <param name="response">The response from Twitter.</param>
-        /// <returns>True or false depending on the result of the upload</returns>
-        private static bool UploadMedia(string filePath, out string response)
+        /// <returns>A media ID for this upload, or if the upload fails null.</returns>
+        private static string UploadLargeMedia(string filePath, out string response)
+        {
+            byte[] bytes = File.ReadAllBytes(filePath);
+
+            // POST media/upload (INIT)
+            Dictionary<string, string> mediaParameters = new Dictionary<string, string>();
+            mediaParameters.Add("command", "INIT");
+            mediaParameters.Add("media_type", "image/gif");
+            mediaParameters.Add("total_bytes", bytes.Length.ToString());
+            mediaParameters.Add("media_category", "tweet_gif");
+
+            WWWForm mediaForm = new WWWForm();
+            AddParametersToForm(mediaParameters, mediaForm);
+
+            Hashtable mediaHeaders = GetHeaders(UploadMediaURL, mediaParameters);
+
+            if (!ApiPostRequest(UploadMediaURL, mediaForm, mediaHeaders, out response))
+            {
+                Debug.LogError(response);
+                return null;
+            }
+            string mediaID = Regex.Match(response, @"(\Dmedia_id\D\W)(\d*)").Groups[2].Value;
+
+            // POST media/upload (APPEND)
+            byte[] chunk;
+            int chunkSize = 1024 * 512; // 512 KB
+            int chunkIndex = 0;
+            for (int i = 0; i < bytes.Length; i += chunkSize)
+            {
+                if (bytes.Length - i < chunkSize)
+                {
+                    chunkSize = bytes.Length - i;
+                }
+                chunk = new byte[chunkSize];
+                Array.Copy(bytes, i, chunk, 0, chunkSize);
+                string mediaString = System.Convert.ToBase64String(chunk);
+
+                mediaParameters = new Dictionary<string, string>();
+                mediaParameters.Add("command", "APPEND");
+                mediaParameters.Add("media_id", mediaID);
+                mediaParameters.Add("segment_index", chunkIndex.ToString());
+                mediaParameters.Add("media_data", mediaString);
+                //mediaParameters.Add("Content-Transfer-Encoding", "base64");
+                chunkIndex++;
+
+                mediaForm = new WWWForm();
+                AddParametersToForm(mediaParameters, mediaForm);
+
+                mediaHeaders = GetHeaders(UploadMediaURL, mediaParameters);
+
+                if (!ApiPostRequest(UploadMediaURL, mediaForm, mediaHeaders, out response))
+                {
+                    Debug.LogError(response);
+                    return null;
+                }
+            }
+
+            // POST media/upload (FINALIZE)
+            mediaParameters = new Dictionary<string, string>();
+            mediaParameters.Add("command", "FINALIZE");
+            mediaParameters.Add("media_id", mediaID);
+
+            mediaForm = new WWWForm();
+            AddParametersToForm(mediaParameters, mediaForm);
+
+            mediaHeaders = GetHeaders(UploadMediaURL, mediaParameters);
+
+            if (!ApiPostRequest(UploadMediaURL, mediaForm, mediaHeaders, out response))
+            {
+                Debug.LogError(response);
+                return null;
+            }
+
+            // Wait for it to complete
+            if (WaitForUploadToComplete(mediaID, out response).IsError)
+            {
+                return null;
+            }
+
+            return mediaID;
+        }
+
+        private static MediaStatusResponse WaitForUploadToComplete(string mediaId, out string response)
+        {
+            bool isFinished = false;
+            MediaStatusResponse status = null;
+
+            Dictionary<string, string> mediaParameters = new Dictionary<string, string>();
+            mediaParameters.Add("command", "STATUS");
+            mediaParameters.Add("media_id", mediaId);
+
+            response = "";
+            while (!isFinished)
+            {
+                if (!ApiGetRequest(UploadMediaURL, mediaParameters, out response))
+                {
+                    status = new MediaStatusResponse();
+                    status.processingInfo.error.code = 256;
+                    status.processingInfo.error.message = "API error: " + response;
+                    return status;
+                }
+
+                status = JsonUtility.FromJson<MediaStatusResponse>(response);
+
+                if (status.processingInfo != null)
+                {
+                    if (status.processingInfo.state == "failed")
+                    {
+                        response = "Failed to upload media: " + status.processingInfo.error.message;
+                        isFinished = true;
+                    } else if (status.processingInfo.check_after_secs > 0)
+                    {
+                        float checkTime = Time.realtimeSinceStartup + status.processingInfo.check_after_secs;
+                        while (Time.realtimeSinceStartup < checkTime) {
+                            // waiting
+                        }
+                    } else
+                    {
+                        isFinished = true;
+                    }
+                }
+            }
+            return status;
+        }
+
+        /// <summary>
+        /// Upload a small media (e.g. an image) file to twitter.
+        /// </summary>
+        /// <param name="filePath">The fully qualified path to the media file to upload.</param>
+        /// <param name="response">The response from Twitter.</param>
+        /// <returns>A media ID for this upload, or if the upload fails null.</returns>
+        private static string UploadSmallMedia(string filePath, out string response)
         {
             //string status = "Testing media upload to twitter";
             Dictionary<string, string> mediaParameters = new Dictionary<string, string>();
             string mediaString = System.Convert.ToBase64String(File.ReadAllBytes(filePath));
             mediaParameters.Add("media_data", mediaString);
-            
+
             WWWForm mediaForm = new WWWForm();
             mediaForm.AddField("media_data", mediaString);
-            
+
             Hashtable mediaHeaders = GetHeaders(UploadMediaURL, mediaParameters);
             mediaHeaders.Add("Content-Transfer-Encoding", "base64");
 
-            return ApiPostRequest(UploadMediaURL, mediaForm, mediaHeaders, out response);
+            if (!ApiPostRequest(UploadMediaURL, mediaForm, mediaHeaders, out response))
+            {
+                Debug.LogError(response);
+                return null;
+            }
+            return Regex.Match(response, @"(\Dmedia_id\D\W)(\d*)").Groups[2].Value;
+        }
+
+        private static void AddParametersToForm(Dictionary<string, string> parameters, WWWForm form)
+        {
+            foreach (KeyValuePair<string, string> param in parameters)
+            {
+                form.AddField(param.Key, param.Value);
+            }
         }
     }
+
+    [Serializable]
+    internal class MediaStatusResponse
+    {
+        public Int64 media_id;
+        public string media_id_string;
+        public int expires_after_secs;
+        public int size;
+        public ProcessingInfo processingInfo;
+
+        public MediaStatusResponse()
+        {
+            this.processingInfo = new ProcessingInfo();
+        }
+
+        public bool IsError
+        {
+            get
+            {
+                if (processingInfo.error != null && processingInfo.error.code != 0)
+                {
+                    return true;
+                } else
+                {
+                    return false;
+                }
+            }
+        }
+    }
+
+    [Serializable]
+    internal class ProcessingInfo { 
+        public string state;
+        public int check_after_secs;
+        public int progress_percent;
+        public MediaError error;
+
+        public ProcessingInfo()
+        {
+            error = new MediaError();
+        }
+    }
+
+    [Serializable]
+    internal class MediaError {
+        public int code;
+        public string name;
+        public string message;
+    }
+
 }

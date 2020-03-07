@@ -54,8 +54,6 @@ namespace WizardsCode.Social {
                                                               "oauth_consumer_key",
                                                               "oauth_token",
                                                               "oauth_verifier"
-                                                              // Leave signature omitted from the list, it is added manually
-                                                              // "oauth_signature",
                                                           };
 
         private static readonly string[] SecretParameters = new[]
@@ -89,7 +87,6 @@ namespace WizardsCode.Social {
         {
             // Add the signature to the oauth parameters
             string signature = GenerateSignature(HTTPRequestType, URL, parameters);
-
             parameters.Add("oauth_signature", signature);
 
             StringBuilder authHeaderBuilder = new StringBuilder();
@@ -104,8 +101,6 @@ namespace WizardsCode.Social {
             {
                 authHeaderBuilder.AppendFormat(",{0}=\"{1}\"", UrlEncode(item.Key), UrlEncode(item.Value));
             }
-
-            //authHeaderBuilder.AppendFormat(",oauth_signature=\"{0}\"", UrlEncode(parameters["oauth_signature"]));
 
             return authHeaderBuilder.ToString();
         }

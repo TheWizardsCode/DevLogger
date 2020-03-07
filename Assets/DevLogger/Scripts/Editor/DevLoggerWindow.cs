@@ -31,10 +31,10 @@ namespace WizardsCode.DevLogger
         // Animated GIF setup
         bool preserveAspect = true; // Automatically compute height from the current aspect ratio
         int width = 640; // Width in pixels
-        int fps = 24; // Height in pixels
-        int bufferSize = 10; // Number of seconds to record
+        int fps = 16; // Height in pixels
+        int bufferSize = 8; // Number of seconds to record
         int repeat = 0; // -1: no repeat, 0: infinite, >0: repeat count
-        int quality = 10; // Quality of color quantization, lower = better but slower (min 1, max 100)
+        int quality = 15; // Quality of color quantization, lower = better but slower (min 1, max 100)
 
 
         [UnityEditor.MenuItem("Tools/Wizards Code/Dev Logger")]
@@ -243,13 +243,16 @@ namespace WizardsCode.DevLogger
                     if (Twitter.PublishTweet(GetFullTweetText(), out string response))
                     {
                         uiStatusText = "Tweet sent succesfully";
+                        AppendDevlog(true, true);
+                    } else
+                    {
+                        Debug.LogError(response);
                     }
-                    AppendDevlog(true, true);
                 }
 
                 if (LatestCaptures != null && LatestCaptures.Count > 0)
                 {
-                    if (GUILayout.Button("Tweet (and DevLog) with image(s)s and text"))
+                    if (GUILayout.Button("Tweet (and DevLog) with image(s) and text"))
                     {
                         List<string> mediaFilePaths = new List<string>();
                         for (int i = 0; i < selectedImages.Count; i++)
@@ -266,9 +269,10 @@ namespace WizardsCode.DevLogger
                             uiStatusText = "Tweet with image(s) sent succesfully";
                         } else
                         {
+                            Debug.LogError(response);
                             uiStatusText = response;
                         }
-                        AppendDevlog(false, true);
+                        AppendDevlog(true, true);
                     }
                 }
                 EditorGUILayout.EndHorizontal();
