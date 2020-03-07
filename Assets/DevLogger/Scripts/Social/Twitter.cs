@@ -102,7 +102,7 @@ namespace WizardsCode.Social
         /// <returns>True if succesfully published.</returns>
         public static bool PublishTweet(string status, out string response)
         {
-            if (string.IsNullOrEmpty(status) || status.Length > 140)
+            if (string.IsNullOrEmpty(status) || status.Length > 280)
             {
                 response = string.Format("Text of tweet too long or too short at {0} chars.", status.Length);
                 Debug.LogError(response);

@@ -235,7 +235,7 @@ namespace WizardsCode.DevLogger
         {
             EditorGUILayout.LabelField(GetFullTweetText());
             EditorGUILayout.LabelField(string.Format("Tweet ({0} chars + {1} for selected hashtags = {2} chars)", shortText.Length, GetSelectedHashtagLength(), GetFullTweetText().Length));
-            if (!string.IsNullOrEmpty(shortText) && GetFullTweetText().Length <= 140)
+            if (!string.IsNullOrEmpty(shortText) && GetFullTweetText().Length <= 280)
             {
                 EditorGUILayout.BeginHorizontal();
                 if (GUILayout.Button("Tweet (and DevLog) with text only"))
