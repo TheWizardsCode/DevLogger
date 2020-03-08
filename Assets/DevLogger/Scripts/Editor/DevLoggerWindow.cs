@@ -30,9 +30,9 @@ namespace WizardsCode.DevLogger
 
         // Animated GIF setup
         bool preserveAspect = true; // Automatically compute height from the current aspect ratio
-        int width = 640; // Width in pixels
+        int width = 360; // Width in pixels
         int fps = 16; // Height in pixels
-        int bufferSize = 8; // Number of seconds to record
+        int bufferSize = 10; // Number of seconds to record
         int repeat = 0; // -1: no repeat, 0: infinite, >0: repeat count
         int quality = 15; // Quality of color quantization, lower = better but slower (min 1, max 100)
 
