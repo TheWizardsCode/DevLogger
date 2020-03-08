@@ -21,6 +21,7 @@ namespace WizardsCode.DevLogger
         string shortText = "";
         string detailText = "";
         string uiStatusText = "";
+        string gitCommit = "";
 
         [SerializeField]
         private List<bool> selectedImages = new List<bool>();
@@ -516,6 +517,8 @@ namespace WizardsCode.DevLogger
 
             EditorGUILayout.LabelField("Hashtags: " + GetSelectedHashTags());
 
+            gitCommit = EditorGUILayout.TextField("Git Commit", gitCommit);
+
             if (!string.IsNullOrEmpty(shortText))
             {
                 EditorGUILayout.BeginHorizontal();
@@ -545,6 +548,12 @@ namespace WizardsCode.DevLogger
         private void AppendDevlog(bool withImage, bool withTweet)
         {
             StringBuilder entry = new StringBuilder(shortText);
+            if (!string.IsNullOrEmpty(gitCommit))
+            {
+                entry.Append("\n\nGit Commit: " + gitCommit);
+                gitCommit = "";
+            }
+
             if (withTweet)
             {
                 entry.Append("\n\n[This DevLog entry was Tweeted.]");
