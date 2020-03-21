@@ -343,7 +343,7 @@ namespace WizardsCode.DevLogger
                 switch (Recorder.State)
                 {
                     case RecorderState.Paused:
-                        _recorder.Record();
+                        Recorder.Record();
                         break;
                     case RecorderState.Recording:
                         if (GUILayout.Button("Save Animated GIF"))
@@ -352,11 +352,11 @@ namespace WizardsCode.DevLogger
                             currentScreenCapture.Encoding = DevLogScreenCapture.ImageEncoding.gif;
                             currentScreenCapture.name = "In Game Footage";
                             
-                            _recorder.OnPreProcessingDone = OnProcessingDone;
-                            _recorder.OnFileSaved = OnFileSaved;
+                            Recorder.OnPreProcessingDone = OnProcessingDone;
+                            Recorder.OnFileSaved = OnFileSaved;
                             
-                            _recorder.SaveFolder = currentScreenCapture.GetAbsoluteImageFolder();
-                            _recorder.Filename = currentScreenCapture.Filename;
+                            Recorder.SaveFolder = currentScreenCapture.GetAbsoluteImageFolder();
+                            Recorder.Filename = currentScreenCapture.Filename;
 
                             Recorder.Save(true);
                         }
