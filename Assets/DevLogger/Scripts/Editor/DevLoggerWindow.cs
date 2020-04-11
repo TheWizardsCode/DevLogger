@@ -337,11 +337,15 @@ namespace WizardsCode.DevLogger
             EditorGUILayout.BeginHorizontal();
             if (Application.isPlaying)
             {
+                if (GUILayout.Button("Scene View"))
+                {
+                    CaptureWindowScreenshot("UnityEditor.SceneView");
+                }
+
                 if (GUILayout.Button("Game View"))
                 {
                     CaptureWindowScreenshot("UnityEditor.GameView");
                 }
-
                 
                 EditorGUILayout.BeginVertical();
 
