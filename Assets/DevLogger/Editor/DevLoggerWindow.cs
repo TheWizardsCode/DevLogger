@@ -16,18 +16,22 @@ namespace WizardsCode.DevLogger
     /// </summary>
     public class DevLoggerWindow : EditorWindow
     {
+        [SerializeField]
+        private List<bool> selectedImages = new List<bool>();
+        [SerializeField]
+        string[] suggestedMetaData;
+        [SerializeField]
+        private bool[] selectedMetaData;
+
         private const string DATABASE_PATH = "Assets/ScreenCaptures.asset";
-        string[] suggestedHashTags = {  "#IndieGame", "#MadeWithUnity" };
         string shortText = "";
         string detailText = "";
         string uiStatusText = "";
         string gitCommit = "";
 
-        [SerializeField]
-        private List<bool> selectedImages = new List<bool>();
-        private int maxImagesToRemember = 4;
+        private int maxImagesToRemember = 10;
 
-        private Vector2 scrollPos;
+        private Vector2 windowScrollPos;
 
         // Animated GIF setup
         bool preserveAspect = true; // Automatically compute height from the current aspect ratio
@@ -108,11 +112,35 @@ namespace WizardsCode.DevLogger
         private void OnEnable()
         {
             EditorApplication.update += Update;
+
+            int numOfHashtags = EditorPrefs.GetInt("numberOfSuggestedMetaData", 0);
+            if (numOfHashtags == 0)
+            {
+                suggestedMetaData = new string[2] { "#IndieGame", "#MadeWithUnity" };
+                selectedMetaData = new bool[2] { true, true };
+            } else
+            {
+                suggestedMetaData = new string[2];
+                selectedMetaData = new bool[2];
+
+                for (int i = 0; i < numOfHashtags; i++)
+                {
+                    suggestedMetaData[i] = EditorPrefs.GetString("suggestedMetaData_" + i);
+                    selectedMetaData[i] = EditorPrefs.GetBool("selectedMetaData_" + i);
+                }
+            }
         }
 
         private void OnDisable()
         {
             EditorApplication.update -= Update;
+
+            EditorPrefs.SetInt("numberOfSuggestedMetaData", suggestedMetaData.Length);
+            for (int i = 0; i < suggestedMetaData.Length; i++)
+            {
+                EditorPrefs.SetString("suggestedMetaData_" + i, suggestedMetaData[i]);
+                EditorPrefs.SetBool("selectedMetaData_" + i, selectedMetaData[i]);
+            }
         }
 
         private void OnDestroy()
@@ -131,6 +159,7 @@ namespace WizardsCode.DevLogger
         DevLogScreenCapture currentScreenCapture;
         private bool showTwitter = false;
         private bool showSettings = false;
+        private Vector2 mediaScrollPosition;
 
         void Update()
         {
@@ -153,10 +182,18 @@ namespace WizardsCode.DevLogger
         #region GUI
         void OnGUI()
         {
-            scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
+            windowScrollPos = EditorGUILayout.BeginScrollView(windowScrollPos);
 
             StartSection("Log Entry", false);
             LogEntryGUI();
+            EndSection();
+
+            StartSection("Meta Data", false);
+            MetaDataGUI();
+            EndSection();
+
+            StartSection("Posting", false);
+            PostingGUI();
             EndSection();
 
             StartSection("Media");
@@ -254,7 +291,7 @@ namespace WizardsCode.DevLogger
         private void TwitterGUI()
         {
             EditorGUILayout.LabelField(GetFullTweetText());
-            EditorGUILayout.LabelField(string.Format("Tweet ({0} chars + {1} for selected hashtags = {2} chars)", shortText.Length, GetSelectedHashtagLength(), GetFullTweetText().Length));
+            EditorGUILayout.LabelField(string.Format("Tweet ({0} chars + {1} for selected hashtags = {2} chars)", shortText.Length, GetSelectedMetaDataLength(), GetFullTweetText().Length));
             if (!string.IsNullOrEmpty(shortText) && GetFullTweetText().Length <= 280)
             {
                 EditorGUILayout.BeginHorizontal();
@@ -303,22 +340,25 @@ namespace WizardsCode.DevLogger
             }
         }
 
-        private int GetSelectedHashtagLength()
+        private int GetSelectedMetaDataLength()
         {
-            return GetSelectedHashTags().Length;
+            return GetSelectedMetaData().Length;
         }
 
         /// <summary>
         /// Get a string containing all the selected hashtags for this tweet.
         /// </summary>
         /// <returns>Space separated list of hashtags</returns>
-        private string GetSelectedHashTags()
+        private string GetSelectedMetaData()
         {
             StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < suggestedHashTags.Length; i++)
+            for (int i = 0; i < suggestedMetaData.Length; i++)
             {
-                sb.Append(" ");
-                sb.Append(suggestedHashTags[i]);
+                if (selectedMetaData[i])
+                {
+                    sb.Append(" ");
+                    sb.Append(suggestedMetaData[i]);
+                }
             }
             return sb.ToString();
         }
@@ -329,7 +369,7 @@ namespace WizardsCode.DevLogger
         /// <returns>The tweet as it will be sent.</returns>
         private string GetFullTweetText()
         {
-            return shortText + GetSelectedHashTags();
+            return shortText + GetSelectedMetaData();
         }
 
         private void OnAuthorizeTwitterGUI()
@@ -346,10 +386,12 @@ namespace WizardsCode.DevLogger
 
         private void MediaListGUI()
         {
+            mediaScrollPosition = EditorGUILayout.BeginScrollView(mediaScrollPosition, GUILayout.Height(140));
             if (LatestCaptures != null && LatestCaptures.Count > 0)
             {
                 ImageSelectionGUI();
             }
+            EditorGUILayout.EndScrollView();
         }
 
         private void MediaCaptureGUI() { 
@@ -588,13 +630,25 @@ namespace WizardsCode.DevLogger
             EditorGUILayout.LabelField("Short Entry (required)");
             shortText = EditorGUILayout.TextArea(shortText, GUILayout.Height(35));
 
-            EditorGUILayout.LabelField("Long Entry (optional)"); 
-            detailText = EditorGUILayout.TextArea(detailText, GUILayout.Height(100)); ;
+            EditorGUILayout.LabelField("Long Entry (optional)");
+            detailText = EditorGUILayout.TextArea(detailText, GUILayout.Height(100));
+        }
 
-            EditorGUILayout.LabelField("Hashtags: " + GetSelectedHashTags());
+        private void MetaDataGUI() {
+            EditorGUILayout.BeginHorizontal();
+
+            EditorGUILayout.BeginVertical();
+            for (int i = 0; i < suggestedMetaData.Length; i++)
+            {
+                selectedMetaData[i] = EditorGUILayout.Toggle(suggestedMetaData[i], selectedMetaData[i]);
+            }
+            EditorGUILayout.EndVertical();
 
             gitCommit = EditorGUILayout.TextField("Git Commit", gitCommit);
+            EditorGUILayout.EndHorizontal();
+        }
 
+        private void PostingGUI() {
             if (!string.IsNullOrEmpty(shortText))
             {
                 EditorGUILayout.BeginHorizontal();
