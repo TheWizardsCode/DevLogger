@@ -399,7 +399,7 @@ namespace WizardsCode.DevLogger
         private void ImageSelectionGUI()
         {
             EditorGUILayout.BeginHorizontal();
-            for (int i = 0; i < LatestCaptures.Count; i++)
+            for (int i = LatestCaptures.Count - 1; i >= 0;  i--)
             {
                 DevLogScreenCapture capture = EditorUtility.InstanceIDToObject(LatestCaptures[i]) as DevLogScreenCapture;
                 if (capture == null)
@@ -494,13 +494,27 @@ namespace WizardsCode.DevLogger
         {
             if (screenCapture != null)
             {
-                LatestCaptures.Insert(0, screenCapture.GetInstanceID());
-                selectedImages.Insert(0, false);
-                if (LatestCaptures.Count > maxImagesToRemember)
+                if (LatestCaptures.Count >= maxImagesToRemember)
                 {
-                    selectedImages.RemoveAt(LatestCaptures.Count - 1);
-                    LatestCaptures.RemoveAt(LatestCaptures.Count - 1);
+                    // Deleted the olded, not selected image
+                    for (int i = 0; i < selectedImages.Count; i++) {
+                        if (!selectedImages[i])
+                        {
+                            selectedImages.RemoveAt(i);
+                            LatestCaptures.RemoveAt(i);
+                            break;
+                        }
+                    }
+
+                    // If we didn't delete one then delete the oldest
+                    if (selectedImages.Count >= maxImagesToRemember)
+                    {
+                        selectedImages.RemoveAt(0);
+                        LatestCaptures.RemoveAt(0);
+                    }
                 }
+                LatestCaptures.Add(screenCapture.GetInstanceID());
+                selectedImages.Add(false);
                 uiStatusText = "Captured as " + screenCapture.GetRelativeImagePath();
             }
             else
