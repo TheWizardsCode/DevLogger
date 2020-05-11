@@ -129,6 +129,9 @@ namespace WizardsCode.DevLogger
         }
 
         DevLogScreenCapture currentScreenCapture;
+        private bool showTwitter = false;
+        private bool showSettings = false;
+
         void Update()
         {
             if (Recorder.State == RecorderState.PreProcessing)
@@ -150,32 +153,42 @@ namespace WizardsCode.DevLogger
         #region GUI
         void OnGUI()
         {
-            if (!Twitter.IsAuthenticated)
-            {
-                OnAuthorizeTwitterGUI();
-                return;
-            } else
-            {
-                scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
-                
-                StartSection("Setup");
-                SetupGUI();
-                EndSection();
+            scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
 
-                StartSection("Log Entry", false);
-                LogEntryGUI();
-                EndSection();
+            StartSection("Log Entry", false);
+            LogEntryGUI();
+            EndSection();
 
-                
-                StartSection("Twitter");
-                TwitterGUI();
-                EndSection();
-                
-                StartSection("Media Capture");
-                MediaGUI();
-                EndSection();
-                EditorGUILayout.EndScrollView();
+            StartSection("Media Capture");
+            MediaGUI();
+            EndSection();
+
+            EditorGUILayout.Space();
+            EditorGUILayout.BeginVertical("Box");
+            showTwitter = EditorGUILayout.Foldout(showTwitter, "Twitter", EditorStyles.foldout);
+            if (showTwitter)
+            {
+                if (Twitter.IsAuthenticated)
+                {
+                    TwitterGUI();
+                }
+                else
+                {
+                    OnAuthorizeTwitterGUI();
+                }
             }
+            EditorGUILayout.EndVertical();
+
+            EditorGUILayout.Space();
+            EditorGUILayout.BeginVertical("Box");
+            showSettings = EditorGUILayout.Foldout(showSettings, "Settings", EditorStyles.foldout);
+            if (showSettings)
+            {
+                SetupGUI();
+            }
+            EditorGUILayout.EndVertical();
+
+            EditorGUILayout.EndScrollView();
         }
 
         private void SetupGUI()
@@ -466,19 +479,12 @@ namespace WizardsCode.DevLogger
         /// </summary>
         /// <param name="windowName">The name of the window to be captured, for example:
         /// WizardsCode.DevLogger.DevLoggerWindow
-        /// UnityEditor.GameView
-        /// UnityEditor.SceneView
         /// UnityEditor.AssetStoreWindow
         /// UnityEditor.TimelineWindow
-        /// UnityEditor.ConsoleWindow
         /// UnityEditor.AnimationWindow
         /// UnityEditor.Graphs.AnimatorControllerTool
-        /// UnityEditor.InspectorWindow
         /// UnityEditor.NavMeshEditorWindow
         /// UnityEditor.LightingWindow
-        /// UnityEditor.SceneHierarchyWindow
-        /// UnityEditor.InspectorWindow
-        /// UnityEditor.ProjectBrowser
         /// </param>
         private void CaptureWindowScreenshot(string windowName)
         {
@@ -590,11 +596,20 @@ namespace WizardsCode.DevLogger
                 EditorGUILayout.LabelField("No valid actions at this time.");
             }
 
+            EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Open Devlog"))
             {
                 string filepath = DevLog.GetAbsoluteProjectDirectory() + DevLog.GetRelativeCurrentFilePath();
                 System.Diagnostics.Process.Start(filepath);
             }
+
+            if (GUILayout.Button("Open Media Folder"))
+            {
+                string filepath = DevLog.GetAbsoluteDirectory().Replace(@"/", @"\");
+                System.Diagnostics.Process.Start("Explorer.exe", @"/open,""" + filepath);
+            }
+            EditorGUILayout.EndHorizontal();
+
         }
 
         private void AppendDevlog(bool withImage, bool withTweet)
