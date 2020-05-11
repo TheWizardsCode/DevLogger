@@ -159,8 +159,12 @@ namespace WizardsCode.DevLogger
             LogEntryGUI();
             EndSection();
 
-            StartSection("Media Capture");
-            MediaGUI();
+            StartSection("Media");
+            MediaListGUI();
+            EndSection();
+
+            StartSection("Capture");
+            MediaCaptureGUI();
             EndSection();
 
             EditorGUILayout.Space();
@@ -340,12 +344,16 @@ namespace WizardsCode.DevLogger
 
         #region Media
 
-        private void MediaGUI()
-        {   
+        private void MediaListGUI()
+        {
             if (LatestCaptures != null && LatestCaptures.Count > 0)
             {
                 ImageSelectionGUI();
             }
+        }
+
+        private void MediaCaptureGUI() { 
+            EditorGUILayout.Space();
 
             EditorGUILayout.BeginHorizontal();
             if (Application.isPlaying)
