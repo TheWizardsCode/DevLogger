@@ -641,7 +641,7 @@ namespace WizardsCode.DevLogger
             EditorGUILayout.BeginVertical();
             for (int i = 0; i < suggestedMetaData.Count; i++)
             {
-                selectedMetaData[i] = EditorGUILayout.Toggle(suggestedMetaData[i], selectedMetaData[i]);
+                selectedMetaData[i] = EditorGUILayout.ToggleLeft(suggestedMetaData[i], selectedMetaData[i]);
             }
 
             EditorGUILayout.BeginHorizontal();
