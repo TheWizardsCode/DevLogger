@@ -19,9 +19,9 @@ namespace WizardsCode.DevLogger
         [SerializeField]
         private List<bool> selectedImages = new List<bool>();
         [SerializeField]
-        string[] suggestedMetaData;
+        List<string> suggestedMetaData;
         [SerializeField]
-        private bool[] selectedMetaData;
+        private List<bool> selectedMetaData;
 
         private const string DATABASE_PATH = "Assets/ScreenCaptures.asset";
         string shortText = "";
@@ -116,17 +116,17 @@ namespace WizardsCode.DevLogger
             int numOfHashtags = EditorPrefs.GetInt("numberOfSuggestedMetaData", 0);
             if (numOfHashtags == 0)
             {
-                suggestedMetaData = new string[2] { "#IndieGame", "#MadeWithUnity" };
-                selectedMetaData = new bool[2] { true, true };
+                suggestedMetaData = new List<string>() { "#IndieGame", "#MadeWithUnity" };
+                selectedMetaData = new List<bool> { true, true };
             } else
             {
-                suggestedMetaData = new string[2];
-                selectedMetaData = new bool[2];
+                suggestedMetaData = new List<string>();
+                selectedMetaData = new List<bool>();
 
                 for (int i = 0; i < numOfHashtags; i++)
                 {
-                    suggestedMetaData[i] = EditorPrefs.GetString("suggestedMetaData_" + i);
-                    selectedMetaData[i] = EditorPrefs.GetBool("selectedMetaData_" + i);
+                    suggestedMetaData.Add(EditorPrefs.GetString("suggestedMetaData_" + i));
+                    selectedMetaData.Add(EditorPrefs.GetBool("selectedMetaData_" + i));
                 }
             }
         }
@@ -135,8 +135,8 @@ namespace WizardsCode.DevLogger
         {
             EditorApplication.update -= Update;
 
-            EditorPrefs.SetInt("numberOfSuggestedMetaData", suggestedMetaData.Length);
-            for (int i = 0; i < suggestedMetaData.Length; i++)
+            EditorPrefs.SetInt("numberOfSuggestedMetaData", suggestedMetaData.Count);
+            for (int i = 0; i < suggestedMetaData.Count; i++)
             {
                 EditorPrefs.SetString("suggestedMetaData_" + i, suggestedMetaData[i]);
                 EditorPrefs.SetBool("selectedMetaData_" + i, selectedMetaData[i]);
@@ -160,6 +160,7 @@ namespace WizardsCode.DevLogger
         private bool showTwitter = false;
         private bool showSettings = false;
         private Vector2 mediaScrollPosition;
+        private string newMetaDataItem;
 
         void Update()
         {
@@ -352,7 +353,7 @@ namespace WizardsCode.DevLogger
         private string GetSelectedMetaData()
         {
             StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < suggestedMetaData.Length; i++)
+            for (int i = 0; i < suggestedMetaData.Count; i++)
             {
                 if (selectedMetaData[i])
                 {
@@ -638,10 +639,20 @@ namespace WizardsCode.DevLogger
             EditorGUILayout.BeginHorizontal();
 
             EditorGUILayout.BeginVertical();
-            for (int i = 0; i < suggestedMetaData.Length; i++)
+            for (int i = 0; i < suggestedMetaData.Count; i++)
             {
                 selectedMetaData[i] = EditorGUILayout.Toggle(suggestedMetaData[i], selectedMetaData[i]);
             }
+
+            EditorGUILayout.BeginHorizontal();
+            newMetaDataItem = EditorGUILayout.TextField(newMetaDataItem);
+            if (GUILayout.Button("Add"))
+            {
+                suggestedMetaData.Add(newMetaDataItem);
+                selectedMetaData.Add(true);
+                newMetaDataItem = "";
+            }
+            EditorGUILayout.EndHorizontal();
             EditorGUILayout.EndVertical();
 
             gitCommit = EditorGUILayout.TextField("Git Commit", gitCommit);
