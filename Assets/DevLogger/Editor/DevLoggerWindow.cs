@@ -447,6 +447,9 @@ namespace WizardsCode.DevLogger
             EditorGUILayout.BeginHorizontal();
             for (int i = LatestCaptures.Count - 1; i >= 0;  i--)
             {
+                EditorGUILayout.BeginVertical();
+
+                EditorGUILayout.BeginHorizontal();
                 DevLogScreenCapture capture = EditorUtility.InstanceIDToObject(LatestCaptures[i]) as DevLogScreenCapture;
                 if (capture == null)
                 {
@@ -459,11 +462,18 @@ namespace WizardsCode.DevLogger
                 {
                     selectedImages[i] = !selectedImages[i];
                 }
-
                 selectedImages[i] = EditorGUILayout.Toggle(selectedImages[i]);
+                EditorGUILayout.EndHorizontal();
+
+                if (GUILayout.Button("View"))
+                {
+                    string filepath = (DevLog.GetAbsoluteDirectory() + capture.Filename).Replace(@"/", @"\");
+                    System.Diagnostics.Process.Start("Explorer.exe", @"/open,""" + filepath);
+                }
+
+                EditorGUILayout.EndVertical();
             }
             EditorGUILayout.EndHorizontal();
-
         }
 
         /// <summary>
