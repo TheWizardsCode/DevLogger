@@ -420,6 +420,11 @@ namespace WizardsCode.DevLogger
                 {
                     CaptureWindowScreenshot("UnityEditor.GameView");
                 }
+
+                if (GUILayout.Button("Console"))
+                {
+                    CaptureWindowScreenshot("UnityEditor.ConsoleWindow");
+                }
             }
             EditorGUILayout.EndHorizontal();
         }
