@@ -62,7 +62,6 @@ namespace WizardsCode.DevLogger
                     {
                         _recorder = Camera.main.gameObject.AddComponent<Recorder>();
                         _recorder.Init();
-                        _recorder.Setup(preserveAspect, width, width/2, fps,bufferSize, repeat, quality);
 
                         PostProcessLayer pp = Camera.main.GetComponent<PostProcessLayer>();
                         if (pp != null)
@@ -77,6 +76,7 @@ namespace WizardsCode.DevLogger
                         removeRecorder = false;
                     }
                 }
+
                 return _recorder;
             }
         }
@@ -157,6 +157,7 @@ namespace WizardsCode.DevLogger
             } else
             {
                 scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
+                
                 StartSection("Setup");
                 SetupGUI();
                 EndSection();
@@ -165,10 +166,11 @@ namespace WizardsCode.DevLogger
                 LogEntryGUI();
                 EndSection();
 
+                
                 StartSection("Twitter");
                 TwitterGUI();
                 EndSection();
-
+                
                 StartSection("Media Capture");
                 MediaGUI();
                 EndSection();
@@ -324,7 +326,7 @@ namespace WizardsCode.DevLogger
         #endregion
 
         #region Media
-        
+
         private void MediaGUI()
         {   
             if (LatestCaptures != null && LatestCaptures.Count > 0)
@@ -335,15 +337,25 @@ namespace WizardsCode.DevLogger
             EditorGUILayout.BeginHorizontal();
             if (Application.isPlaying)
             {
+                if (GUILayout.Button("Scene View"))
+                {
+                    CaptureWindowScreenshot("UnityEditor.SceneView");
+                }
+
                 if (GUILayout.Button("Game View"))
                 {
                     CaptureWindowScreenshot("UnityEditor.GameView");
                 }
+                
+                EditorGUILayout.BeginVertical();
 
                 switch (Recorder.State)
                 {
-                    case RecorderState.Paused:
-                        _recorder.Record();
+                    case RecorderState.Paused: // We are paused so start recording. This allows saving of the last X seconds
+                        Recorder.Setup(preserveAspect, width, width / 2, fps, bufferSize, repeat, quality);
+                        Recorder.Record();
+
+                        EditorGUILayout.LabelField("Starting Recording");
                         break;
                     case RecorderState.Recording:
                         if (GUILayout.Button("Save Animated GIF"))
@@ -352,11 +364,11 @@ namespace WizardsCode.DevLogger
                             currentScreenCapture.Encoding = DevLogScreenCapture.ImageEncoding.gif;
                             currentScreenCapture.name = "In Game Footage";
                             
-                            _recorder.OnPreProcessingDone = OnProcessingDone;
-                            _recorder.OnFileSaved = OnFileSaved;
+                            Recorder.OnPreProcessingDone = OnProcessingDone;
+                            Recorder.OnFileSaved = OnFileSaved;
                             
-                            _recorder.SaveFolder = currentScreenCapture.GetAbsoluteImageFolder();
-                            _recorder.Filename = currentScreenCapture.Filename;
+                            Recorder.SaveFolder = currentScreenCapture.GetAbsoluteImageFolder();
+                            Recorder.Filename = currentScreenCapture.Filename;
 
                             Recorder.Save(true);
                         }
@@ -365,6 +377,23 @@ namespace WizardsCode.DevLogger
                         EditorGUILayout.LabelField("Processing");
                         break;
                 }
+
+                EditorGUILayout.BeginHorizontal();
+                GUILayout.Label("Buffer (in seconds)");
+                bufferSize = int.Parse(GUILayout.TextField(bufferSize.ToString()));
+                EditorGUILayout.EndHorizontal();
+
+                EditorGUILayout.BeginHorizontal();
+                GUILayout.Label("Quality (lower is better)");
+                quality = int.Parse(GUILayout.TextField(quality.ToString()));
+                EditorGUILayout.EndHorizontal();
+
+                EditorGUILayout.BeginHorizontal();
+                GUILayout.Label("Width");
+                width = int.Parse(GUILayout.TextField(width.ToString()));
+                EditorGUILayout.EndHorizontal();
+                
+                EditorGUILayout.EndVertical();
             } else
             {
                 if (GUILayout.Button("Hierarchy"))
@@ -389,7 +418,6 @@ namespace WizardsCode.DevLogger
 
                 if (GUILayout.Button("Game View"))
                 {
-                    //CaptureScreen(DevLogScreenCapture.ImageEncoding.png);
                     CaptureWindowScreenshot("UnityEditor.GameView");
                 }
             }
