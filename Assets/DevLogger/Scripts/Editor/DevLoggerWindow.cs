@@ -377,6 +377,11 @@ namespace WizardsCode.DevLogger
                     CaptureWindowScreenshot("UnityEditor.InspectorWindow");
                 }
 
+                if (GUILayout.Button("Project"))
+                {
+                    CaptureWindowScreenshot("UnityEditor.ProjectBrowser");
+                }
+
                 if (GUILayout.Button("Scene View"))
                 {
                     CaptureWindowScreenshot("UnityEditor.SceneView");
