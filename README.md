@@ -15,17 +15,22 @@ DevLogger is a Unity Plugin that helps you keep a DevLog while working on your p
 
 # Setup
 
-## Register the application on Twitter
+Simply checkout this repository into your project. Then open DevLogger using
+``` -> Wizards Code -> Dev Logger```
 
-In preparation...
+## Twitter Setup
+
+If you want to tweet from within DevLogger you will need to setup authentication
+for Twitter but following these steps:
 
   1. Create a developer account on Twitter http://dev.twitter.com
   2. Register DevLogger at http://dev.twitter.com/apps/new
   3. Get the Consumer Token and Secret for the app
   4. Generate an Access Token and Access Token Secret
-  5. Tools -> Wizards Code -> Dev Logger
+  5. In the DevLogger window expand the Twitter section
   6. Enter the consumer key and secret as well as the Access token and secret
- 
+  7. The twitter section will change to the twitter controls
+
 # Using DevLogger
 
 ## Capture an in-game ScreenShot or Animated GIFs
@@ -98,14 +103,6 @@ to you is helpful.
 
   * No known breaking bugs at this time (of course there are bugs)
 
-# TODO
 
-This is a loose collection of things that are on the immediate roadmap. Nothing here is 
-promised. If you really want one of these items please implement it and issue a pull
-request, same goes for other features not listed here.
-
-  * Tweeting
-	  - Make the hashtags used configurable on a per tweet basis
-	  - Automatically append a link to any tweet
 
 
