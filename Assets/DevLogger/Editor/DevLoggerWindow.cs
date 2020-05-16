@@ -22,7 +22,7 @@ namespace WizardsCode.DevLogger
         List<string> suggestedMetaData;
         [SerializeField]
         private List<bool> selectedMetaData;
-
+        
         private const string DATABASE_PATH = "Assets/ScreenCaptures.asset";
         string shortText = "";
         string detailText = "";
@@ -61,10 +61,10 @@ namespace WizardsCode.DevLogger
             {
                 if (_recorder == null)
                 {
-                    _recorder = Camera.main.GetComponent<Recorder>();
+                    _recorder = m_Camera.GetComponent<Recorder>();
                     if (_recorder == null)
                     {
-                        _recorder = Camera.main.gameObject.AddComponent<Recorder>();
+                        _recorder = m_Camera.gameObject.AddComponent<Recorder>();
                         _recorder.Init();
 
                         PostProcessLayer pp = Camera.main.GetComponent<PostProcessLayer>();
@@ -183,58 +183,86 @@ namespace WizardsCode.DevLogger
         #region GUI
         void OnGUI()
         {
-            windowScrollPos = EditorGUILayout.BeginScrollView(windowScrollPos);
-
-            StartSection("Log Entry", false);
-            LogEntryGUI();
-            EndSection();
-
-            StartSection("Meta Data", false);
-            MetaDataGUI();
-            EndSection();
-
-            StartSection("Posting", false);
-            PostingGUI();
-            EndSection();
-
-            StartSection("Media");
-            MediaListGUI();
-            EndSection();
-
-            StartSection("Capture");
-            MediaCaptureGUI();
-            EndSection();
-
-            EditorGUILayout.Space();
-            EditorGUILayout.BeginVertical("Box");
-            showTwitter = EditorGUILayout.Foldout(showTwitter, "Twitter", EditorStyles.foldout);
-            if (showTwitter)
+            if (!m_Camera)
             {
-                if (Twitter.IsAuthenticated)
-                {
-                    TwitterGUI();
-                }
-                else
-                {
-                    OnAuthorizeTwitterGUI();
-                }
+                m_Camera = Camera.main;
             }
-            EditorGUILayout.EndVertical();
 
-            EditorGUILayout.Space();
-            EditorGUILayout.BeginVertical("Box");
-            showSettings = EditorGUILayout.Foldout(showSettings, "Settings", EditorStyles.foldout);
-            if (showSettings)
+            if (m_Camera)
             {
-                SetupGUI();
-            }
-            EditorGUILayout.EndVertical();
+                windowScrollPos = EditorGUILayout.BeginScrollView(windowScrollPos);
 
-            EditorGUILayout.EndScrollView();
+                StartSection("Log Entry", false);
+                LogEntryGUI();
+                EndSection();
+
+                StartSection("Meta Data", false);
+                MetaDataGUI();
+                EndSection();
+
+                StartSection("Posting", false);
+                PostingGUI();
+                EndSection();
+
+                StartSection("Media");
+                MediaListGUI();
+                EndSection();
+
+                StartSection("Capture");
+                MediaCaptureGUI();
+                EndSection();
+
+                EditorGUILayout.Space();
+                EditorGUILayout.BeginVertical("Box");
+                showTwitter = EditorGUILayout.Foldout(showTwitter, "Twitter", EditorStyles.foldout);
+                if (showTwitter)
+                {
+                    if (Twitter.IsAuthenticated)
+                    {
+                        TwitterGUI();
+                    }
+                    else
+                    {
+                        OnAuthorizeTwitterGUI();
+                    }
+                }
+                EditorGUILayout.EndVertical();
+
+                EditorGUILayout.Space();
+                EditorGUILayout.BeginVertical("Box");
+                showSettings = EditorGUILayout.Foldout(showSettings, "Settings", EditorStyles.foldout);
+                if (showSettings)
+                {
+                    SettingsGUI();
+                }
+                EditorGUILayout.EndVertical();
+
+                EditorGUILayout.EndScrollView();
+            } else
+            {
+                showSettings = true;
+                EditorGUILayout.BeginVertical("Box");
+                showSettings = EditorGUILayout.Foldout(showSettings, "Settings", EditorStyles.foldout);
+                if (showSettings)
+                {
+                    SettingsGUI();
+                }
+                EditorGUILayout.EndVertical();
+            }
         }
 
-        private void SetupGUI()
+        public Camera m_Camera;
+        private void SettingsGUI()
         {
+            EditorGUILayout.BeginVertical();
+            if (!m_Camera)
+            {
+                EditorGUILayout.LabelField("No main camera in scene, please select tag a camera as MainCamera or select a camera here.");
+            }
+            EditorGUILayout.BeginHorizontal();
+            m_Camera = (Camera)EditorGUILayout.ObjectField(m_Camera, typeof(Camera), true);
+            EditorGUILayout.EndHorizontal();
+
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Reset"))
             {
@@ -270,6 +298,8 @@ namespace WizardsCode.DevLogger
             {
                 EditorGUILayout.LabelField(uiStatusText);
             }
+
+            EditorGUILayout.EndVertical();
         }
 
         private static void StartSection(string title, bool withSpace = true)
