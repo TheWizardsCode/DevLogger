@@ -460,6 +460,8 @@ namespace WizardsCode.DevLogger
                 EditorGUILayout.EndVertical();
             } else
             {
+                EditorGUILayout.BeginVertical();
+                EditorGUILayout.BeginHorizontal();
                 if (GUILayout.Button("Hierarchy"))
                 {
                     CaptureWindowScreenshot("UnityEditor.SceneHierarchyWindow");
@@ -489,18 +491,28 @@ namespace WizardsCode.DevLogger
                 {
                     CaptureWindowScreenshot("UnityEditor.ConsoleWindow");
                 }
+                EditorGUILayout.EndHorizontal();
 
+                EditorGUILayout.Space();
+                EditorGUILayout.Space();
+
+                EditorGUILayout.BeginHorizontal();
                 if (GUILayout.Button("Package Manager"))
                 {
                     CaptureWindowScreenshot("UnityEditor.PackageManager.UI.PackageManagerWindow");
+                }
+
+                if (GUILayout.Button("Asset Store"))
+                {
+                    CaptureWindowScreenshot("UnityEditor.AssetStoreWindow");
                 }
 
                 if (GUILayout.Button("Project Settings"))
                 {
                     CaptureWindowScreenshot("UnityEditor.ProjectSettingsWindow");
                 }
-
-                
+                EditorGUILayout.EndHorizontal();
+                EditorGUILayout.EndVertical();
             }
             EditorGUILayout.EndHorizontal();
         }
