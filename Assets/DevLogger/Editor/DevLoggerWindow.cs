@@ -59,7 +59,7 @@ namespace WizardsCode.DevLogger
         {
             get
             {
-                if (_recorder == null)
+                if (_recorder == null && m_Camera)
                 {
                     _recorder = m_Camera.GetComponent<Recorder>();
                     if (_recorder == null)
