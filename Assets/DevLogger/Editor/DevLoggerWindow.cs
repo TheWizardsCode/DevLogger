@@ -494,6 +494,13 @@ namespace WizardsCode.DevLogger
                 {
                     CaptureWindowScreenshot("UnityEditor.PackageManager.UI.PackageManagerWindow");
                 }
+
+                if (GUILayout.Button("Project Settings"))
+                {
+                    CaptureWindowScreenshot("UnityEditor.ProjectSettingsWindow");
+                }
+
+                
             }
             EditorGUILayout.EndHorizontal();
         }
