@@ -17,7 +17,7 @@ namespace WizardsCode.DevLogger
     public class DevLoggerWindow : EditorWindow
     {
         [SerializeField]
-        private List<bool> selectedImages = new List<bool>();
+        private List<bool> availableImages = new List<bool>();
         [SerializeField]
         List<string> suggestedMetaData;
         [SerializeField]
@@ -239,7 +239,7 @@ namespace WizardsCode.DevLogger
             if (GUILayout.Button("Reset"))
             {
                 LatestCaptures = new List<int>();
-                selectedImages = new List<bool>();
+                availableImages = new List<bool>();
                 if (EditorUtility.DisplayDialog("Reset Twitter OAuth Tokens?",
                     "Do you also want to clear the Twitter access tokens?",
                     "Yes", "Do Not Clear Them")) {
@@ -313,9 +313,9 @@ namespace WizardsCode.DevLogger
                     if (GUILayout.Button("Tweet (and DevLog) with image(s) and text"))
                     {
                         List<string> mediaFilePaths = new List<string>();
-                        for (int i = 0; i < selectedImages.Count; i++)
+                        for (int i = 0; i < availableImages.Count; i++)
                         {
-                            if (selectedImages[i])
+                            if (availableImages[i])
                             {
                                 DevLogScreenCapture capture = EditorUtility.InstanceIDToObject(LatestCaptures[i]) as DevLogScreenCapture;
                                 mediaFilePaths.Add(capture.GetRelativeImagePath());
@@ -510,15 +510,15 @@ namespace WizardsCode.DevLogger
                 if (capture == null)
                 {
                     LatestCaptures.RemoveAt(i);
-                    selectedImages.RemoveAt(i);
+                    availableImages.RemoveAt(i);
                     i--;
                     continue;
                 }
                 if (GUILayout.Button(capture.Texture, GUILayout.Width(100), GUILayout.Height(100)))
                 {
-                    selectedImages[i] = !selectedImages[i];
+                    availableImages[i] = !availableImages[i];
                 }
-                selectedImages[i] = EditorGUILayout.Toggle(selectedImages[i]);
+                availableImages[i] = EditorGUILayout.Toggle(availableImages[i]);
                 EditorGUILayout.EndHorizontal();
 
                 if (GUILayout.Button("View"))
@@ -602,24 +602,24 @@ namespace WizardsCode.DevLogger
                 if (LatestCaptures.Count >= maxImagesToRemember)
                 {
                     // Deleted the olded, not selected image
-                    for (int i = 0; i < selectedImages.Count; i++) {
-                        if (!selectedImages[i])
+                    for (int i = 0; i < availableImages.Count; i++) {
+                        if (!availableImages[i])
                         {
-                            selectedImages.RemoveAt(i);
+                            availableImages.RemoveAt(i);
                             LatestCaptures.RemoveAt(i);
                             break;
                         }
                     }
 
                     // If we didn't delete one then delete the oldest
-                    if (selectedImages.Count >= maxImagesToRemember)
+                    if (availableImages.Count >= maxImagesToRemember)
                     {
-                        selectedImages.RemoveAt(0);
+                        availableImages.RemoveAt(0);
                         LatestCaptures.RemoveAt(0);
                     }
                 }
                 LatestCaptures.Add(screenCapture.GetInstanceID());
-                selectedImages.Add(false);
+                availableImages.Add(false);
                 uiStatusText = "Captured as " + screenCapture.GetRelativeImagePath();
             }
             else
@@ -668,14 +668,30 @@ namespace WizardsCode.DevLogger
             if (!string.IsNullOrEmpty(shortText))
             {
                 EditorGUILayout.BeginHorizontal();
-                if (GUILayout.Button("DevLog (no Tweet) with text only"))
+                
+                bool hasSelection = false;
+                for (int i = 0; i < availableImages.Count; i++)
                 {
-                    AppendDevlog(false, false);
+                    if (availableImages[i])
+                    {
+                        hasSelection = true;
+                        break;
+                    }
                 }
 
-                if (GUILayout.Button("Devlog (no Tweet) with selected image and text"))
+                if (hasSelection)
                 {
-                    AppendDevlog(true, false);
+                    if (GUILayout.Button("Devlog (no Tweet) with selected image and text"))
+                    {
+                        AppendDevlog(true, false);
+                    }
+                }
+                else
+                {
+                    if (GUILayout.Button("DevLog (no Tweet) with text only"))
+                    {
+                        AppendDevlog(false, false);
+                    }
                 }
                 EditorGUILayout.EndHorizontal();
             }
@@ -717,9 +733,9 @@ namespace WizardsCode.DevLogger
             if (withImage)
             {
                 List<string> mediaFilePaths = new List<string>();
-                for (int i = 0; i < selectedImages.Count; i++)
+                for (int i = 0; i < availableImages.Count; i++)
                 {
-                    if (selectedImages[i])
+                    if (availableImages[i])
                     {
                         DevLogScreenCapture capture = EditorUtility.InstanceIDToObject(LatestCaptures[i]) as DevLogScreenCapture;
                         mediaFilePaths.Add(capture.Filename);
