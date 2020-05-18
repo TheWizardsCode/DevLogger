@@ -22,6 +22,8 @@ namespace WizardsCode.DevLogger
         List<string> suggestedMetaData;
         [SerializeField]
         private List<bool> selectedMetaData;
+        [SerializeField]
+        private DevLogEntries devLog;
         
         private const string DATABASE_PATH = "Assets/ScreenCaptures.asset";
         string shortText = "";
@@ -259,8 +261,15 @@ namespace WizardsCode.DevLogger
             {
                 EditorGUILayout.LabelField("No main camera in scene, please select tag a camera as MainCamera or select a camera here.");
             }
+
             EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.PrefixLabel("Camera for captures");
             m_Camera = (Camera)EditorGUILayout.ObjectField(m_Camera, typeof(Camera), true);
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.PrefixLabel("Dev Log Storage");
+            devLog = EditorGUILayout.ObjectField(devLog, typeof(DevLogEntries), true) as DevLogEntries;
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.BeginHorizontal();
@@ -767,16 +776,31 @@ namespace WizardsCode.DevLogger
 
         private void AppendDevlog(bool withImage, bool withTweet)
         {
-            StringBuilder entry = new StringBuilder(shortText);
+            Entry entry = new Entry();
+
+            entry.shortDescription = shortText;
+            StringBuilder text = new StringBuilder(entry.shortDescription);
+
             if (!string.IsNullOrEmpty(gitCommit))
             {
-                entry.Append("\n\nGit Commit: " + gitCommit);
+                entry.commitHash = gitCommit;
+
+                text.Append("\n\nGit Commit: " + gitCommit);
                 gitCommit = "";
             }
 
+            for (int i = 0; i < suggestedMetaData.Count; i++)
+            {
+                if (selectedMetaData[i])
+                {
+                    entry.metaData.Add(suggestedMetaData[i]);
+                }
+            }
+            
             if (withTweet)
             {
-                entry.Append("\n\n[This DevLog entry was Tweeted.]");
+                entry.tweeted = true;
+                text.Append("\n\n[This DevLog entry was Tweeted.]");
             }
 
             if (withImage)
@@ -788,15 +812,21 @@ namespace WizardsCode.DevLogger
                     {
                         DevLogScreenCapture capture = EditorUtility.InstanceIDToObject(LatestCaptures[i]) as DevLogScreenCapture;
                         mediaFilePaths.Add(capture.Filename);
+                        entry.capture.Add(capture);
                     }
                 }
+                
+                entry.longDescription = detailText;
 
-                DevLog.Append(entry.ToString(), detailText, mediaFilePaths);
+                DevLog.Append(text.ToString(), detailText, mediaFilePaths);
             }
             else
             {
-                DevLog.Append(entry.ToString(), detailText);
+                entry.longDescription = detailText;
+                DevLog.Append(text.ToString(), detailText);
             }
+
+            devLog.entries.Add(entry);
 
             shortText = "";
             detailText = "";
