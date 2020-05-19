@@ -7,6 +7,8 @@ using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.Rendering.PostProcessing;
 using WizardsCode.DevLog;
+using WizardsCode.EditorUtils;
+using WizardsCode.Git;
 using WizardsCode.Social;
 
 namespace WizardsCode.DevLogger
@@ -34,7 +36,7 @@ namespace WizardsCode.DevLogger
         private Vector2 windowScrollPos;
 
         public Camera m_Camera;
-        private string[] toolbarLabels = { "Log Entry", "Log", "Settings" };
+        private string[] toolbarLabels = { "Entry", "Dev Log", "Git", "Settings" };
         private int selectedTab = 0;
 
         // Animated GIF setup
@@ -136,6 +138,8 @@ namespace WizardsCode.DevLogger
 
             devLog = AssetDatabase.LoadAssetAtPath( EditorPrefs.GetString("DevLogScriptableOjectPath"), typeof(DevLogEntries)) as DevLogEntries;
             ConfigureReorderableLogList();
+
+            GitSettings.Load();
         }
 
         private void OnDisable()
@@ -151,6 +155,8 @@ namespace WizardsCode.DevLogger
             }
             // TODO Need to store DevLog referece on a per project basis
             EditorPrefs.SetString("DevLogScriptableOjectPath", AssetDatabase.GetAssetPath(devLog));
+
+            GitSettings.Save();
         }
 
         private void OnDestroy()
@@ -209,6 +215,9 @@ namespace WizardsCode.DevLogger
                     LogTab();
                     break;
                 case 2:
+                    GitPanel.OnGUI();
+                    break;
+                case 3:
                     SettingsTab();
                     break;
             }
@@ -219,25 +228,25 @@ namespace WizardsCode.DevLogger
             {
                 windowScrollPos = EditorGUILayout.BeginScrollView(windowScrollPos);
 
-                StartSection("Log Entry", false);
+                Skin.StartSection("Log Entry", false);
                 LogEntryGUI();
-                EndSection();
+                Skin.EndSection();
 
-                StartSection("Meta Data", false);
+                Skin.StartSection("Meta Data", false);
                 MetaDataGUI();
-                EndSection();
+                Skin.EndSection();
 
-                StartSection("Posting", false);
+                Skin.StartSection("Posting", false);
                 PostingGUI();
-                EndSection();
+                Skin.EndSection();
 
-                StartSection("Media");
+                Skin.StartSection("Media");
                 MediaListGUI();
-                EndSection();
+                Skin.EndSection();
 
-                StartSection("Capture");
+                Skin.StartSection("Capture");
                 MediaCaptureGUI();
-                EndSection();
+                Skin.EndSection();
 
                 EditorGUILayout.Space();
                 EditorGUILayout.BeginVertical("Box");
@@ -428,20 +437,7 @@ namespace WizardsCode.DevLogger
             EditorGUI.LabelField(fieldRect, entry.created.ToString("dd MMM yyyy"));
         }
 
-        private static void StartSection(string title, bool withSpace = true)
-        {
-            if (withSpace)
-            {
-                EditorGUILayout.Space();
-            }
-            EditorGUILayout.BeginVertical("Box");
-            EditorGUILayout.LabelField(title, EditorStyles.boldLabel);
-        }
 
-        private static void EndSection()
-        {
-            EditorGUILayout.EndVertical();
-        }
         #endregion
 
         #region Twitter
