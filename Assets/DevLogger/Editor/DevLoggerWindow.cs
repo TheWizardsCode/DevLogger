@@ -17,14 +17,11 @@ namespace WizardsCode.DevLogger
     /// </summary>
     public class DevLoggerWindow : EditorWindow
     {
-        [SerializeField]
         private List<bool> availableImages = new List<bool>();
-        [SerializeField]
         List<string> suggestedMetaData;
-        [SerializeField]
-        private List<bool> selectedMetaData;
-        [SerializeField]
-        private DevLogEntries devLog;
+        List<bool> selectedMetaData;
+        public DevLogEntries devLog;
+
         
         private const string DATABASE_PATH = "Assets/ScreenCaptures.asset";
         string shortText = "";
@@ -137,6 +134,7 @@ namespace WizardsCode.DevLogger
                 }
             }
 
+            devLog = AssetDatabase.LoadAssetAtPath( EditorPrefs.GetString("DevLogScriptableOjectPath"), typeof(DevLogEntries)) as DevLogEntries;
             ConfigureReorderableLogList();
         }
 
@@ -144,12 +142,15 @@ namespace WizardsCode.DevLogger
         {
             EditorApplication.update -= Update;
 
+            // TODO Create a constants file for these preference names
             EditorPrefs.SetInt("numberOfSuggestedMetaData", suggestedMetaData.Count);
             for (int i = 0; i < suggestedMetaData.Count; i++)
             {
                 EditorPrefs.SetString("suggestedMetaData_" + i, suggestedMetaData[i]);
                 EditorPrefs.SetBool("selectedMetaData_" + i, selectedMetaData[i]);
             }
+            // TODO Need to store DevLog referece on a per project basis
+            EditorPrefs.SetString("DevLogScriptableOjectPath", AssetDatabase.GetAssetPath(devLog));
         }
 
         private void OnDestroy()
