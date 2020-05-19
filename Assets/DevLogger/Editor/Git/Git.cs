@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
@@ -27,7 +28,7 @@ namespace WizardsCode.Git
 
         public static async Task<string> Log()
         {
-            Process process = await ProcessAsync(GitSettings.GitPath, "log");
+            Process process = await ProcessAsync(GitSettings.GitPath, "log --pretty=oneline");
 
             LastLogUpdate = DateTime.Now;
 
