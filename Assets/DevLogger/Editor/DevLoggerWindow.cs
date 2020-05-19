@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEditor;
+using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.Rendering.PostProcessing;
 using WizardsCode.DevLog;
@@ -34,6 +35,10 @@ namespace WizardsCode.DevLogger
         private int maxImagesToRemember = 10;
 
         private Vector2 windowScrollPos;
+
+        public Camera m_Camera;
+        private string[] toolbarLabels = { "Log Entry", "Log", "Settings" };
+        private int selectedTab = 0;
 
         // Animated GIF setup
         bool preserveAspect = true; // Automatically compute height from the current aspect ratio
@@ -131,6 +136,8 @@ namespace WizardsCode.DevLogger
                     selectedMetaData.Add(EditorPrefs.GetBool("selectedMetaData_" + i));
                 }
             }
+
+            ConfigureReorderableLogList();
         }
 
         private void OnDisable()
@@ -163,6 +170,7 @@ namespace WizardsCode.DevLogger
         private bool showSettings = false;
         private Vector2 mediaScrollPosition;
         private string newMetaDataItem;
+        private ReorderableList logList;
 
         void Update()
         {
@@ -190,6 +198,22 @@ namespace WizardsCode.DevLogger
                 m_Camera = Camera.main;
             }
 
+            selectedTab = GUILayout.Toolbar(selectedTab, toolbarLabels);
+            switch (selectedTab)
+            {
+                case 0:
+                    LogEntryTab();
+                    break;
+                case 1:
+                    LogTab();
+                    break;
+                case 2:
+                    SettingsTab();
+                    break;
+            }
+        }
+
+        public void LogEntryTab() { 
             if (m_Camera)
             {
                 windowScrollPos = EditorGUILayout.BeginScrollView(windowScrollPos);
@@ -230,32 +254,28 @@ namespace WizardsCode.DevLogger
                 }
                 EditorGUILayout.EndVertical();
 
-                EditorGUILayout.Space();
-                EditorGUILayout.BeginVertical("Box");
-                showSettings = EditorGUILayout.Foldout(showSettings, "Settings", EditorStyles.foldout);
-                if (showSettings)
-                {
-                    SettingsGUI();
-                }
-                EditorGUILayout.EndVertical();
-
                 EditorGUILayout.EndScrollView();
             } else
             {
-                showSettings = true;
-                EditorGUILayout.BeginVertical("Box");
-                showSettings = EditorGUILayout.Foldout(showSettings, "Settings", EditorStyles.foldout);
-                if (showSettings)
-                {
-                    SettingsGUI();
-                }
-                EditorGUILayout.EndVertical();
+                SettingsTab();
             }
         }
 
-        public Camera m_Camera;
-        private void SettingsGUI()
+        public void LogTab()
         {
+            if (logList == null)
+            {
+                EditorGUILayout.LabelField("Setup your log in the 'Settings' Tab.");
+            } else {
+                listScrollPosition = EditorGUILayout.BeginScrollView(listScrollPosition);
+                logList.DoLayoutList();
+                EditorGUILayout.EndScrollView();
+            }
+        }
+
+        public void SettingsTab()
+        {
+            EditorGUILayout.BeginVertical("Box");
             EditorGUILayout.BeginVertical();
             if (!m_Camera)
             {
@@ -269,7 +289,12 @@ namespace WizardsCode.DevLogger
 
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.PrefixLabel("Dev Log Storage");
-            devLog = EditorGUILayout.ObjectField(devLog, typeof(DevLogEntries), true) as DevLogEntries;
+            DevLogEntries oldDevLog = devLog;
+            devLog = EditorGUILayout.ObjectField(oldDevLog, typeof(DevLogEntries), true) as DevLogEntries;
+            if (devLog != oldDevLog)
+            {
+                ConfigureReorderableLogList();
+            }
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.BeginHorizontal();
@@ -309,6 +334,97 @@ namespace WizardsCode.DevLogger
             }
 
             EditorGUILayout.EndVertical();
+
+            EditorGUILayout.EndVertical();
+        }
+
+        private void ConfigureReorderableLogList()
+        {
+            if (devLog != null)
+            {
+                logList = new ReorderableList(devLog.entries, typeof(DevLogEntry), true, true, true, true);
+                logList.drawElementCallback = DrawLogListElement;
+                logList.drawHeaderCallback = DrawHeader;
+                logList.elementHeightCallback = ElementHeightCallback;
+                logList.displayAdd = false;
+            } else
+            {
+                logList = null;
+            }
+        }
+
+        float listLabelWidth = 80;
+        int listDescriptionLines = 6;
+        private Vector2 listScrollPosition;
+
+        private float ElementHeightCallback(int index)
+        {
+            float height = EditorGUIUtility.singleLineHeight; // title
+            height += EditorGUIUtility.singleLineHeight * listDescriptionLines; // descrption
+            height += EditorGUIUtility.singleLineHeight * devLog.entries[index].metaData.Count; // meta data
+            height += EditorGUIUtility.singleLineHeight * devLog.entries[index].captures.Count; // capture
+            height += EditorGUIUtility.singleLineHeight;// Commit Hash
+            height += EditorGUIUtility.singleLineHeight;// Tweeted
+            height += EditorGUIUtility.singleLineHeight;// Date
+            height += 10; // space
+            return height;
+        }
+
+        private void DrawHeader(Rect rect)
+        {
+            EditorGUI.LabelField(rect, "Entries");
+        }
+
+        private void DrawLogListElement(Rect rect, int index, bool isActive, bool isFocused)
+        {
+            Entry entry = devLog.entries[index];
+
+            Rect labelRect = new Rect(rect.x, rect.y, listLabelWidth, EditorGUIUtility.singleLineHeight);
+            EditorGUI.PrefixLabel(labelRect, new GUIContent("Title"));
+            Rect fieldRect = new Rect(labelRect.x + listLabelWidth, labelRect.y, rect.width - listLabelWidth, labelRect.height);
+            EditorGUI.TextField(fieldRect, entry.shortDescription);
+
+            labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight, labelRect.width, labelRect.height);
+            EditorGUI.PrefixLabel(labelRect, new GUIContent("Description"));
+            fieldRect = new Rect(fieldRect.x, labelRect.y, fieldRect.width, EditorGUIUtility.singleLineHeight * listDescriptionLines);
+            EditorGUI.TextArea(fieldRect, entry.longDescription);
+
+            labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight * listDescriptionLines, labelRect.width, labelRect.height);
+            if (devLog.entries[index].metaData.Count != 0)
+            {
+                EditorGUI.PrefixLabel(labelRect, new GUIContent("Meta Data"));
+                for (int i = 0; i < entry.metaData.Count; i++)
+                {
+                    fieldRect = new Rect(fieldRect.x, labelRect.y + EditorGUIUtility.singleLineHeight * i, fieldRect.width, EditorGUIUtility.singleLineHeight);
+                    EditorGUI.TextField(fieldRect, entry.metaData[i]);
+                }
+            }
+
+            labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight * devLog.entries[index].metaData.Count, labelRect.width, labelRect.height);
+            if (devLog.entries[index].captures.Count != 0)
+            {
+                EditorGUI.PrefixLabel(labelRect, new GUIContent("Captures"));
+                for (int i = 0; i < entry.captures.Count; i++)
+                {
+                    fieldRect = new Rect(fieldRect.x, labelRect.y + EditorGUIUtility.singleLineHeight * i, fieldRect.width, EditorGUIUtility.singleLineHeight);
+                    EditorGUI.TextField(fieldRect, entry.captures[i].Filename);
+                }
+            }
+            
+            labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight * devLog.entries[index].captures.Count, labelRect.width, labelRect.height);
+            EditorGUI.PrefixLabel(labelRect, new GUIContent("Commit"));
+            fieldRect = new Rect(fieldRect.x, labelRect.y, fieldRect.width, EditorGUIUtility.singleLineHeight);
+            EditorGUI.TextArea(fieldRect, entry.commitHash);
+
+            labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight, labelRect.width, labelRect.height);
+            EditorGUI.PrefixLabel(labelRect, new GUIContent("Tweeted"));
+            fieldRect = new Rect(fieldRect.x, labelRect.y, fieldRect.width, EditorGUIUtility.singleLineHeight);
+            EditorGUI.Toggle(fieldRect, entry.tweeted);
+
+            labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight, labelRect.width, labelRect.height);
+            EditorGUI.PrefixLabel(labelRect, new GUIContent("Created"));
+            fieldRect = new Rect(fieldRect.x, labelRect.y, fieldRect.width, EditorGUIUtility.singleLineHeight);
+            EditorGUI.LabelField(fieldRect, entry.created.ToString("dd MMM yyyy"));
         }
 
         private static void StartSection(string title, bool withSpace = true)
@@ -812,7 +928,7 @@ namespace WizardsCode.DevLogger
                     {
                         DevLogScreenCapture capture = EditorUtility.InstanceIDToObject(LatestCaptures[i]) as DevLogScreenCapture;
                         mediaFilePaths.Add(capture.Filename);
-                        entry.capture.Add(capture);
+                        entry.captures.Add(capture);
                     }
                 }
                 

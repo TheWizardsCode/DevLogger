@@ -26,7 +26,7 @@ namespace WizardsCode.DevLogger
         [SerializeField, Tooltip("The meta data such as links and hashtags associated with this entry.")]
         public List<string> metaData = new List<string>();
         [SerializeField, Tooltip("A list of the screen captures for this entry")]
-        public List<DevLogScreenCapture> capture = new List<DevLogScreenCapture>();
+        public List<DevLogScreenCapture> captures = new List<DevLogScreenCapture>();
         [SerializeField, Tooltip("The commit hash related to this change in the project.")]
         public string commitHash = "";
         [SerializeField, Tooltip("Has this entry been tweeted?")]
