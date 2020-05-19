@@ -175,7 +175,7 @@ namespace WizardsCode.DevLogger
 
         void Update()
         {
-            if (Recorder.State == RecorderState.PreProcessing)
+            if (Recorder != null || Recorder.State == RecorderState.PreProcessing)
             {
                 return;
             }
