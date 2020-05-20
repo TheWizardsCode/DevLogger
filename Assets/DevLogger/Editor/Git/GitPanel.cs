@@ -41,10 +41,10 @@ namespace WizardsCode.Git
                 EditorGUILayout.BeginVertical();
                 for (int i = 0; i < logEntries.Count; i++)
                 {
-                    EditorGUILayout.BeginVertical();
+                    Skin.StartHelpBox();
                     string text = logEntries[i].hash + "\n" + logEntries[i].description;
                     EditorGUILayout.SelectableLabel(text, Skin.infoLabelStyle, GUILayout.ExpandWidth(true));
-                    EditorGUILayout.EndVertical();
+                    Skin.EndHelpBox();
                 }
 
                 EditorGUILayout.EndVertical();

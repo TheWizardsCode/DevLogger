@@ -36,5 +36,19 @@ namespace WizardsCode.EditorUtils {
         {
             EditorGUILayout.EndVertical();
         }
+
+        public static void StartHelpBox(bool withSpace = true)
+        {
+            if (withSpace)
+            {
+                EditorGUILayout.Space();
+            }
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+        }
+
+        public static void EndHelpBox()
+        {
+            EditorGUILayout.EndVertical();
+        }
     }
 }

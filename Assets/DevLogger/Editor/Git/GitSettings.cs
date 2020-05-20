@@ -26,33 +26,35 @@ namespace WizardsCode.Git
         private static string m_RepositoryPath;
         public static string RepositoryPath
         {
-            get => m_RepositoryPath;
+            get
+            {
+                if (string.IsNullOrEmpty(m_RepositoryPath)) {
+                    m_RepositoryPath = Application.dataPath.Substring(0, Application.dataPath.Length - "Assets".Length);
+                }
+                return m_RepositoryPath;
+            }
             set
             {
                 m_RepositoryPath = value;
             }
         }
 
-        static GitSettings() {
-            if (string.IsNullOrEmpty(RepositoryPath))
-            {
-                RepositoryPath = Application.dataPath.Substring(0, Application.dataPath.Length - "Assets".Length);
-            }
-        }
-
         public static void Save()
         {
-            EditorPrefs.SetString(GitConstants.GITPATH, GitPath);
+            EditorPrefs.SetString(GitConstants.GIT_PATH, GitPath);
+            EditorPrefs.SetString(GitConstants.REPOSITORY_PATH, RepositoryPath);
         }
 
         public static void Load()
         {
-            EditorPrefs.GetString(GitConstants.GITPATH, DefaultGitPath);
+            GitPath = EditorPrefs.GetString(GitConstants.GIT_PATH, DefaultGitPath);
+            RepositoryPath = EditorPrefs.GetString(GitConstants.REPOSITORY_PATH, Application.dataPath.Substring(0, Application.dataPath.Length - "Assets".Length));
         }
 
         public static void Reset()
         {
-            EditorPrefs.DeleteKey(GitConstants.GITPATH);
+            EditorPrefs.DeleteKey(GitConstants.GIT_PATH);
+            EditorPrefs.DeleteKey(GitConstants.REPOSITORY_PATH);
         }
     }
 }
