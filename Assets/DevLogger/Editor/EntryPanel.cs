@@ -116,7 +116,7 @@ namespace WizardsCode.DevLogger
             detailText = EditorGUILayout.TextArea(detailText, GUILayout.Height(100));
         }
 
-        private static async Task MetaDataGUI() {
+        private static void MetaDataGUI() {
             EditorGUILayout.BeginHorizontal();
 
             EditorGUILayout.BeginVertical();
@@ -141,12 +141,17 @@ namespace WizardsCode.DevLogger
             gitCommit = EditorGUILayout.TextField("Git Commit", gitCommit);
             if (GUILayout.Button("Git Log"))
             {
-                GitLogEntry log = await GitPanel.LatestLog();
-                shortText = log.description;
-                gitCommit = log.hash;
+                PopulateFromLatestGitLog();
             }
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.EndHorizontal();
+        }
+
+        private static async Task PopulateFromLatestGitLog()
+        {
+            GitLogEntry log = await GitPanel.LatestLog();
+            shortText = log.description;
+            gitCommit = log.hash;
         }
 
         private static void PostingGUI() {
