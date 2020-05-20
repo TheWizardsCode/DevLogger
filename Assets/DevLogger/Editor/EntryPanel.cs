@@ -24,7 +24,7 @@ namespace WizardsCode.DevLogger
         [SerializeField] List<string> suggestedMetaData;
         [SerializeField] List<bool> selectedMetaData;
         [SerializeField] string newMetaDataItem;
-        [SerializeField] internal MediaPanel mediaPanel;
+        internal MediaPanel mediaPanel;
 
         public EntryPanel(MediaPanel mediaPanel)
         {
