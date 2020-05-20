@@ -19,34 +19,8 @@ namespace WizardsCode.DevLogger
     /// </summary>
     public class DevLoggerWindow : EditorWindow
     {
-        private List<bool> availableImages = new List<bool>();
-        List<string> suggestedMetaData;
-        List<bool> selectedMetaData;
-        public DevLogEntries devLog;
-
-        
-        private const string DATABASE_PATH = "Assets/ScreenCaptures.asset";
-        string shortText = "";
-        string detailText = "";
-        string uiStatusText = "";
-        string gitCommit = "";
-
-        private int maxImagesToRemember = 10;
-
-        private Vector2 windowScrollPos;
-
-        public Camera m_Camera;
         private string[] toolbarLabels = { "Entry", "Dev Log", "Git", "Settings" };
         private int selectedTab = 0;
-
-        // Animated GIF setup
-        bool preserveAspect = true; // Automatically compute height from the current aspect ratio
-        int width = 360; // Width in pixels
-        int fps = 16; // Height in pixels
-        int bufferSize = 10; // Number of seconds to record
-        int repeat = 0; // -1: no repeat, 0: infinite, >0: repeat count
-        int quality = 15; // Quality of color quantization, lower = better but slower (min 1, max 100)
-
 
         [UnityEditor.MenuItem("Tools/Wizards Code/Dev Logger")]
         public static void ShowWindow()
@@ -54,165 +28,50 @@ namespace WizardsCode.DevLogger
             EditorWindow.GetWindow(typeof(DevLoggerWindow), false, "DevLog: " + Application.productName, true);
         }
 
-        [SerializeField]
-        private List<int> _latestCaptures;
-        private Recorder _recorder;
-        private bool removeRecorder;
-        private bool originalFinalBlitToCameraTarget;
-        private bool m_IsSaving;
-
-        private Recorder Recorder
-        {
-            get
-            {
-                if (_recorder == null && m_Camera)
-                {
-                    _recorder = m_Camera.GetComponent<Recorder>();
-                    if (_recorder == null)
-                    {
-                        _recorder = m_Camera.gameObject.AddComponent<Recorder>();
-                        _recorder.Init();
-
-                        PostProcessLayer pp = Camera.main.GetComponent<PostProcessLayer>();
-                        if (pp != null)
-                        {
-                            originalFinalBlitToCameraTarget = pp.finalBlitToCameraTarget;
-                            pp.finalBlitToCameraTarget = false;
-                        }
-                        removeRecorder = true;
-                    }
-                    else
-                    {
-                        removeRecorder = false;
-                    }
-                }
-
-                return _recorder;
-            }
-        }
-
-        private void OnFileSaved(int arg1, string arg2)
-        {
-            m_IsSaving = false;
-            _recorder.Record();
-        }
-
-        private void OnProcessingDone()
-        {
-            m_IsSaving = true;
-        }
-
-        public List<int> LatestCaptures
-        {
-            get
-            {
-                if (_latestCaptures == null)
-                {
-                    _latestCaptures = new List<int>();
-                }
-                return _latestCaptures;
-            }
-            set { _latestCaptures = value; }
-        }
-
         private void OnEnable()
         {
             EditorApplication.update += Update;
-
-            int numOfHashtags = EditorPrefs.GetInt("numberOfSuggestedMetaData", 0);
-            if (numOfHashtags == 0)
-            {
-                suggestedMetaData = new List<string>() { "#IndieGame", "#MadeWithUnity" };
-                selectedMetaData = new List<bool> { true, true };
-            } else
-            {
-                suggestedMetaData = new List<string>();
-                selectedMetaData = new List<bool>();
-
-                for (int i = 0; i < numOfHashtags; i++)
-                {
-                    suggestedMetaData.Add(EditorPrefs.GetString("suggestedMetaData_" + i));
-                    selectedMetaData.Add(EditorPrefs.GetBool("selectedMetaData_" + i));
-                }
-            }
-
-            devLog = AssetDatabase.LoadAssetAtPath( EditorPrefs.GetString("DevLogScriptableOjectPath"), typeof(DevLogEntries)) as DevLogEntries;
-            ConfigureReorderableLogList();
-
+            EntryPanel.OnEnable();
+            DevLogPanel.OnEnable();
             GitSettings.Load();
         }
 
         private void OnDisable()
         {
             EditorApplication.update -= Update;
-
-            // TODO Create a constants file for these preference names
-            EditorPrefs.SetInt("numberOfSuggestedMetaData", suggestedMetaData.Count);
-            for (int i = 0; i < suggestedMetaData.Count; i++)
-            {
-                EditorPrefs.SetString("suggestedMetaData_" + i, suggestedMetaData[i]);
-                EditorPrefs.SetBool("selectedMetaData_" + i, selectedMetaData[i]);
-            }
-            // TODO Need to store DevLog referece on a per project basis
-            EditorPrefs.SetString("DevLogScriptableOjectPath", AssetDatabase.GetAssetPath(devLog));
-
+            EntryPanel.OnDisable();
+            DevLogPanel.OnDisable();
             GitSettings.Save();
         }
 
         private void OnDestroy()
         {
-            if (removeRecorder)
-            {
-                DestroyImmediate(_recorder);
-            }
-            PostProcessLayer pp = Camera.main.GetComponent<PostProcessLayer>();
-            if (pp != null)
-            {
-                pp.finalBlitToCameraTarget = originalFinalBlitToCameraTarget;
-            }
+            MediaPanel.OnDestroy();
         }
 
-        DevLogScreenCapture currentScreenCapture;
-        private bool showTwitter = false;
         private bool showSettings = false;
-        private Vector2 mediaScrollPosition;
-        private string newMetaDataItem;
-        private ReorderableList logList;
 
         void Update()
         {
-            if (Recorder == null || Recorder.State == RecorderState.PreProcessing)
-            {
-                return;
-            }
-
-            if (currentScreenCapture != null && !m_IsSaving && !currentScreenCapture.IsImageSaved)
-            {
-                AddToLatestCaptures(currentScreenCapture);
-
-                AssetDatabase.AddObjectToAsset(currentScreenCapture, DATABASE_PATH);
-                AssetDatabase.SaveAssets();
-
-                currentScreenCapture.IsImageSaved = true;
-            }
+            MediaPanel.Update();
         }
 
         #region GUI
         void OnGUI()
         {
-            if (!m_Camera)
-            {
-                m_Camera = Camera.main;
-            }
-
             selectedTab = GUILayout.Toolbar(selectedTab, toolbarLabels);
             switch (selectedTab)
             {
                 case 0:
-                    LogEntryTab();
+                    if (MediaPanel.CaptureCamera && DevLogPanel.DevLog != null) {
+                        EntryPanel.OnGUI();
+                    } else
+                    {
+                        SettingsTab();
+                    }
                     break;
                 case 1:
-                    LogTab();
+                    DevLogPanel.OnGUI();
                     break;
                 case 2:
                     GitPanel.OnGUI();
@@ -223,95 +82,30 @@ namespace WizardsCode.DevLogger
             }
         }
 
-        public void LogEntryTab() { 
-            if (m_Camera)
-            {
-                windowScrollPos = EditorGUILayout.BeginScrollView(windowScrollPos);
-
-                Skin.StartSection("Log Entry", false);
-                LogEntryGUI();
-                Skin.EndSection();
-
-                Skin.StartSection("Meta Data", false);
-                MetaDataGUI();
-                Skin.EndSection();
-
-                Skin.StartSection("Posting", false);
-                PostingGUI();
-                Skin.EndSection();
-
-                Skin.StartSection("Media");
-                MediaListGUI();
-                Skin.EndSection();
-
-                Skin.StartSection("Capture");
-                MediaCaptureGUI();
-                Skin.EndSection();
-
-                EditorGUILayout.Space();
-                EditorGUILayout.BeginVertical("Box");
-                showTwitter = EditorGUILayout.Foldout(showTwitter, "Twitter", EditorStyles.foldout);
-                if (showTwitter)
-                {
-                    if (Twitter.IsAuthenticated)
-                    {
-                        TwitterGUI();
-                    }
-                    else
-                    {
-                        OnAuthorizeTwitterGUI();
-                    }
-                }
-                EditorGUILayout.EndVertical();
-
-                EditorGUILayout.EndScrollView();
-            } else
-            {
-                SettingsTab();
-            }
-        }
-
-        public void LogTab()
-        {
-            if (logList == null)
-            {
-                EditorGUILayout.LabelField("Setup your log in the 'Settings' Tab.");
-            } else {
-                listScrollPosition = EditorGUILayout.BeginScrollView(listScrollPosition);
-                logList.DoLayoutList();
-                EditorGUILayout.EndScrollView();
-            }
-        }
-
         public void SettingsTab()
         {
             EditorGUILayout.BeginVertical("Box");
             EditorGUILayout.BeginVertical();
-            if (!m_Camera)
+            if (!MediaPanel.CaptureCamera)
             {
                 EditorGUILayout.LabelField("No main camera in scene, please select tag a camera as MainCamera or select a camera here.");
             }
 
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.PrefixLabel("Camera for captures");
-            m_Camera = (Camera)EditorGUILayout.ObjectField(m_Camera, typeof(Camera), true);
+            MediaPanel.CaptureCamera = (Camera)EditorGUILayout.ObjectField(MediaPanel.CaptureCamera, typeof(Camera), true);
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.PrefixLabel("Dev Log Storage");
-            DevLogEntries oldDevLog = devLog;
-            devLog = EditorGUILayout.ObjectField(oldDevLog, typeof(DevLogEntries), true) as DevLogEntries;
-            if (devLog != oldDevLog)
-            {
-                ConfigureReorderableLogList();
-            }
+            DevLogPanel.DevLog = EditorGUILayout.ObjectField(DevLogPanel.DevLog, typeof(DevLogEntries), true) as DevLogEntries;
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Reset"))
             {
-                LatestCaptures = new List<int>();
-                availableImages = new List<bool>();
+                MediaPanel.LatestCaptures = new List<int>();
+                MediaPanel.ImageSelection = new List<bool>();
                 if (EditorUtility.DisplayDialog("Reset Twitter OAuth Tokens?",
                     "Do you also want to clear the Twitter access tokens?",
                     "Yes", "Do Not Clear Them")) {
@@ -321,7 +115,7 @@ namespace WizardsCode.DevLogger
 
             if (GUILayout.Button("Capture DevLogger"))
             {
-                CaptureWindowScreenshot("WizardsCode.DevLogger.DevLoggerWindow");
+                MediaPanel.CaptureWindowScreenshot("WizardsCode.DevLogger.DevLoggerWindow");
             }
 
             if (GUILayout.Button("Dump Window Names"))
@@ -334,616 +128,17 @@ namespace WizardsCode.DevLogger
             }
             EditorGUILayout.EndHorizontal();
 
-            if (string.IsNullOrEmpty(uiStatusText))
-            {
-                EditorGUILayout.LabelField("Welcome to " + Application.productName + " v" + Application.version);
-            }
-            else
-            {
-                EditorGUILayout.LabelField(uiStatusText);
-            }
-
-            EditorGUILayout.EndVertical();
-
-            EditorGUILayout.EndVertical();
-        }
-
-        private void ConfigureReorderableLogList()
-        {
-            if (devLog != null)
-            {
-                logList = new ReorderableList(devLog.entries, typeof(DevLogEntry), true, true, true, true);
-                logList.drawElementCallback = DrawLogListElement;
-                logList.drawHeaderCallback = DrawHeader;
-                logList.elementHeightCallback = ElementHeightCallback;
-                logList.displayAdd = false;
-            } else
-            {
-                logList = null;
-            }
-        }
-
-        float listLabelWidth = 80;
-        int listDescriptionLines = 6;
-        private Vector2 listScrollPosition;
-
-        private float ElementHeightCallback(int index)
-        {
-            float height = EditorGUIUtility.singleLineHeight; // title
-            height += EditorGUIUtility.singleLineHeight * listDescriptionLines; // descrption
-            height += EditorGUIUtility.singleLineHeight * devLog.entries[index].metaData.Count; // meta data
-            height += EditorGUIUtility.singleLineHeight * devLog.entries[index].captures.Count; // capture
-            height += EditorGUIUtility.singleLineHeight;// Commit Hash
-            height += EditorGUIUtility.singleLineHeight;// Tweeted
-            height += EditorGUIUtility.singleLineHeight;// Date
-            height += 10; // space
-            return height;
-        }
-
-        private void DrawHeader(Rect rect)
-        {
-            EditorGUI.LabelField(rect, "Entries");
-        }
-
-        private void DrawLogListElement(Rect rect, int index, bool isActive, bool isFocused)
-        {
-            Entry entry = devLog.entries[index];
-
-            Rect labelRect = new Rect(rect.x, rect.y, listLabelWidth, EditorGUIUtility.singleLineHeight);
-            EditorGUI.PrefixLabel(labelRect, new GUIContent("Title"));
-            Rect fieldRect = new Rect(labelRect.x + listLabelWidth, labelRect.y, rect.width - listLabelWidth, labelRect.height);
-            EditorGUI.TextField(fieldRect, entry.shortDescription);
-
-            labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight, labelRect.width, labelRect.height);
-            EditorGUI.PrefixLabel(labelRect, new GUIContent("Description"));
-            fieldRect = new Rect(fieldRect.x, labelRect.y, fieldRect.width, EditorGUIUtility.singleLineHeight * listDescriptionLines);
-            EditorGUI.TextArea(fieldRect, entry.longDescription);
-
-            labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight * listDescriptionLines, labelRect.width, labelRect.height);
-            if (devLog.entries[index].metaData.Count != 0)
-            {
-                EditorGUI.PrefixLabel(labelRect, new GUIContent("Meta Data"));
-                for (int i = 0; i < entry.metaData.Count; i++)
-                {
-                    fieldRect = new Rect(fieldRect.x, labelRect.y + EditorGUIUtility.singleLineHeight * i, fieldRect.width, EditorGUIUtility.singleLineHeight);
-                    EditorGUI.TextField(fieldRect, entry.metaData[i]);
-                }
-            }
-
-            labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight * devLog.entries[index].metaData.Count, labelRect.width, labelRect.height);
-            if (devLog.entries[index].captures.Count != 0)
-            {
-                EditorGUI.PrefixLabel(labelRect, new GUIContent("Captures"));
-                for (int i = 0; i < entry.captures.Count; i++)
-                {
-                    fieldRect = new Rect(fieldRect.x, labelRect.y + EditorGUIUtility.singleLineHeight * i, fieldRect.width, EditorGUIUtility.singleLineHeight);
-                    EditorGUI.TextField(fieldRect, entry.captures[i].Filename);
-                }
-            }
+            EditorGUILayout.LabelField("Welcome to " + Application.productName + " v" + Application.version);
             
-            labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight * devLog.entries[index].captures.Count, labelRect.width, labelRect.height);
-            EditorGUI.PrefixLabel(labelRect, new GUIContent("Commit"));
-            fieldRect = new Rect(fieldRect.x, labelRect.y, fieldRect.width, EditorGUIUtility.singleLineHeight);
-            EditorGUI.TextArea(fieldRect, entry.commitHash);
-
-            labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight, labelRect.width, labelRect.height);
-            EditorGUI.PrefixLabel(labelRect, new GUIContent("Tweeted"));
-            fieldRect = new Rect(fieldRect.x, labelRect.y, fieldRect.width, EditorGUIUtility.singleLineHeight);
-            EditorGUI.Toggle(fieldRect, entry.tweeted);
-
-            labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight, labelRect.width, labelRect.height);
-            EditorGUI.PrefixLabel(labelRect, new GUIContent("Created"));
-            fieldRect = new Rect(fieldRect.x, labelRect.y, fieldRect.width, EditorGUIUtility.singleLineHeight);
-            EditorGUI.LabelField(fieldRect, entry.created.ToString("dd MMM yyyy"));
-        }
-
-
-        #endregion
-
-        #region Twitter
-        private void TwitterGUI()
-        {
-            EditorGUILayout.LabelField(GetFullTweetText());
-            EditorGUILayout.LabelField(string.Format("Tweet ({0} chars + {1} for selected hashtags = {2} chars)", shortText.Length, GetSelectedMetaDataLength(), GetFullTweetText().Length));
-            if (!string.IsNullOrEmpty(shortText) && GetFullTweetText().Length <= 280)
-            {
-                EditorGUILayout.BeginHorizontal();
-                if (GUILayout.Button("Tweet (and DevLog) with text only"))
-                {
-                    if (Twitter.PublishTweet(GetFullTweetText(), out string response))
-                    {
-                        uiStatusText = "Tweet sent succesfully";
-                        AppendDevlog(true, true);
-                    } else
-                    {
-                        Debug.LogError(response);
-                    }
-                }
-
-                if (LatestCaptures != null && LatestCaptures.Count > 0)
-                {
-                    if (GUILayout.Button("Tweet (and DevLog) with image(s) and text"))
-                    {
-                        List<string> mediaFilePaths = new List<string>();
-                        for (int i = 0; i < availableImages.Count; i++)
-                        {
-                            if (availableImages[i])
-                            {
-                                DevLogScreenCapture capture = EditorUtility.InstanceIDToObject(LatestCaptures[i]) as DevLogScreenCapture;
-                                mediaFilePaths.Add(capture.GetRelativeImagePath());
-                            }
-                        }
-
-                        if (Twitter.PublishTweetWithMedia(GetFullTweetText(), mediaFilePaths, out string response))
-                        {
-                            uiStatusText = "Tweet with image(s) sent succesfully";
-                        } else
-                        {
-                            Debug.LogError(response);
-                            uiStatusText = response;
-                        }
-                        AppendDevlog(true, true);
-                    }
-                }
-                EditorGUILayout.EndHorizontal();
-            }
-            else
-            {
-                EditorGUILayout.LabelField("No valid actions at this time.");
-            }
-        }
-
-        private int GetSelectedMetaDataLength()
-        {
-            return GetSelectedMetaData().Length;
-        }
-
-        /// <summary>
-        /// Get a string containing all the selected hashtags for this tweet.
-        /// </summary>
-        /// <returns>Space separated list of hashtags</returns>
-        private string GetSelectedMetaData()
-        {
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < suggestedMetaData.Count; i++)
-            {
-                if (selectedMetaData[i])
-                {
-                    sb.Append(" ");
-                    sb.Append(suggestedMetaData[i]);
-                }
-            }
-            return sb.ToString();
-        }
-
-        /// <summary>
-        /// Get the Tweet in the form it would be sent.
-        /// </summary>
-        /// <returns>The tweet as it will be sent.</returns>
-        private string GetFullTweetText()
-        {
-            return shortText + GetSelectedMetaData();
-        }
-
-        private void OnAuthorizeTwitterGUI()
-        {
-            GUILayout.Label("Authorize on Twitter", EditorStyles.boldLabel);
-            EditorPrefs.SetString(Twitter.EDITOR_PREFS_TWITTER_API_KEY, EditorGUILayout.TextField("Consumer API Key", EditorPrefs.GetString(Twitter.EDITOR_PREFS_TWITTER_API_KEY)));
-            EditorPrefs.SetString(Twitter.EDITOR_PREFS_TWITTER_API_SECRET, EditorGUILayout.TextField("Consumer API Secret", EditorPrefs.GetString(Twitter.EDITOR_PREFS_TWITTER_API_SECRET)));
-            EditorPrefs.SetString(Twitter.EDITOR_PREFS_TWITTER_ACCESS_TOKEN, EditorGUILayout.TextField("Acess Token", EditorPrefs.GetString(Twitter.EDITOR_PREFS_TWITTER_ACCESS_TOKEN)));
-            EditorPrefs.SetString(Twitter.EDITOR_PREFS_TWITTER_ACCESS_SECRET, EditorGUILayout.TextField("Access Secret", EditorPrefs.GetString(Twitter.EDITOR_PREFS_TWITTER_ACCESS_SECRET)));
-        }
-        #endregion
-
-        #region Media
-
-        private void MediaListGUI()
-        {
-            mediaScrollPosition = EditorGUILayout.BeginScrollView(mediaScrollPosition, GUILayout.Height(140));
-            if (LatestCaptures != null && LatestCaptures.Count > 0)
-            {
-                ImageSelectionGUI();
-            }
-            EditorGUILayout.EndScrollView();
-        }
-
-        private void MediaCaptureGUI() { 
-            EditorGUILayout.Space();
-
-            EditorGUILayout.BeginHorizontal();
-            if (Application.isPlaying)
-            {
-                if (GUILayout.Button("Scene View"))
-                {
-                    CaptureWindowScreenshot("UnityEditor.SceneView");
-                }
-
-                if (GUILayout.Button("Game View"))
-                {
-                    CaptureWindowScreenshot("UnityEditor.GameView");
-                }
-                
-                EditorGUILayout.BeginVertical();
-
-                switch (Recorder.State)
-                {
-                    case RecorderState.Paused: // We are paused so start recording. This allows saving of the last X seconds
-                        Recorder.Setup(preserveAspect, width, width / 2, fps, bufferSize, repeat, quality);
-                        Recorder.Record();
-
-                        EditorGUILayout.LabelField("Starting Recording");
-                        break;
-                    case RecorderState.Recording:
-                        if (GUILayout.Button("Save Animated GIF"))
-                        {
-                            currentScreenCapture = ScriptableObject.CreateInstance<DevLogScreenCapture>();
-                            currentScreenCapture.Encoding = DevLogScreenCapture.ImageEncoding.gif;
-                            currentScreenCapture.name = "In Game Footage";
-                            
-                            Recorder.OnPreProcessingDone = OnProcessingDone;
-                            Recorder.OnFileSaved = OnFileSaved;
-                            
-                            Recorder.SaveFolder = currentScreenCapture.GetAbsoluteImageFolder();
-                            Recorder.Filename = currentScreenCapture.Filename;
-
-                            Recorder.Save(true);
-                        }
-                        break;
-                    case RecorderState.PreProcessing:
-                        EditorGUILayout.LabelField("Processing");
-                        break;
-                }
-
-                EditorGUILayout.BeginHorizontal();
-                GUILayout.Label("Buffer (in seconds)");
-                bufferSize = int.Parse(GUILayout.TextField(bufferSize.ToString()));
-                EditorGUILayout.EndHorizontal();
-
-                EditorGUILayout.BeginHorizontal();
-                GUILayout.Label("Quality (lower is better)");
-                quality = int.Parse(GUILayout.TextField(quality.ToString()));
-                EditorGUILayout.EndHorizontal();
-
-                EditorGUILayout.BeginHorizontal();
-                GUILayout.Label("Width");
-                width = int.Parse(GUILayout.TextField(width.ToString()));
-                EditorGUILayout.EndHorizontal();
-                
-                EditorGUILayout.EndVertical();
-            } else
-            {
-                EditorGUILayout.BeginVertical();
-                EditorGUILayout.BeginHorizontal();
-                if (GUILayout.Button("Hierarchy"))
-                {
-                    CaptureWindowScreenshot("UnityEditor.SceneHierarchyWindow");
-                }
-
-                if (GUILayout.Button("Inspector"))
-                {
-                    CaptureWindowScreenshot("UnityEditor.InspectorWindow");
-                }
-
-                if (GUILayout.Button("Project"))
-                {
-                    CaptureWindowScreenshot("UnityEditor.ProjectBrowser");
-                }
-
-                if (GUILayout.Button("Scene View"))
-                {
-                    CaptureWindowScreenshot("UnityEditor.SceneView");
-                }
-
-                if (GUILayout.Button("Game View"))
-                {
-                    CaptureWindowScreenshot("UnityEditor.GameView");
-                }
-
-                if (GUILayout.Button("Console"))
-                {
-                    CaptureWindowScreenshot("UnityEditor.ConsoleWindow");
-                }
-                EditorGUILayout.EndHorizontal();
-
-                EditorGUILayout.Space();
-                EditorGUILayout.Space();
-
-                EditorGUILayout.BeginHorizontal();
-                if (GUILayout.Button("Package Manager"))
-                {
-                    CaptureWindowScreenshot("UnityEditor.PackageManager.UI.PackageManagerWindow");
-                }
-
-                if (GUILayout.Button("Asset Store"))
-                {
-                    CaptureWindowScreenshot("UnityEditor.AssetStoreWindow");
-                }
-
-                if (GUILayout.Button("Project Settings"))
-                {
-                    CaptureWindowScreenshot("UnityEditor.ProjectSettingsWindow");
-                }
-                EditorGUILayout.EndHorizontal();
-                EditorGUILayout.EndVertical();
-            }
-            EditorGUILayout.EndHorizontal();
-        }
-
-        private void ImageSelectionGUI()
-        {
-            EditorGUILayout.BeginHorizontal();
-            for (int i = LatestCaptures.Count - 1; i >= 0;  i--)
-            {
-                EditorGUILayout.BeginVertical();
-
-                EditorGUILayout.BeginHorizontal();
-                DevLogScreenCapture capture = EditorUtility.InstanceIDToObject(LatestCaptures[i]) as DevLogScreenCapture;
-                if (capture == null)
-                {
-                    LatestCaptures.RemoveAt(i);
-                    availableImages.RemoveAt(i);
-                    i--;
-                    continue;
-                }
-                if (GUILayout.Button(capture.Texture, GUILayout.Width(100), GUILayout.Height(100)))
-                {
-                    availableImages[i] = !availableImages[i];
-                }
-                availableImages[i] = EditorGUILayout.Toggle(availableImages[i]);
-                EditorGUILayout.EndHorizontal();
-
-                if (GUILayout.Button("View"))
-                {
-                    string filepath = (DevLog.GetAbsoluteDirectory() + capture.Filename).Replace(@"/", @"\");
-                    System.Diagnostics.Process.Start("Explorer.exe", @"/open,""" + filepath);
-                }
-
-                EditorGUILayout.EndVertical();
-            }
-            EditorGUILayout.EndHorizontal();
-        }
-
-        /// <summary>
-        /// Captures a screenshot of the desired editor window. To get a list of all the
-        /// windows available in the editor use:
-        /// ```
-        /// EditorWindow[] allWindows = Resources.FindObjectsOfTypeAll<EditorWindow>();
-        ///        foreach (EditorWindow window in allWindows)
-        ///        {
-        ///          Debug.Log(window);
-        ///        }
-        ///```
-        /// </summary>
-        /// <param name="windowName">The name of the window to be captured, for example:
-        /// WizardsCode.DevLogger.DevLoggerWindow
-        /// UnityEditor.AssetStoreWindow
-        /// UnityEditor.TimelineWindow
-        /// UnityEditor.AnimationWindow
-        /// UnityEditor.Graphs.AnimatorControllerTool
-        /// UnityEditor.NavMeshEditorWindow
-        /// UnityEditor.LightingWindow
-        /// </param>
-        private void CaptureWindowScreenshot(string windowName)
-        {
-            DevLogScreenCapture screenCapture = ScriptableObject.CreateInstance<DevLogScreenCapture>();
-            screenCapture.Encoding = DevLogScreenCapture.ImageEncoding.png;
-            screenCapture.name = windowName;
-
-            EditorWindow window;
-            if (windowName.StartsWith("UnityEditor."))
-            {
-                window = EditorWindow.GetWindow(typeof(Editor).Assembly.GetType(windowName));
-            }
-            else
-            {
-                Type t = Type.GetType(windowName);
-                window = EditorWindow.GetWindow(t);
-            }
-            window.Focus();
-
-            EditorApplication.delayCall += () =>
-            {
-                int width = (int)window.position.width;
-                int height = (int)window.position.height;
-                Vector2 position = window.position.position;
-                position.y += 18;
-
-                Color[] pixels = UnityEditorInternal.InternalEditorUtility.ReadScreenPixel(position, width, height);
-
-                Texture2D windowTexture = new Texture2D(width, height, TextureFormat.RGB24, false);
-                windowTexture.SetPixels(pixels);
-
-                byte[] bytes = windowTexture.EncodeToPNG();
-                System.IO.File.WriteAllBytes(screenCapture.GetRelativeImagePath(), bytes);
-                screenCapture.IsImageSaved = true;
-
-                AddToLatestCaptures(screenCapture);
-
-                AssetDatabase.AddObjectToAsset(screenCapture, DATABASE_PATH);
-                AssetDatabase.SaveAssets();
-
-                this.Focus();
-            };
-        }
-
-        private void AddToLatestCaptures(DevLogScreenCapture screenCapture)
-        {
-            if (screenCapture != null)
-            {
-                if (LatestCaptures.Count >= maxImagesToRemember)
-                {
-                    // Deleted the olded, not selected image
-                    for (int i = 0; i < availableImages.Count; i++) {
-                        if (!availableImages[i])
-                        {
-                            availableImages.RemoveAt(i);
-                            LatestCaptures.RemoveAt(i);
-                            break;
-                        }
-                    }
-
-                    // If we didn't delete one then delete the oldest
-                    if (availableImages.Count >= maxImagesToRemember)
-                    {
-                        availableImages.RemoveAt(0);
-                        LatestCaptures.RemoveAt(0);
-                    }
-                }
-                LatestCaptures.Add(screenCapture.GetInstanceID());
-                availableImages.Add(false);
-                uiStatusText = "Captured as " + screenCapture.GetRelativeImagePath();
-            }
-            else
-            {
-                uiStatusText = "Error capturing screen";
-            }
-        }
-        #endregion
-
-        #region Log Entry
-        private void LogEntryGUI()
-        {
-            EditorStyles.textField.wordWrap = true;
-            EditorGUILayout.LabelField("Short Entry (required)");
-            shortText = EditorGUILayout.TextArea(shortText, GUILayout.Height(35));
-
-            EditorGUILayout.LabelField("Long Entry (optional)");
-            detailText = EditorGUILayout.TextArea(detailText, GUILayout.Height(100));
-        }
-
-        private void MetaDataGUI() {
-            EditorGUILayout.BeginHorizontal();
-
-            EditorGUILayout.BeginVertical();
-            for (int i = 0; i < suggestedMetaData.Count; i++)
-            {
-                selectedMetaData[i] = EditorGUILayout.ToggleLeft(suggestedMetaData[i], selectedMetaData[i]);
-            }
-
-            EditorGUILayout.BeginHorizontal();
-            newMetaDataItem = EditorGUILayout.TextField(newMetaDataItem);
-            if (GUILayout.Button("Add"))
-            {
-                suggestedMetaData.Add(newMetaDataItem);
-                selectedMetaData.Add(true);
-                newMetaDataItem = "";
-            }
-            EditorGUILayout.EndHorizontal();
             EditorGUILayout.EndVertical();
 
-            gitCommit = EditorGUILayout.TextField("Git Commit", gitCommit);
-            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.EndVertical();
         }
 
-        private void PostingGUI() {
-            if (!string.IsNullOrEmpty(shortText))
-            {
-                EditorGUILayout.BeginHorizontal();
-                
-                bool hasSelection = false;
-                for (int i = 0; i < availableImages.Count; i++)
-                {
-                    if (availableImages[i])
-                    {
-                        hasSelection = true;
-                        break;
-                    }
-                }
+        
 
-                if (hasSelection)
-                {
-                    if (GUILayout.Button("Devlog (no Tweet) with selected image and text"))
-                    {
-                        AppendDevlog(true, false);
-                    }
-                }
-                else
-                {
-                    if (GUILayout.Button("DevLog (no Tweet) with text only"))
-                    {
-                        AppendDevlog(false, false);
-                    }
-                }
-                EditorGUILayout.EndHorizontal();
-            }
-            else
-            {
-                EditorGUILayout.LabelField("No valid actions at this time.");
-            }
 
-            EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("Open Devlog"))
-            {
-                string filepath = DevLog.GetAbsoluteProjectDirectory() + DevLog.GetRelativeCurrentFilePath();
-                System.Diagnostics.Process.Start(filepath);
-            }
-
-            if (GUILayout.Button("Open Media Folder"))
-            {
-                string filepath = DevLog.GetAbsoluteDirectory().Replace(@"/", @"\");
-                System.Diagnostics.Process.Start("Explorer.exe", @"/open,""" + filepath);
-            }
-            EditorGUILayout.EndHorizontal();
-
-        }
-
-        private void AppendDevlog(bool withImage, bool withTweet)
-        {
-            Entry entry = new Entry();
-
-            entry.shortDescription = shortText;
-            StringBuilder text = new StringBuilder(entry.shortDescription);
-
-            if (!string.IsNullOrEmpty(gitCommit))
-            {
-                entry.commitHash = gitCommit;
-
-                text.Append("\n\nGit Commit: " + gitCommit);
-                gitCommit = "";
-            }
-
-            for (int i = 0; i < suggestedMetaData.Count; i++)
-            {
-                if (selectedMetaData[i])
-                {
-                    entry.metaData.Add(suggestedMetaData[i]);
-                }
-            }
-            
-            if (withTweet)
-            {
-                entry.tweeted = true;
-                text.Append("\n\n[This DevLog entry was Tweeted.]");
-            }
-
-            if (withImage)
-            {
-                List<string> mediaFilePaths = new List<string>();
-                for (int i = 0; i < availableImages.Count; i++)
-                {
-                    if (availableImages[i])
-                    {
-                        DevLogScreenCapture capture = EditorUtility.InstanceIDToObject(LatestCaptures[i]) as DevLogScreenCapture;
-                        mediaFilePaths.Add(capture.Filename);
-                        entry.captures.Add(capture);
-                    }
-                }
-                
-                entry.longDescription = detailText;
-
-                DevLog.Append(text.ToString(), detailText, mediaFilePaths);
-            }
-            else
-            {
-                entry.longDescription = detailText;
-                DevLog.Append(text.ToString(), detailText);
-            }
-
-            devLog.entries.Add(entry);
-
-            shortText = "";
-            detailText = "";
-        }
         #endregion
+
     }
 }

@@ -42,8 +42,14 @@ namespace WizardsCode.Git
                 for (int i = 0; i < logEntries.Count; i++)
                 {
                     Skin.StartHelpBox();
+                    EditorGUILayout.BeginHorizontal();
                     string text = logEntries[i].hash + "\n" + logEntries[i].description;
                     EditorGUILayout.SelectableLabel(text, Skin.infoLabelStyle, GUILayout.ExpandWidth(true));
+                    if (GUILayout.Button("DevLog", GUILayout.Width(60)))
+                    {
+
+                    }
+                    EditorGUILayout.EndHorizontal();
                     Skin.EndHelpBox();
                 }
 
@@ -94,6 +100,7 @@ namespace WizardsCode.Git
             if (GUILayout.Button("Update Status"))
             {
                 Task.Run(UpdateStatus);
+                Task.Run(UpdateLog);
             }
 
             Skin.EndSection();

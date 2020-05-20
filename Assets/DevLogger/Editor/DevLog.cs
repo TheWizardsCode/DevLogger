@@ -19,6 +19,7 @@ namespace WizardsCode.DevLogger
         /// </summary>
         /// <param name="shortText">The short text content of this log entry.</param>
         /// <param name="mediaFilePath">The path to a media file to include as an image. If null no image will be included.</param>
+        [Obsolete("Use Append(Entry entry) instead")]
         public static void Append(string shortText, string detailText, List<string> mediaFilePaths = null)
         {
             StringBuilder entry = new StringBuilder();
