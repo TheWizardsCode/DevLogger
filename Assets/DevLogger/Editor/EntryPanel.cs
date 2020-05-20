@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
 using WizardsCode.DevLog;
 using WizardsCode.EditorUtils;
+using WizardsCode.Git;
 
 namespace WizardsCode.DevLogger
 {
@@ -114,7 +116,7 @@ namespace WizardsCode.DevLogger
             detailText = EditorGUILayout.TextArea(detailText, GUILayout.Height(100));
         }
 
-        private static void MetaDataGUI() {
+        private static async Task MetaDataGUI() {
             EditorGUILayout.BeginHorizontal();
 
             EditorGUILayout.BeginVertical();
@@ -134,7 +136,16 @@ namespace WizardsCode.DevLogger
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.EndVertical();
 
+
+            EditorGUILayout.BeginHorizontal();
             gitCommit = EditorGUILayout.TextField("Git Commit", gitCommit);
+            if (GUILayout.Button("Git Log"))
+            {
+                GitLogEntry log = await GitPanel.LatestLog();
+                shortText = log.description;
+                gitCommit = log.hash;
+            }
+            EditorGUILayout.EndHorizontal();
             EditorGUILayout.EndHorizontal();
         }
 

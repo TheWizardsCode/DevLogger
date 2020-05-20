@@ -127,7 +127,9 @@ namespace WizardsCode.Git
         }
 
         private static List<GitLogEntry> logEntries;
-        
+
+        public static int i { get; private set; }
+
         private static async Task UpdateLog()
         {
             logScrollPos = Vector2.zero;
@@ -139,16 +141,27 @@ namespace WizardsCode.Git
 
                 string[] lines = log.Split(new[] { '\r', '\n' });
                 for (int i = 0; i < lines.Length; i++)
-                {
-                    string hash = lines[i].Substring(0, 39);
-                    string description = lines[i].Substring(41);
-                    logEntries.Add(new GitLogEntry(hash, description));
+                {;
+                    logEntries.Add(GetEntryFromLogLine(lines[i]));
                 }
             }
             catch (Exception error)
             {
                 logError = error.Message;
             }
+        }
+
+        private static GitLogEntry GetEntryFromLogLine(string line)
+        {
+            string hash = line.Substring(0, 39);
+            string description = line.Substring(41);
+            return new GitLogEntry(hash, description);
+        }
+
+        internal static async Task<GitLogEntry> LatestLog()
+        {
+            string log = await Git.Log(1);
+            return GetEntryFromLogLine(log);
         }
     }
 }

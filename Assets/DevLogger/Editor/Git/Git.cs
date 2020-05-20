@@ -26,9 +26,9 @@ namespace WizardsCode.Git
             return process?.StandardOutput.ReadToEnd();
         }
 
-        public static async Task<string> Log()
+        public static async Task<string> Log(int maxCount = 10)
         {
-            Process process = await ProcessAsync(GitSettings.GitPath, "log --pretty=oneline");
+            Process process = await ProcessAsync(GitSettings.GitPath, "log --pretty=oneline --max-count=" + maxCount);
 
             LastLogUpdate = DateTime.Now;
 
