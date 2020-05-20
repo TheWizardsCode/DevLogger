@@ -6,6 +6,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
+using WizardsCode.DevLog;
+using WizardsCode.DevLogger;
 using WizardsCode.EditorUtils;
 
 namespace WizardsCode.Git
@@ -47,7 +49,7 @@ namespace WizardsCode.Git
                     EditorGUILayout.SelectableLabel(text, Skin.infoLabelStyle, GUILayout.ExpandWidth(true));
                     if (GUILayout.Button("DevLog", GUILayout.Width(60)))
                     {
-
+                        EntryPanel.Populate(logEntries[i].hash, logEntries[i].description);
                     }
                     EditorGUILayout.EndHorizontal();
                     Skin.EndHelpBox();

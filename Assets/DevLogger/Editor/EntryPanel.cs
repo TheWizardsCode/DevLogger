@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using UnityEditor;
 using UnityEngine;
@@ -51,6 +52,12 @@ namespace WizardsCode.DevLogger
                 EditorPrefs.SetString("suggestedMetaData_" + i, suggestedMetaData[i]);
                 EditorPrefs.SetBool("selectedMetaData_" + i, selectedMetaData[i]);
             }
+        }
+
+        internal static void Populate(string hash, string description)
+        {
+            shortText = description;
+            gitCommit = hash;
         }
 
         public static void OnGUI()
