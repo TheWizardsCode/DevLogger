@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -7,13 +8,21 @@ using WizardsCode.Social;
 
 namespace WizardsCode.DevLogger
 {
-    public static class TwitterPanel
+    [Serializable]
+    public class TwitterPanel
     {
-        static bool showTwitter = false;
-        private static string m_StatusText;
+        [SerializeField] bool showTwitter = false;
+        [SerializeField] EntryPanel entryPanel;
+        string m_StatusText;
 
-        public static void OnGUI(string tweet)
+        public TwitterPanel(EntryPanel entryPanel)
         {
+            this.entryPanel = entryPanel;
+        }
+
+        public void OnGUI()
+        {
+            string tweet = entryPanel.shortText + entryPanel.GetSelectedMetaData();
             EditorGUILayout.BeginVertical("Box");
             showTwitter = EditorGUILayout.Foldout(showTwitter, "Twitter", EditorStyles.foldout);
             if (showTwitter)
@@ -31,7 +40,7 @@ namespace WizardsCode.DevLogger
                             if (Twitter.PublishTweet(tweet, out string response))
                             {
                                 m_StatusText = "Tweet sent succesfully";
-                                EntryPanel.AppendDevlog(true, true);
+                                entryPanel.AppendDevlog(true, true);
                             }
                             else
                             {
@@ -39,16 +48,16 @@ namespace WizardsCode.DevLogger
                             }
                         }
 
-                        if (MediaPanel.LatestCaptures != null && MediaPanel.LatestCaptures.Count > 0)
+                        if (entryPanel.mediaPanel.LatestCaptures != null && entryPanel.mediaPanel.LatestCaptures.Count > 0)
                         {
                             if (GUILayout.Button("Tweet (and DevLog) with image(s) and text"))
                             {
                                 List<string> mediaFilePaths = new List<string>();
-                                for (int i = 0; i < MediaPanel.ImageSelection.Count; i++)
+                                for (int i = 0; i < entryPanel.mediaPanel.ImageSelection.Count; i++)
                                 {
-                                    if (MediaPanel.ImageSelection[i])
+                                    if (entryPanel.mediaPanel.ImageSelection[i])
                                     {
-                                        DevLogScreenCapture capture = EditorUtility.InstanceIDToObject(MediaPanel.LatestCaptures[i]) as DevLogScreenCapture;
+                                        DevLogScreenCapture capture = EditorUtility.InstanceIDToObject(entryPanel.mediaPanel.LatestCaptures[i]) as DevLogScreenCapture;
                                         mediaFilePaths.Add(capture.GetRelativeImagePath());
                                     }
                                 }
@@ -65,7 +74,7 @@ namespace WizardsCode.DevLogger
 
                                 EditorGUILayout.LabelField(m_StatusText);
 
-                                EntryPanel.AppendDevlog(true, true);
+                                entryPanel.AppendDevlog(true, true);
                             }
                         }
                         EditorGUILayout.EndHorizontal();
@@ -83,12 +92,12 @@ namespace WizardsCode.DevLogger
             EditorGUILayout.EndVertical();
         }
 
-        private static int GetSelectedMetaDataLength()
+        private int GetSelectedMetaDataLength()
         {
-            return EntryPanel.GetSelectedMetaData().Length;
+            return entryPanel.GetSelectedMetaData().Length;
         }
 
-        private static void OnAuthorizeTwitterGUI()
+        private void OnAuthorizeTwitterGUI()
         {
             GUILayout.Label("Authorize on Twitter", EditorStyles.boldLabel);
             EditorPrefs.SetString(Twitter.EDITOR_PREFS_TWITTER_API_KEY, EditorGUILayout.TextField("Consumer API Key", EditorPrefs.GetString(Twitter.EDITOR_PREFS_TWITTER_API_KEY)));

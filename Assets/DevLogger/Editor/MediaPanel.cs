@@ -10,54 +10,56 @@ using WizardsCode.EditorUtils;
 
 namespace WizardsCode.DevLogger
 {
+    [Serializable]
     public class MediaPanel
     {
         const string DATABASE_PATH = "Assets/ScreenCaptures.asset";
 
-        static int maxImagesToRemember = 10;
-        static Vector2 mediaScrollPosition;
-        static List<int> _latestCaptures;
-        public static List<bool> ImageSelection = new List<bool>();
+        [SerializeField] int maxImagesToRemember = 10;
+        [SerializeField] Vector2 mediaScrollPosition;
+        [SerializeField] List<int> _latestCaptures;
+        public List<bool> ImageSelection = new List<bool>();
 
-        static Recorder _recorder;
-        static DevLogScreenCapture currentScreenCapture;
-        static bool removeRecorder;
-        static bool originalFinalBlitToCameraTarget;
-        static bool m_IsSaving;
-        static Camera m_Camera;
+        [SerializeField] Recorder _recorder;
+        [SerializeField] DevLogScreenCapture currentScreenCapture;
+        [SerializeField] bool removeRecorder;
+        [SerializeField] bool originalFinalBlitToCameraTarget;
+        [SerializeField] bool m_IsSaving;
+        [SerializeField] Camera m_Camera;
 
         // Animated GIF setup
-        static bool preserveAspect = true; // Automatically compute height from the current aspect ratio
-        static int width = 360; // Width in pixels
-        static int fps = 16; // Height in pixels
-        static int bufferSize = 10; // Number of seconds to record
-        static int repeat = 0; // -1: no repeat, 0: infinite, >0: repeat count
-        static int quality = 15; // Quality of color quantization, lower = better but slower (min 1, max 100)
-
-        public MediaPanel() {
-            if (!m_Camera)
-            {
-                m_Camera = Camera.main;
-            }
-        }
-
-        public static Camera CaptureCamera
+        [SerializeField] bool preserveAspect = true; // Automatically compute height from the current aspect ratio
+        [SerializeField] int width = 360; // Width in pixels
+        [SerializeField] int fps = 16; // Height in pixels
+        [SerializeField] int bufferSize = 10; // Number of seconds to record
+        [SerializeField] int repeat = 0; // -1: no repeat, 0: infinite, >0: repeat count
+        [SerializeField] int quality = 15; // Quality of color quantization, lower = better but slower (min 1, max 100)
+        
+        public Camera CaptureCamera
         {
-            get { return m_Camera; }
+            get {
+
+                if (m_Camera == null)
+                {
+                    m_Camera = Camera.main;
+                }
+                
+                return m_Camera; 
+            }
             set { m_Camera = value; }
         }
 
-        internal static void OnEnable()
+        internal void OnEnable()
         {
             CaptureCamera = AssetDatabase.LoadAssetAtPath(EditorPrefs.GetString("DevLogCaptureCamera_" + Application.productName), typeof(Camera)) as Camera;
         }
 
-        internal static void OnDisable()
+        internal void OnDisable()
         {
             EditorPrefs.SetString("DevLogCaptureCamera_" + Application.productName, AssetDatabase.GetAssetPath(CaptureCamera));
         }
 
-        private static Recorder Recorder
+        private Recorder Recorder
         {
             get
             {
@@ -87,7 +89,7 @@ namespace WizardsCode.DevLogger
             }
         }
 
-        internal static void OnDestroy()
+        internal void OnDestroy()
         {
             if (removeRecorder)
             {
@@ -100,18 +102,18 @@ namespace WizardsCode.DevLogger
             }
         }
 
-        private static void OnFileSaved(int arg1, string arg2)
+        private void OnFileSaved(int arg1, string arg2)
         {
             m_IsSaving = false;
             _recorder.Record();
         }
 
-        private static void OnProcessingDone()
+        private void OnProcessingDone()
         {
             m_IsSaving = true;
         }
 
-        public static List<int> LatestCaptures
+        public List<int> LatestCaptures
         {
             get
             {
@@ -124,19 +126,20 @@ namespace WizardsCode.DevLogger
             set { _latestCaptures = value; }
         }
 
-        public static void OnGUI()
+        public void OnGUI()
         {
             Skin.StartSection("Media");
+
             mediaScrollPosition = EditorGUILayout.BeginScrollView(mediaScrollPosition, GUILayout.Height(140));
             if (LatestCaptures != null && LatestCaptures.Count > 0)
             {
                 ImageSelectionGUI();
             }
             EditorGUILayout.EndScrollView();
+
             Skin.EndSection();
 
-            EditorGUILayout.Space();
-
+            Skin.StartSection("Capture");
             EditorGUILayout.BeginHorizontal();
             if (Application.isPlaying)
             {
@@ -255,9 +258,10 @@ namespace WizardsCode.DevLogger
                 EditorGUILayout.EndVertical();
             }
             EditorGUILayout.EndHorizontal();
+            Skin.EndSection();
         }
 
-        private static void ImageSelectionGUI()
+        private void ImageSelectionGUI()
         {
             EditorGUILayout.BeginHorizontal();
             for (int i = LatestCaptures.Count - 1; i >= 0; i--)
@@ -291,7 +295,7 @@ namespace WizardsCode.DevLogger
             EditorGUILayout.EndHorizontal();
         }
 
-        private static void AddToLatestCaptures(DevLogScreenCapture screenCapture)
+        private void AddToLatestCaptures(DevLogScreenCapture screenCapture)
         {
             if (screenCapture != null)
             {
@@ -320,7 +324,7 @@ namespace WizardsCode.DevLogger
             }
         }
 
-        internal static void Update()
+        internal void Update()
         {
             if (Recorder == null || Recorder.State == RecorderState.PreProcessing)
             {
@@ -358,7 +362,7 @@ namespace WizardsCode.DevLogger
         /// UnityEditor.NavMeshEditorWindow
         /// UnityEditor.LightingWindow
         /// </param>
-        public static void CaptureWindowScreenshot(string windowName)
+        public void CaptureWindowScreenshot(string windowName)
         {
             DevLogScreenCapture screenCapture = ScriptableObject.CreateInstance<DevLogScreenCapture>();
             screenCapture.Encoding = DevLogScreenCapture.ImageEncoding.png;

@@ -32,6 +32,6 @@ namespace WizardsCode.DevLogger
         [SerializeField, Tooltip("Has this entry been tweeted?")]
         public bool tweeted = false;
         [SerializeField, Tooltip("The date and time the log entry was created.")]
-        public DateTime created;
+        public DateTime created = DateTime.Now;
     }
 }

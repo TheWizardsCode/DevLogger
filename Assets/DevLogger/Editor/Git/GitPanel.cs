@@ -12,16 +12,25 @@ using WizardsCode.EditorUtils;
 
 namespace WizardsCode.Git
 {
-    public static class GitPanel
+    [Serializable]
+    public class GitPanel
     {   
-        public static bool isInitialized = false;
-        private static string status;
-        private static string statusError;
-        private static Vector2 statusScrollPos;
-        private static Vector2 logScrollPos;
-        private static string logError;
+        [SerializeField] public bool isInitialized = false;
+        [SerializeField] string status;
+        [SerializeField] string statusError;
+        [SerializeField] Vector2 statusScrollPos;
+        [SerializeField] Vector2 logScrollPos;
+        [SerializeField] string logError;
 
-        public static void OnGUI()
+        [SerializeField] List<GitLogEntry> logEntries;
+        [SerializeField] EntryPanel entryPanel;
+
+        public GitPanel(EntryPanel entryPanel)
+        {
+            this.entryPanel = entryPanel;
+        }
+
+        public void OnGUI()
         {
             if (!isInitialized)
             {
@@ -33,7 +42,7 @@ namespace WizardsCode.Git
             }
         }
 
-        private static void LogGUI()
+        private  void LogGUI()
         {
             Skin.StartSection("Log", false);
             if (logEntries != null)
@@ -49,7 +58,7 @@ namespace WizardsCode.Git
                     EditorGUILayout.SelectableLabel(text, Skin.infoLabelStyle, GUILayout.ExpandWidth(true));
                     if (GUILayout.Button("DevLog", GUILayout.Width(60)))
                     {
-                        EntryPanel.Populate(logEntries[i].hash, logEntries[i].description);
+                        entryPanel.Populate(logEntries[i].hash, logEntries[i].description);
                     }
                     EditorGUILayout.EndHorizontal();
                     Skin.EndHelpBox();
@@ -71,7 +80,7 @@ namespace WizardsCode.Git
             Skin.EndSection();
         }
 
-        private static void StatusBoxGUI()
+        private  void StatusBoxGUI()
         {
             Skin.StartSection("Status", false);
             EditorGUILayout.LabelField($"Last Status Update: {Git.LastStatusUpdate}");
@@ -108,7 +117,7 @@ namespace WizardsCode.Git
             Skin.EndSection();
         }
 
-        private static async Task UpdateStatus()
+        private  async Task UpdateStatus()
         {
             statusScrollPos = Vector2.zero;
             try
@@ -126,11 +135,9 @@ namespace WizardsCode.Git
             }
         }
 
-        private static List<GitLogEntry> logEntries;
+        public  int i { get; private set; }
 
-        public static int i { get; private set; }
-
-        private static async Task UpdateLog()
+        private  async Task UpdateLog()
         {
             logScrollPos = Vector2.zero;
             try
@@ -151,14 +158,14 @@ namespace WizardsCode.Git
             }
         }
 
-        private static GitLogEntry GetEntryFromLogLine(string line)
+        private  GitLogEntry GetEntryFromLogLine(string line)
         {
             string hash = line.Substring(0, 39);
             string description = line.Substring(41);
             return new GitLogEntry(hash, description);
         }
 
-        internal static async Task<GitLogEntry> LatestLog()
+        internal  async Task<GitLogEntry> LatestLog()
         {
             string log = await Git.Log(1);
             return GetEntryFromLogLine(log);

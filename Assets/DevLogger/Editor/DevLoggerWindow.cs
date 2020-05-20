@@ -17,8 +17,14 @@ namespace WizardsCode.DevLogger
     /// <summary>
     /// The main DevLogger control window.
     /// </summary>
+    [Serializable]
     public class DevLoggerWindow : EditorWindow
     {
+        [SerializeField] EntryPanel entryPanel;
+        [SerializeField] TwitterPanel twitterPanel;
+        [SerializeField] GitPanel gitPanel;
+        [SerializeField] MediaPanel mediaPanel;
+
         private string[] toolbarLabels = { "Entry", "Dev Log", "Git", "Settings" };
         private int selectedTab = 0;
 
@@ -28,10 +34,18 @@ namespace WizardsCode.DevLogger
             EditorWindow.GetWindow(typeof(DevLoggerWindow), false, "DevLog: " + Application.productName, true);
         }
 
+        private void Awake()
+        {
+            mediaPanel = new MediaPanel();
+            entryPanel = new EntryPanel(mediaPanel);
+            twitterPanel = new TwitterPanel(entryPanel);
+            gitPanel = new GitPanel(entryPanel);
+        }
+
         private void OnEnable()
         {
             EditorApplication.update += Update;
-            EntryPanel.OnEnable();
+            entryPanel.OnEnable();
             DevLogPanel.OnEnable();
             GitSettings.Load();
         }
@@ -39,21 +53,21 @@ namespace WizardsCode.DevLogger
         private void OnDisable()
         {
             EditorApplication.update -= Update;
-            EntryPanel.OnDisable();
+            entryPanel.OnDisable();
             DevLogPanel.OnDisable();
             GitSettings.Save();
         }
 
         private void OnDestroy()
         {
-            MediaPanel.OnDestroy();
+            mediaPanel.OnDestroy();
         }
 
         private bool showSettings = false;
 
         void Update()
         {
-            MediaPanel.Update();
+            mediaPanel.Update();
         }
 
         #region GUI
@@ -63,8 +77,12 @@ namespace WizardsCode.DevLogger
             switch (selectedTab)
             {
                 case 0:
-                    if (MediaPanel.CaptureCamera && DevLogPanel.DevLog != null) {
-                        EntryPanel.OnGUI();
+                    if (mediaPanel.CaptureCamera && DevLogPanel.DevLog != null) {
+                        entryPanel.OnGUI();
+                        EditorGUILayout.Space();
+                        mediaPanel.OnGUI();
+                        EditorGUILayout.Space();
+                        twitterPanel.OnGUI();
                     } else
                     {
                         SettingsTab();
@@ -74,7 +92,7 @@ namespace WizardsCode.DevLogger
                     DevLogPanel.OnGUI();
                     break;
                 case 2:
-                    GitPanel.OnGUI();
+                    gitPanel.OnGUI();
                     break;
                 case 3:
                     SettingsTab();
@@ -86,26 +104,35 @@ namespace WizardsCode.DevLogger
         {
             EditorGUILayout.BeginVertical("Box");
             EditorGUILayout.BeginVertical();
-            if (!MediaPanel.CaptureCamera)
+            if (!mediaPanel.CaptureCamera)
             {
                 EditorGUILayout.LabelField("No main camera in scene, please select tag a camera as MainCamera or select a camera here.");
             }
 
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.PrefixLabel("Camera for captures");
-            MediaPanel.CaptureCamera = (Camera)EditorGUILayout.ObjectField(MediaPanel.CaptureCamera, typeof(Camera), true);
+            mediaPanel.CaptureCamera = (Camera)EditorGUILayout.ObjectField(mediaPanel.CaptureCamera, typeof(Camera), true);
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.PrefixLabel("Dev Log Storage");
             DevLogPanel.DevLog = EditorGUILayout.ObjectField(DevLogPanel.DevLog, typeof(DevLogEntries), true) as DevLogEntries;
+            if (DevLogPanel.DevLog == null)
+            {
+                if (GUILayout.Button("Create"))
+                {
+                    DevLogPanel.DevLog = ScriptableObject.CreateInstance<DevLogEntries>();
+                    AssetDatabase.CreateAsset(DevLogPanel.DevLog, "Assets/Dev Log " + Application.version + ".asset");
+                    AssetDatabase.SaveAssets();
+                }
+            }
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Reset"))
             {
-                MediaPanel.LatestCaptures = new List<int>();
-                MediaPanel.ImageSelection = new List<bool>();
+                mediaPanel.LatestCaptures = new List<int>();
+                mediaPanel.ImageSelection = new List<bool>();
                 if (EditorUtility.DisplayDialog("Reset Twitter OAuth Tokens?",
                     "Do you also want to clear the Twitter access tokens?",
                     "Yes", "Do Not Clear Them")) {
@@ -115,7 +142,7 @@ namespace WizardsCode.DevLogger
 
             if (GUILayout.Button("Capture DevLogger"))
             {
-                MediaPanel.CaptureWindowScreenshot("WizardsCode.DevLogger.DevLoggerWindow");
+                mediaPanel.CaptureWindowScreenshot("WizardsCode.DevLogger.DevLoggerWindow");
             }
 
             if (GUILayout.Button("Dump Window Names"))

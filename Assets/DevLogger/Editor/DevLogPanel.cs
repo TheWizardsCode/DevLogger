@@ -142,5 +142,6 @@ namespace WizardsCode.DevLog
             fieldRect = new Rect(fieldRect.x, labelRect.y, fieldRect.width, EditorGUIUtility.singleLineHeight);
             EditorGUI.LabelField(fieldRect, entry.created.ToString("dd MMM yyyy"));
         }
+
     }
 }

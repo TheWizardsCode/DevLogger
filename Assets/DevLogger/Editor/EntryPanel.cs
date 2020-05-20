@@ -13,18 +13,25 @@ namespace WizardsCode.DevLogger
     /// <summary>
     /// The GUI Panel for a new DevLog Entry
     /// </summary>
-    public static class EntryPanel
+    [Serializable]
+    public class EntryPanel
     {
-        static Vector2 windowScrollPos;
-        static string shortText = "";
-        static string detailText = "";
-        static string uiStatusText = "";
-        static string gitCommit = "";
-        static List<string> suggestedMetaData;
-        static List<bool> selectedMetaData;
-        static string newMetaDataItem;
+        [SerializeField] Vector2 windowScrollPos;
+        [SerializeField] internal string shortText = "";
+        [SerializeField] string detailText = "";
+        [SerializeField] string uiStatusText = "";
+        [SerializeField] string gitCommit = "";
+        [SerializeField] List<string> suggestedMetaData;
+        [SerializeField] List<bool> selectedMetaData;
+        [SerializeField] string newMetaDataItem;
+        [SerializeField] internal MediaPanel mediaPanel;
 
-        internal static void OnEnable()
+        public EntryPanel(MediaPanel mediaPanel)
+        {
+            this.mediaPanel = mediaPanel;
+        }
+
+        internal void OnEnable()
         {
             int numOfHashtags = EditorPrefs.GetInt("numberOfSuggestedMetaData", 0);
             if (numOfHashtags == 0)
@@ -45,7 +52,7 @@ namespace WizardsCode.DevLogger
             }
         }
 
-        internal static void OnDisable()
+        internal void OnDisable()
         {
             // TODO Create a constants file for these preference names
             EditorPrefs.SetInt("numberOfSuggestedMetaData", suggestedMetaData.Count);
@@ -56,13 +63,13 @@ namespace WizardsCode.DevLogger
             }
         }
 
-        internal static void Populate(string hash, string description)
+        internal void Populate(string hash, string description)
         {
             shortText = description;
             gitCommit = hash;
         }
 
-        public static void OnGUI()
+        public void OnGUI()
         {
             windowScrollPos = EditorGUILayout.BeginScrollView(windowScrollPos);
 
@@ -78,12 +85,9 @@ namespace WizardsCode.DevLogger
             PostingGUI();
             Skin.EndSection();
 
-            Skin.StartSection("Capture");
-            MediaPanel.OnGUI();
+            Skin.StartSection("Data");
+            FoldersGUI();
             Skin.EndSection();
-
-            EditorGUILayout.Space();
-            TwitterPanel.OnGUI(shortText + GetSelectedMetaData());
 
             EditorGUILayout.EndScrollView();
         }
@@ -92,7 +96,7 @@ namespace WizardsCode.DevLogger
         /// Get a string containing all the selected hashtags for this tweet.
         /// </summary>
         /// <returns>Space separated list of hashtags</returns>
-        public static string GetSelectedMetaData()
+        public string GetSelectedMetaData()
         {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < suggestedMetaData.Count; i++)
@@ -106,7 +110,7 @@ namespace WizardsCode.DevLogger
             return sb.ToString();
         }
 
-        private static void LogEntryGUI()
+        private void LogEntryGUI()
         {
             EditorStyles.textField.wordWrap = true;
             EditorGUILayout.LabelField("Short Entry (required)");
@@ -116,7 +120,7 @@ namespace WizardsCode.DevLogger
             detailText = EditorGUILayout.TextArea(detailText, GUILayout.Height(100));
         }
 
-        private static void MetaDataGUI() {
+        private void MetaDataGUI() {
             EditorGUILayout.BeginHorizontal();
 
             EditorGUILayout.BeginVertical();
@@ -139,30 +143,19 @@ namespace WizardsCode.DevLogger
 
             EditorGUILayout.BeginHorizontal();
             gitCommit = EditorGUILayout.TextField("Git Commit", gitCommit);
-            if (GUILayout.Button("Git Log"))
-            {
-                PopulateFromLatestGitLog();
-            }
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.EndHorizontal();
         }
 
-        private static async Task PopulateFromLatestGitLog()
-        {
-            GitLogEntry log = await GitPanel.LatestLog();
-            shortText = log.description;
-            gitCommit = log.hash;
-        }
-
-        private static void PostingGUI() {
+        private void PostingGUI() {
             if (!string.IsNullOrEmpty(shortText))
             {
                 EditorGUILayout.BeginHorizontal();
-                
+
                 bool hasSelection = false;
-                for (int i = 0; i < MediaPanel.ImageSelection.Count; i++)
+                for (int i = 0; i < mediaPanel.ImageSelection.Count; i++)
                 {
-                    if (MediaPanel.ImageSelection[i])
+                    if (mediaPanel.ImageSelection[i])
                     {
                         hasSelection = true;
                         break;
@@ -189,7 +182,9 @@ namespace WizardsCode.DevLogger
             {
                 EditorGUILayout.LabelField("No valid actions at this time.");
             }
+        }
 
+        private void FoldersGUI() {
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Open Devlog"))
             {
@@ -203,10 +198,9 @@ namespace WizardsCode.DevLogger
                 System.Diagnostics.Process.Start("Explorer.exe", @"/open,""" + filepath);
             }
             EditorGUILayout.EndHorizontal();
-
         }
 
-        public static void AppendDevlog(bool withImage, bool withTweet)
+        public void AppendDevlog(bool withImage, bool withTweet)
         {
             Entry entry = new Entry();
 
@@ -238,11 +232,11 @@ namespace WizardsCode.DevLogger
             if (withImage)
             {
                 List<string> mediaFilePaths = new List<string>();
-                for (int i = 0; i < MediaPanel.ImageSelection.Count; i++)
+                for (int i = 0; i < mediaPanel.ImageSelection.Count; i++)
                 {
-                    if (MediaPanel.ImageSelection[i])
+                    if (mediaPanel.ImageSelection[i])
                     {
-                        DevLogScreenCapture capture = EditorUtility.InstanceIDToObject(MediaPanel.LatestCaptures[i]) as DevLogScreenCapture;
+                        DevLogScreenCapture capture = EditorUtility.InstanceIDToObject(mediaPanel.LatestCaptures[i]) as DevLogScreenCapture;
                         mediaFilePaths.Add(capture.Filename);
                         entry.captures.Add(capture);
                     }
