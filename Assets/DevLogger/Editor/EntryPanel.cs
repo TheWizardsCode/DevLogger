@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
-using WizardsCode.DevLog;
+using WizardsCode.DevLogger;
 using WizardsCode.EditorUtils;
 using WizardsCode.Git;
 
@@ -153,9 +153,9 @@ namespace WizardsCode.DevLogger
                 EditorGUILayout.BeginHorizontal();
 
                 bool hasSelection = false;
-                for (int i = 0; i < mediaPanel.ImageSelection.Count; i++)
+                for (int i = 0; i < mediaPanel.ScreenCaptures.Count; i++)
                 {
-                    if (mediaPanel.ImageSelection[i])
+                    if (mediaPanel.ScreenCaptures.captures[i])
                     {
                         hasSelection = true;
                         break;
@@ -232,11 +232,11 @@ namespace WizardsCode.DevLogger
             if (withImage)
             {
                 List<string> mediaFilePaths = new List<string>();
-                for (int i = 0; i < mediaPanel.ImageSelection.Count; i++)
+                for (int i = 0; i < mediaPanel.ScreenCaptures.Count; i++)
                 {
-                    if (mediaPanel.ImageSelection[i])
+                    if (mediaPanel.ScreenCaptures.captures[i].IsSelected)
                     {
-                        DevLogScreenCapture capture = EditorUtility.InstanceIDToObject(mediaPanel.LatestCaptures[i]) as DevLogScreenCapture;
+                        DevLogScreenCapture capture = mediaPanel.ScreenCaptures.captures[i];
                         mediaFilePaths.Add(capture.Filename);
                         entry.captures.Add(capture);
                     }

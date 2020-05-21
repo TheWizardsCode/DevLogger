@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-using WizardsCode.DevLog;
+using WizardsCode.DevLogger;
 using WizardsCode.Social;
 
 namespace WizardsCode.DevLogger
@@ -48,16 +48,16 @@ namespace WizardsCode.DevLogger
                             }
                         }
 
-                        if (entryPanel.mediaPanel.LatestCaptures != null && entryPanel.mediaPanel.LatestCaptures.Count > 0)
+                        if (entryPanel.mediaPanel.ScreenCaptures != null && entryPanel.mediaPanel.ScreenCaptures.Count > 0)
                         {
                             if (GUILayout.Button("Tweet (and DevLog) with image(s) and text"))
                             {
                                 List<string> mediaFilePaths = new List<string>();
-                                for (int i = 0; i < entryPanel.mediaPanel.ImageSelection.Count; i++)
+                                for (int i = 0; i < entryPanel.mediaPanel.ScreenCaptures.Count; i++)
                                 {
-                                    if (entryPanel.mediaPanel.ImageSelection[i])
+                                    if (entryPanel.mediaPanel.ScreenCaptures.captures[i])
                                     {
-                                        DevLogScreenCapture capture = EditorUtility.InstanceIDToObject(entryPanel.mediaPanel.LatestCaptures[i]) as DevLogScreenCapture;
+                                        DevLogScreenCapture capture = entryPanel.mediaPanel.ScreenCaptures.captures[i];
                                         mediaFilePaths.Add(capture.GetRelativeImagePath());
                                     }
                                 }

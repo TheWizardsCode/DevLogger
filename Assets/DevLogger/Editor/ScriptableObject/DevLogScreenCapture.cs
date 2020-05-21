@@ -7,7 +7,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace WizardsCode.DevLog
+namespace WizardsCode.DevLogger
 {
     public class DevLogScreenCapture : ScriptableObject
     {
@@ -34,6 +34,7 @@ namespace WizardsCode.DevLog
         public int _height;
 
         public bool IsImageSaved = false;
+        public bool IsSelected = false;
 
         private Texture2D _texture;
         public Texture2D Texture

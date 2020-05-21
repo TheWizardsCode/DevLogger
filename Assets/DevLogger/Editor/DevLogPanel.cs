@@ -6,11 +6,12 @@ using UnityEditorInternal;
 using UnityEngine;
 using WizardsCode.DevLogger;
 
-namespace WizardsCode.DevLog
+namespace WizardsCode.DevLogger
 {
     public static class DevLogPanel
     {
         public static DevLogEntries m_DevLog;
+        public static DevLogScreenCaptures m_ScreenCaptures;
         static ReorderableList logList;
         static float listLabelWidth = 80;
         static int listDescriptionLines = 6;
@@ -32,6 +33,23 @@ namespace WizardsCode.DevLog
             }
         }
 
+        public static DevLogScreenCaptures ScreenCaptures
+        {
+            get { return m_ScreenCaptures; }
+            set
+            {
+                if (m_ScreenCaptures  != value)
+                {
+                    m_ScreenCaptures = value;
+                    EditorPrefs.SetString("DevLogScreenCapturesObjectPath_" + Application.productName, AssetDatabase.GetAssetPath(ScreenCaptures));
+                }
+                else
+                {
+                    m_ScreenCaptures = value;
+                }
+            }
+        }
+
         public static void OnGUI()
         {
             if (logList == null)
@@ -48,13 +66,13 @@ namespace WizardsCode.DevLog
 
         internal static void OnEnable()
         {
-            DevLog = AssetDatabase.LoadAssetAtPath(EditorPrefs.GetString("DevLogScriptableOjectPath_" + Application.productName), typeof(DevLogEntries)) as DevLogEntries;
+            DevLog = AssetDatabase.LoadAssetAtPath(EditorPrefs.GetString("DevLogScriptableObjectPath_" + Application.productName), typeof(DevLogEntries)) as DevLogEntries;
             ConfigureReorderableLogList();
         }
 
         internal static void OnDisable()
         {
-            EditorPrefs.SetString("DevLogScriptableOjectPath_" + Application.productName, AssetDatabase.GetAssetPath(DevLog));
+            EditorPrefs.SetString("DevLogScriptableObjectPath_" + Application.productName, AssetDatabase.GetAssetPath(DevLog));
         }
 
         private static void ConfigureReorderableLogList()

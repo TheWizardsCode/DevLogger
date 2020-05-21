@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.Rendering.PostProcessing;
-using WizardsCode.DevLog;
+using WizardsCode.DevLogger;
 using WizardsCode.EditorUtils;
 using WizardsCode.Git;
 using WizardsCode.Social;
@@ -45,6 +45,7 @@ namespace WizardsCode.DevLogger
         private void OnEnable()
         {
             EditorApplication.update += Update;
+            mediaPanel.OnEnable();
             entryPanel.OnEnable();
             DevLogPanel.OnEnable();
             GitSettings.Load();
@@ -53,6 +54,7 @@ namespace WizardsCode.DevLogger
         private void OnDisable()
         {
             EditorApplication.update -= Update;
+            mediaPanel.OnEnable();
             entryPanel.OnDisable();
             DevLogPanel.OnDisable();
             GitSettings.Save();
@@ -77,7 +79,7 @@ namespace WizardsCode.DevLogger
             switch (selectedTab)
             {
                 case 0:
-                    if (mediaPanel.CaptureCamera && DevLogPanel.DevLog != null) {
+                    if (mediaPanel.CaptureCamera && DevLogPanel.DevLog != null && DevLogPanel.ScreenCaptures != null) {
                         entryPanel.OnGUI();
                         EditorGUILayout.Space();
                         mediaPanel.OnGUI();
@@ -129,10 +131,22 @@ namespace WizardsCode.DevLogger
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.PrefixLabel("Screen Capture Storage");
+            DevLogPanel.ScreenCaptures = EditorGUILayout.ObjectField(DevLogPanel.ScreenCaptures, typeof(DevLogScreenCaptures), true) as DevLogScreenCaptures;
+            if (DevLogPanel.ScreenCaptures == null)
+            {
+                if (GUILayout.Button("Create"))
+                {
+                    DevLogPanel.ScreenCaptures = ScriptableObject.CreateInstance<DevLogScreenCaptures>();
+                    AssetDatabase.CreateAsset(DevLogPanel.ScreenCaptures, "Assets/Screen Captures " + Application.version + ".asset");
+                    AssetDatabase.SaveAssets();
+                }
+            }
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Reset"))
             {
-                mediaPanel.LatestCaptures = new List<int>();
-                mediaPanel.ImageSelection = new List<bool>();
                 if (EditorUtility.DisplayDialog("Reset Twitter OAuth Tokens?",
                     "Do you also want to clear the Twitter access tokens?",
                     "Yes", "Do Not Clear Them")) {

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering.PostProcessing;
-using WizardsCode.DevLog;
+using WizardsCode.DevLogger;
 using WizardsCode.EditorUtils;
 
 namespace WizardsCode.DevLogger
@@ -15,10 +15,7 @@ namespace WizardsCode.DevLogger
     {
         const string DATABASE_PATH = "Assets/ScreenCaptures.asset";
 
-        [SerializeField] int maxImagesToRemember = 10;
         [SerializeField] Vector2 mediaScrollPosition;
-        [SerializeField] List<int> _latestCaptures;
-        public List<bool> ImageSelection = new List<bool>();
 
         [SerializeField] Recorder _recorder;
         [SerializeField] DevLogScreenCapture currentScreenCapture;
@@ -34,6 +31,8 @@ namespace WizardsCode.DevLogger
         [SerializeField] int bufferSize = 10; // Number of seconds to record
         [SerializeField] int repeat = 0; // -1: no repeat, 0: infinite, >0: repeat count
         [SerializeField] int quality = 15; // Quality of color quantization, lower = better but slower (min 1, max 100)
+
+        DevLogScreenCaptures m_ScreenCaptures;
         
         public Camera CaptureCamera
         {
@@ -49,16 +48,24 @@ namespace WizardsCode.DevLogger
             set { m_Camera = value; }
         }
 
+        public DevLogScreenCaptures ScreenCaptures
+        {
+            get { return m_ScreenCaptures; }
+            set { m_ScreenCaptures = value; }
+        }
+
         internal void OnEnable()
         {
             CaptureCamera = AssetDatabase.LoadAssetAtPath(EditorPrefs.GetString("DevLogCaptureCamera_" + Application.productName), typeof(Camera)) as Camera;
+            ScreenCaptures = AssetDatabase.LoadAssetAtPath(EditorPrefs.GetString("DevLogScreenCapturesObjectPath_" + Application.productName), typeof(DevLogScreenCaptures)) as DevLogScreenCaptures;
         }
 
         internal void OnDisable()
         {
             EditorPrefs.SetString("DevLogCaptureCamera_" + Application.productName, AssetDatabase.GetAssetPath(CaptureCamera));
+            EditorPrefs.SetString("DevLogScreenCapturesObjectPath_" + Application.productName, AssetDatabase.GetAssetPath(ScreenCaptures));
         }
-
+            
         private Recorder Recorder
         {
             get
@@ -113,25 +120,12 @@ namespace WizardsCode.DevLogger
             m_IsSaving = true;
         }
 
-        public List<int> LatestCaptures
-        {
-            get
-            {
-                if (_latestCaptures == null)
-                {
-                    _latestCaptures = new List<int>();
-                }
-                return _latestCaptures;
-            }
-            set { _latestCaptures = value; }
-        }
-
         public void OnGUI()
         {
             Skin.StartSection("Media");
 
             mediaScrollPosition = EditorGUILayout.BeginScrollView(mediaScrollPosition, GUILayout.Height(140));
-            if (LatestCaptures != null && LatestCaptures.Count > 0)
+            if (ScreenCaptures.captures != null && ScreenCaptures.captures.Count > 0)
             {
                 ImageSelectionGUI();
             }
@@ -264,24 +258,18 @@ namespace WizardsCode.DevLogger
         private void ImageSelectionGUI()
         {
             EditorGUILayout.BeginHorizontal();
-            for (int i = LatestCaptures.Count - 1; i >= 0; i--)
+            for (int i = m_ScreenCaptures.captures.Count - 1; i >= 0; i--)
             {
                 EditorGUILayout.BeginVertical();
 
                 EditorGUILayout.BeginHorizontal();
-                DevLogScreenCapture capture = EditorUtility.InstanceIDToObject(LatestCaptures[i]) as DevLogScreenCapture;
-                if (capture == null)
-                {
-                    LatestCaptures.RemoveAt(i);
-                    ImageSelection.RemoveAt(i);
-                    i--;
-                    continue;
-                }
+                DevLogScreenCapture capture = m_ScreenCaptures.captures[i];
+                
                 if (GUILayout.Button(capture.Texture, GUILayout.Width(100), GUILayout.Height(100)))
                 {
-                    ImageSelection[i] = !ImageSelection[i];
+                    m_ScreenCaptures.captures[i].IsSelected = !m_ScreenCaptures.captures[i].IsSelected;
                 }
-                ImageSelection[i] = EditorGUILayout.Toggle(ImageSelection[i]);
+                m_ScreenCaptures.captures[i].IsSelected = EditorGUILayout.Toggle(m_ScreenCaptures.captures[i].IsSelected);
                 EditorGUILayout.EndHorizontal();
 
                 if (GUILayout.Button("View"))
@@ -299,28 +287,7 @@ namespace WizardsCode.DevLogger
         {
             if (screenCapture != null)
             {
-                if (LatestCaptures.Count >= maxImagesToRemember)
-                {
-                    // Deleted the olded, not selected image
-                    for (int i = 0; i < ImageSelection.Count; i++)
-                    {
-                        if (!ImageSelection[i])
-                        {
-                            ImageSelection.RemoveAt(i);
-                            LatestCaptures.RemoveAt(i);
-                            break;
-                        }
-                    }
-
-                    // If we didn't delete one then delete the oldest
-                    if (ImageSelection.Count >= maxImagesToRemember)
-                    {
-                        ImageSelection.RemoveAt(0);
-                        LatestCaptures.RemoveAt(0);
-                    }
-                }
-                LatestCaptures.Add(screenCapture.GetInstanceID());
-                ImageSelection.Add(false);
+                m_ScreenCaptures.captures.Add(screenCapture);
             }
         }
 

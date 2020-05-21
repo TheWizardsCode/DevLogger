@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
-using WizardsCode.DevLog;
+using WizardsCode.DevLogger;
 using WizardsCode.DevLogger;
 using WizardsCode.EditorUtils;
 

@@ -2,12 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using WizardsCode.DevLog;
+using WizardsCode.DevLogger;
 
 namespace WizardsCode.DevLogger
 {
-    [CreateAssetMenu(menuName = "Wizards Code/Dev Log")]
-
     public class DevLogEntries : ScriptableObject
     {
         [SerializeField, Tooltip("The entries in this Dev Log.")]
