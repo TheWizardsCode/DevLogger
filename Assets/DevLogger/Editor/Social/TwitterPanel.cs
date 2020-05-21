@@ -55,7 +55,7 @@ namespace WizardsCode.DevLogger
                                 List<string> mediaFilePaths = new List<string>();
                                 for (int i = 0; i < entryPanel.mediaPanel.ScreenCaptures.Count; i++)
                                 {
-                                    if (entryPanel.mediaPanel.ScreenCaptures.captures[i])
+                                    if (entryPanel.mediaPanel.ScreenCaptures.captures[i].IsSelected)
                                     {
                                         DevLogScreenCapture capture = entryPanel.mediaPanel.ScreenCaptures.captures[i];
                                         mediaFilePaths.Add(capture.GetRelativeImagePath());
