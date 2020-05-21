@@ -79,7 +79,7 @@ namespace WizardsCode.DevLogger
             switch (selectedTab)
             {
                 case 0:
-                    if (mediaPanel.CaptureCamera && DevLogPanel.DevLog != null && DevLogPanel.ScreenCaptures != null) {
+                    if (mediaPanel.CaptureCamera && DevLogPanel.DevLog != null && mediaPanel.ScreenCaptures != null) {
                         entryPanel.OnGUI();
                         EditorGUILayout.Space();
                         mediaPanel.OnGUI();
@@ -132,13 +132,13 @@ namespace WizardsCode.DevLogger
 
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.PrefixLabel("Screen Capture Storage");
-            DevLogPanel.ScreenCaptures = EditorGUILayout.ObjectField(DevLogPanel.ScreenCaptures, typeof(DevLogScreenCaptures), true) as DevLogScreenCaptures;
-            if (DevLogPanel.ScreenCaptures == null)
+            mediaPanel.ScreenCaptures = EditorGUILayout.ObjectField(mediaPanel.ScreenCaptures, typeof(DevLogScreenCaptures), true) as DevLogScreenCaptures;
+            if (mediaPanel.ScreenCaptures == null)
             {
                 if (GUILayout.Button("Create"))
                 {
-                    DevLogPanel.ScreenCaptures = ScriptableObject.CreateInstance<DevLogScreenCaptures>();
-                    AssetDatabase.CreateAsset(DevLogPanel.ScreenCaptures, "Assets/Screen Captures " + Application.version + ".asset");
+                    mediaPanel.ScreenCaptures = ScriptableObject.CreateInstance<DevLogScreenCaptures>();
+                    AssetDatabase.CreateAsset(mediaPanel.ScreenCaptures, "Assets/Screen Captures " + Application.version + ".asset");
                     AssetDatabase.SaveAssets();
                 }
             }

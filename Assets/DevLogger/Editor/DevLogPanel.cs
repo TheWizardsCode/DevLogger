@@ -33,23 +33,6 @@ namespace WizardsCode.DevLogger
             }
         }
 
-        public static DevLogScreenCaptures ScreenCaptures
-        {
-            get { return m_ScreenCaptures; }
-            set
-            {
-                if (m_ScreenCaptures  != value)
-                {
-                    m_ScreenCaptures = value;
-                    EditorPrefs.SetString("DevLogScreenCapturesObjectPath_" + Application.productName, AssetDatabase.GetAssetPath(ScreenCaptures));
-                }
-                else
-                {
-                    m_ScreenCaptures = value;
-                }
-            }
-        }
-
         public static void OnGUI()
         {
             if (logList == null)
