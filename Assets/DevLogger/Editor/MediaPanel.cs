@@ -1,11 +1,8 @@
 ﻿using Moments;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering.PostProcessing;
-using WizardsCode.DevLogger;
 using WizardsCode.EditorUtils;
 
 namespace WizardsCode.DevLogger
@@ -348,7 +345,7 @@ namespace WizardsCode.DevLogger
             EditorWindow window;
             if (windowName.StartsWith("UnityEditor."))
             {
-                window = EditorWindow.GetWindow(typeof(Editor).Assembly.GetType(windowName));
+                window = EditorWindow.GetWindow(typeof(UnityEditor.Editor).Assembly.GetType(windowName));
             }
             else
             {
