@@ -50,20 +50,30 @@ namespace WizardsCode.DevLogger
 
         public DevLogScreenCaptures ScreenCaptures
         {
-            get { return m_ScreenCaptures; }
-            set { m_ScreenCaptures = value; }
+            get { 
+                if (m_ScreenCaptures == null)
+                {
+                    m_ScreenCaptures = AssetDatabase.LoadAssetAtPath(EditorPrefs.GetString("DevLogScreenCapturesObjectPath_" + Application.productName), typeof(DevLogScreenCaptures)) as DevLogScreenCaptures;
+                }
+                return m_ScreenCaptures; 
+            }
+            set { 
+                if (m_ScreenCaptures != value)
+                {
+                    EditorPrefs.SetString("DevLogScreenCapturesObjectPath_" + Application.productName, AssetDatabase.GetAssetPath(value));
+                }
+                m_ScreenCaptures = value; 
+            }
         }
 
         internal void OnEnable()
         {
             CaptureCamera = AssetDatabase.LoadAssetAtPath(EditorPrefs.GetString("DevLogCaptureCamera_" + Application.productName), typeof(Camera)) as Camera;
-            ScreenCaptures = AssetDatabase.LoadAssetAtPath(EditorPrefs.GetString("DevLogScreenCapturesObjectPath_" + Application.productName), typeof(DevLogScreenCaptures)) as DevLogScreenCaptures;
         }
 
         internal void OnDisable()
         {
             EditorPrefs.SetString("DevLogCaptureCamera_" + Application.productName, AssetDatabase.GetAssetPath(CaptureCamera));
-            EditorPrefs.SetString("DevLogScreenCapturesObjectPath_" + Application.productName, AssetDatabase.GetAssetPath(ScreenCaptures));
         }
             
         private Recorder Recorder
