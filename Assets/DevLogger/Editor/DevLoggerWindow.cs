@@ -130,6 +130,7 @@ namespace WizardsCode.DevLogger
         {
             EditorGUILayout.BeginVertical("Box");
             EditorGUILayout.BeginVertical();
+            if (!m_CaptureCamera) m_CaptureCamera = Camera.main;
             if (!m_CaptureCamera)
             {
                 EditorGUILayout.LabelField("No main camera in scene, please select tag a camera as MainCamera or select a camera here.");
