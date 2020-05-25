@@ -115,7 +115,7 @@ namespace WizardsCode.DevLogger
                 for (int i = 0; i < entry.captures.Count; i++)
                 {
                     fieldRect = new Rect(fieldRect.x, labelRect.y + EditorGUIUtility.singleLineHeight * i, fieldRect.width, EditorGUIUtility.singleLineHeight);
-                    EditorGUI.TextField(fieldRect, entry.captures[i].Filename);
+                    EditorGUI.ObjectField(fieldRect, entry.captures[i], typeof(ScreenCapture), false);
                 }
             }
 
