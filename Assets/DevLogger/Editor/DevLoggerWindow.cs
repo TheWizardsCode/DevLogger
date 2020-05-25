@@ -118,6 +118,8 @@ namespace WizardsCode.DevLogger
                         }
                         break;
                     case 1:
+                        if (devLogPanel == null) devLogPanel = new DevLogPanel(m_DevLogEntries);
+
                         devLogPanel.ScreenCaptures = m_ScreenCaptures;
                         devLogPanel.Entries = m_DevLogEntries;
                         devLogPanel.OnGUI();
