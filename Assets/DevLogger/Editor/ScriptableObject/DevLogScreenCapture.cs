@@ -13,30 +13,19 @@ namespace WizardsCode.DevLogger
     {
         public enum ImageEncoding { gif, png }
 
-        [SerializeField]
-        private ImageEncoding _encoding;
-        public ImageEncoding Encoding {
-            get { return _encoding; }
-            set { _encoding = value; }
-        }
-
-        [SerializeField]
-        private string _productName;
-        [SerializeField]
-        private string _version;
-        [SerializeField]
-        private long _timestamp;
-        [SerializeField]
-        private string _sceneName;
-        [SerializeField]
+        public ImageEncoding encoding;
+        public string productName;
+        public string version;
+        public string sceneName;
+        public long timestamp;
         public int _width;
-        [SerializeField]
         public int _height;
 
         public bool IsImageSaved = false;
         public bool IsSelected = false;
 
         private Texture2D _texture;
+
         public Texture2D Texture
         {
             get {
@@ -66,14 +55,6 @@ namespace WizardsCode.DevLogger
             {
                 Debug.LogError("Unable to read image from " + uri + " into texture: " + www.error);
             }
-        }
-
-        void Awake()
-        {
-            _productName = Application.productName;
-            _version = Application.version;
-            _timestamp = DateTime.Now.ToFileTime();
-            _sceneName = SceneManager.GetActiveScene().name;
         }
 
         /// <summary>
@@ -128,15 +109,15 @@ namespace WizardsCode.DevLogger
                 StringBuilder sb = new StringBuilder();
                 sb.Append(name);
                 sb.Append("_");
-                sb.Append(_productName);
+                sb.Append(productName);
                 sb.Append("_");
-                sb.Append(_sceneName);
+                sb.Append(sceneName);
                 sb.Append("_v");
-                sb.Append(_version);
+                sb.Append(version);
                 sb.Append("_");
-                sb.Append(_timestamp);
+                sb.Append(timestamp);
                 sb.Append(".");
-                sb.Append(Encoding);
+                sb.Append(encoding);
                 return sb.ToString();
             }
         }

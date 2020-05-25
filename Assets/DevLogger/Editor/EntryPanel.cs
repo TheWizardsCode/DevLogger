@@ -16,7 +16,7 @@ namespace WizardsCode.DevLogger
     [Serializable]
     public class EntryPanel
     {
-        [SerializeField] Vector2 windowScrollPos;
+        [SerializeField] Vector2 windowScrollPos = Vector2.zero;
         [SerializeField] internal string shortText = "";
         [SerializeField] string detailText = "";
         [SerializeField] string uiStatusText = "";

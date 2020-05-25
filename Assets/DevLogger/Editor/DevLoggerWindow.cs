@@ -75,6 +75,7 @@ namespace WizardsCode.DevLogger
 
         private void OnDestroy()
         {
+            AssetDatabase.SaveAssets();
             mediaPanel.OnDestroy();
         }
 

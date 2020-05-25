@@ -3,6 +3,7 @@ using System;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering.PostProcessing;
+using UnityEngine.SceneManagement;
 using WizardsCode.EditorUtils;
 
 namespace WizardsCode.DevLogger
@@ -142,7 +143,13 @@ namespace WizardsCode.DevLogger
                         if (GUILayout.Button("Save Animated GIF"))
                         {
                             currentScreenCapture = ScriptableObject.CreateInstance<DevLogScreenCapture>();
-                            currentScreenCapture.Encoding = DevLogScreenCapture.ImageEncoding.gif;
+
+                            currentScreenCapture.productName = Application.productName;
+                            currentScreenCapture.version = Application.version;
+                            currentScreenCapture.timestamp = DateTime.Now.ToFileTime();
+                            currentScreenCapture.sceneName = SceneManager.GetActiveScene().name;
+
+                            currentScreenCapture.encoding = DevLogScreenCapture.ImageEncoding.gif;
                             currentScreenCapture.name = "In Game Footage";
 
                             Recorder.OnPreProcessingDone = OnProcessingDone;
@@ -268,7 +275,12 @@ namespace WizardsCode.DevLogger
         {
             if (screenCapture != null)
             {
+                AssetDatabase.AddObjectToAsset(screenCapture, ScreenCaptures);
+                
                 ScreenCaptures.captures.Add(screenCapture);
+                EditorUtility.SetDirty(ScreenCaptures);
+
+                AssetDatabase.SaveAssets();
             }
         }
 
@@ -282,9 +294,6 @@ namespace WizardsCode.DevLogger
             if (currentScreenCapture != null && !m_IsSaving && !currentScreenCapture.IsImageSaved)
             {
                 AddToLatestCaptures(currentScreenCapture);
-
-                AssetDatabase.AddObjectToAsset(currentScreenCapture, DATABASE_PATH);
-                AssetDatabase.SaveAssets();
 
                 currentScreenCapture.IsImageSaved = true;
             }
@@ -313,7 +322,11 @@ namespace WizardsCode.DevLogger
         public void CaptureWindowScreenshot(string windowName)
         {
             DevLogScreenCapture screenCapture = ScriptableObject.CreateInstance<DevLogScreenCapture>();
-            screenCapture.Encoding = DevLogScreenCapture.ImageEncoding.png;
+            screenCapture.productName = Application.productName;
+            screenCapture.version = Application.version;
+            screenCapture.timestamp = DateTime.Now.ToFileTime();
+            screenCapture.sceneName = SceneManager.GetActiveScene().name;
+            screenCapture.encoding = DevLogScreenCapture.ImageEncoding.png;
             screenCapture.name = windowName;
 
             EditorWindow window;
@@ -345,9 +358,6 @@ namespace WizardsCode.DevLogger
                 screenCapture.IsImageSaved = true;
 
                 AddToLatestCaptures(screenCapture);
-
-                AssetDatabase.AddObjectToAsset(screenCapture, DATABASE_PATH);
-                AssetDatabase.SaveAssets();
 
                 // TODO This used to be in the window, but now it's not so how do we get focus back?
                 // this.Focus();
