@@ -9,22 +9,24 @@ using WizardsCode.DevLogger;
 namespace WizardsCode.DevLogger
 {
     public class DevLogPanel
-    {
-        public DevLogScreenCaptures m_ScreenCaptures;
-        static ReorderableList logList;
-        static float listLabelWidth = 80;
-        static int listDescriptionLines = 6;
-        static Vector2 listScrollPosition;
+    {   
+        ReorderableList logList;
+        float listLabelWidth = 80;
+        int listDescriptionLines = 6;
+        Vector2 listScrollPosition;
 
         public DevLogPanel(DevLogEntries entries)
         {
-            DevLog = entries;
+            Entries = entries;
         }
 
-        private DevLogEntries DevLog { get; set; }
+        internal DevLogEntries Entries { get; set; }
+        internal DevLogScreenCaptures ScreenCaptures { get; set; }
 
         public void OnGUI()
         {
+            ConfigureReorderableLogList();
+
             if (logList == null)
             {
                 EditorGUILayout.LabelField("Setup your log in the 'Settings' Tab.");
@@ -37,22 +39,20 @@ namespace WizardsCode.DevLogger
             }
         }
 
-        internal void OnEnable()
-        {
-            ConfigureReorderableLogList();
-        }
-
+        private DevLogEntries lastEntriesList;
         private void ConfigureReorderableLogList()
         {
-            if (DevLog != null)
+            if (Entries != lastEntriesList)
             {
-                logList = new ReorderableList(DevLog.entries, typeof(DevLogEntry), true, true, true, true);
+                logList = new ReorderableList(Entries.entries, typeof(DevLogEntry), true, true, true, true);
                 logList.drawElementCallback = DrawLogListElement;
                 logList.drawHeaderCallback = DrawHeader;
                 logList.elementHeightCallback = ElementHeightCallback;
                 logList.displayAdd = false;
+
+                lastEntriesList = Entries;
             }
-            else
+            else if (Entries == null)
             {
                 logList = null;
             }
@@ -62,8 +62,8 @@ namespace WizardsCode.DevLogger
         {
             float height = EditorGUIUtility.singleLineHeight; // title
             height += EditorGUIUtility.singleLineHeight * listDescriptionLines; // descrption
-            height += EditorGUIUtility.singleLineHeight * DevLog.entries[index].metaData.Count; // meta data
-            height += EditorGUIUtility.singleLineHeight * DevLog.entries[index].captures.Count; // capture
+            height += EditorGUIUtility.singleLineHeight * Entries.entries[index].metaData.Count; // meta data
+            height += EditorGUIUtility.singleLineHeight * Entries.entries[index].captures.Count; // capture
             height += EditorGUIUtility.singleLineHeight;// Commit Hash
             height += EditorGUIUtility.singleLineHeight;// Tweeted
             height += EditorGUIUtility.singleLineHeight;// Date
@@ -78,7 +78,7 @@ namespace WizardsCode.DevLogger
 
         private void DrawLogListElement(Rect rect, int index, bool isActive, bool isFocused)
         {
-            Entry entry = DevLog.entries[index];
+            Entry entry = Entries.entries[index];
 
             Rect labelRect = new Rect(rect.x, rect.y, listLabelWidth, EditorGUIUtility.singleLineHeight);
             EditorGUI.PrefixLabel(labelRect, new GUIContent("Title"));
@@ -91,7 +91,7 @@ namespace WizardsCode.DevLogger
             EditorGUI.TextArea(fieldRect, entry.longDescription);
 
             labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight * listDescriptionLines, labelRect.width, labelRect.height);
-            if (DevLog.entries[index].metaData.Count != 0)
+            if (Entries.entries[index].metaData.Count != 0)
             {
                 EditorGUI.PrefixLabel(labelRect, new GUIContent("Meta Data"));
                 for (int i = 0; i < entry.metaData.Count; i++)
@@ -101,8 +101,8 @@ namespace WizardsCode.DevLogger
                 }
             }
 
-            labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight * DevLog.entries[index].metaData.Count, labelRect.width, labelRect.height);
-            if (DevLog.entries[index].captures.Count != 0)
+            labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight * Entries.entries[index].metaData.Count, labelRect.width, labelRect.height);
+            if (Entries.entries[index].captures.Count != 0)
             {
                 EditorGUI.PrefixLabel(labelRect, new GUIContent("Captures"));
                 for (int i = 0; i < entry.captures.Count; i++)
@@ -112,7 +112,7 @@ namespace WizardsCode.DevLogger
                 }
             }
 
-            labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight * DevLog.entries[index].captures.Count, labelRect.width, labelRect.height);
+            labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight * Entries.entries[index].captures.Count, labelRect.width, labelRect.height);
             EditorGUI.PrefixLabel(labelRect, new GUIContent("Commit"));
             fieldRect = new Rect(fieldRect.x, labelRect.y, fieldRect.width, EditorGUIUtility.singleLineHeight);
             EditorGUI.TextArea(fieldRect, entry.commitHash);

@@ -17,16 +17,16 @@ namespace WizardsCode.DevLogger
     /// <summary>
     /// The main DevLogger control window.
     /// </summary>
-    [Serializable]
     public class DevLoggerWindow : EditorWindow
     {
-        [SerializeField] EntryPanel entryPanel;
-        [SerializeField] TwitterPanel twitterPanel;
-        [SerializeField] GitPanel gitPanel;
-        [SerializeField] MediaPanel mediaPanel;
-        [SerializeField] DevLogPanel devLogPanel;
-
-        private DevLogEntries m_DevLogEntries;
+        EntryPanel entryPanel;
+        TwitterPanel twitterPanel;
+        GitPanel gitPanel;
+        MediaPanel mediaPanel;
+        DevLogPanel devLogPanel;
+        DevLogScreenCaptures m_ScreenCaptures;
+        DevLogEntries m_DevLogEntries;
+        Camera m_CaptureCamera;
 
         private string[] toolbarLabels = { "Entry", "Dev Log", "Git", "Settings" };
         private int selectedTab = 0;
@@ -42,8 +42,14 @@ namespace WizardsCode.DevLogger
             m_DevLogEntries = AssetDatabase.LoadAssetAtPath(EditorPrefs.GetString("DevLogScriptableObjectPath_" + Application.productName), typeof(DevLogEntries)) as DevLogEntries;
             devLogPanel = new DevLogPanel(m_DevLogEntries);
 
-            mediaPanel = new MediaPanel();
-            entryPanel = new EntryPanel(m_DevLogEntries, mediaPanel);
+            m_ScreenCaptures = AssetDatabase.LoadAssetAtPath(EditorPrefs.GetString("DevLogScreenCapturesObjectPath_" + Application.productName), typeof(DevLogScreenCaptures)) as DevLogScreenCaptures;
+            if (m_CaptureCamera == null)
+            {
+                m_CaptureCamera = Camera.main;
+            }
+            mediaPanel = new MediaPanel(m_ScreenCaptures, m_CaptureCamera);
+
+            entryPanel = new EntryPanel(m_DevLogEntries, m_ScreenCaptures);
             twitterPanel = new TwitterPanel(entryPanel);
             gitPanel = new GitPanel(entryPanel);
         }
@@ -53,7 +59,6 @@ namespace WizardsCode.DevLogger
             EditorApplication.update += Update;
             mediaPanel.OnEnable();
             entryPanel.OnEnable();
-            devLogPanel.OnEnable();
             GitSettings.Load();
         }
 
@@ -63,6 +68,9 @@ namespace WizardsCode.DevLogger
             mediaPanel.OnEnable();
             entryPanel.OnDisable();
             GitSettings.Save();
+            AssetDatabase.SaveAssets();
+            EditorPrefs.SetString("DevLogScriptableObjectPath_" + Application.productName, AssetDatabase.GetAssetPath(m_DevLogEntries));
+            EditorPrefs.SetString("DevLogScreenCapturesObjectPath_" + Application.productName, AssetDatabase.GetAssetPath(m_ScreenCaptures));
         }
 
         private void OnDestroy()
@@ -84,11 +92,20 @@ namespace WizardsCode.DevLogger
             switch (selectedTab)
             {
                 case 0:
-                    if (mediaPanel.CaptureCamera && m_DevLogEntries != null && mediaPanel.ScreenCaptures != null) {
+                    if (m_CaptureCamera && m_DevLogEntries != null && m_ScreenCaptures != null) {
+                        entryPanel.ScreenCaptures = m_ScreenCaptures;
+                        entryPanel.Entries = m_DevLogEntries;
                         entryPanel.OnGUI();
+
                         EditorGUILayout.Space();
+
+                        mediaPanel.CaptureCamera = m_CaptureCamera;
+                        mediaPanel.ScreenCaptures = m_ScreenCaptures;
                         mediaPanel.OnGUI();
+                        
                         EditorGUILayout.Space();
+
+                        twitterPanel.ScreenCaptures = m_ScreenCaptures;
                         twitterPanel.OnGUI();
                     } else
                     {
@@ -96,6 +113,8 @@ namespace WizardsCode.DevLogger
                     }
                     break;
                 case 1:
+                    devLogPanel.ScreenCaptures = m_ScreenCaptures;
+                    devLogPanel.Entries = m_DevLogEntries;
                     devLogPanel.OnGUI();
                     break;
                 case 2:
@@ -111,14 +130,14 @@ namespace WizardsCode.DevLogger
         {
             EditorGUILayout.BeginVertical("Box");
             EditorGUILayout.BeginVertical();
-            if (!mediaPanel.CaptureCamera)
+            if (!m_CaptureCamera)
             {
                 EditorGUILayout.LabelField("No main camera in scene, please select tag a camera as MainCamera or select a camera here.");
             }
 
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.PrefixLabel("Camera for captures");
-            mediaPanel.CaptureCamera = (Camera)EditorGUILayout.ObjectField(mediaPanel.CaptureCamera, typeof(Camera), true);
+            m_CaptureCamera = (Camera)EditorGUILayout.ObjectField(m_CaptureCamera, typeof(Camera), true);
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.BeginHorizontal();
@@ -137,13 +156,13 @@ namespace WizardsCode.DevLogger
 
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.PrefixLabel("Screen Capture Storage");
-            mediaPanel.ScreenCaptures = EditorGUILayout.ObjectField(mediaPanel.ScreenCaptures, typeof(DevLogScreenCaptures), true) as DevLogScreenCaptures;
-            if (mediaPanel.ScreenCaptures == null)
+            m_ScreenCaptures = EditorGUILayout.ObjectField(m_ScreenCaptures, typeof(DevLogScreenCaptures), true) as DevLogScreenCaptures;
+            if (m_ScreenCaptures == null)
             {
                 if (GUILayout.Button("Create"))
                 {
-                    mediaPanel.ScreenCaptures = ScriptableObject.CreateInstance<DevLogScreenCaptures>();
-                    AssetDatabase.CreateAsset(mediaPanel.ScreenCaptures, "Assets/Screen Captures " + Application.version + ".asset");
+                    m_ScreenCaptures = ScriptableObject.CreateInstance<DevLogScreenCaptures>();
+                    AssetDatabase.CreateAsset(m_ScreenCaptures, "Assets/Screen Captures " + Application.version + ".asset");
                     AssetDatabase.SaveAssets();
                 }
             }

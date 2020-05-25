@@ -24,15 +24,15 @@ namespace WizardsCode.DevLogger
         [SerializeField] List<string> suggestedMetaData;
         [SerializeField] List<bool> selectedMetaData;
         [SerializeField] string newMetaDataItem;
-        [SerializeField] internal MediaPanel mediaPanel;
 
-        DevLogEntries m_DevLogEntries;
-
-        public EntryPanel(DevLogEntries entries, MediaPanel mediaPanel)
+        public EntryPanel(DevLogEntries entries, DevLogScreenCaptures screenCaptures)
         {
-            m_DevLogEntries = entries;
-            this.mediaPanel = mediaPanel;
+            Entries = entries;
+            ScreenCaptures = screenCaptures;
         }
+
+        internal DevLogEntries Entries { get; set; }
+        internal DevLogScreenCaptures ScreenCaptures { get; set; }
 
         internal void OnEnable()
         {
@@ -156,9 +156,9 @@ namespace WizardsCode.DevLogger
                 EditorGUILayout.BeginHorizontal();
 
                 bool hasSelection = false;
-                for (int i = 0; i < mediaPanel.ScreenCaptures.Count; i++)
+                for (int i = 0; i < ScreenCaptures.Count; i++)
                 {
-                    if (mediaPanel.ScreenCaptures.captures[i])
+                    if (ScreenCaptures.captures[i])
                     {
                         hasSelection = true;
                         break;
@@ -235,11 +235,11 @@ namespace WizardsCode.DevLogger
             if (withImage)
             {
                 List<string> mediaFilePaths = new List<string>();
-                for (int i = 0; i < mediaPanel.ScreenCaptures.Count; i++)
+                for (int i = 0; i < ScreenCaptures.Count; i++)
                 {
-                    if (mediaPanel.ScreenCaptures.captures[i].IsSelected)
+                    if (ScreenCaptures.captures[i].IsSelected)
                     {
-                        DevLogScreenCapture capture = mediaPanel.ScreenCaptures.captures[i];
+                        DevLogScreenCapture capture = ScreenCaptures.captures[i];
                         mediaFilePaths.Add(capture.Filename);
                         entry.captures.Add(capture);
                     }
@@ -255,7 +255,7 @@ namespace WizardsCode.DevLogger
                 DevLog.Append(text.ToString(), detailText);
             }
 
-            m_DevLogEntries.entries.Add(entry);
+            Entries.entries.Add(entry);
 
             shortText = "";
             detailText = "";

@@ -29,40 +29,15 @@ namespace WizardsCode.DevLogger
         [SerializeField] int repeat = 0; // -1: no repeat, 0: infinite, >0: repeat count
         [SerializeField] int quality = 15; // Quality of color quantization, lower = better but slower (min 1, max 100)
 
-        DevLogScreenCaptures m_ScreenCaptures;
+        public MediaPanel(DevLogScreenCaptures captures, Camera camera)
+        {
+            ScreenCaptures = captures;
+            CaptureCamera = camera;
+        }
+
+        internal Camera CaptureCamera { get; set; }
+        internal DevLogScreenCaptures ScreenCaptures { get; set; }
         
-        public Camera CaptureCamera
-        {
-            get {
-
-                if (m_Camera == null)
-                {
-                    m_Camera = Camera.main;
-                }
-                
-                return m_Camera; 
-            }
-            set { m_Camera = value; }
-        }
-
-        public DevLogScreenCaptures ScreenCaptures
-        {
-            get { 
-                if (m_ScreenCaptures == null)
-                {
-                    m_ScreenCaptures = AssetDatabase.LoadAssetAtPath(EditorPrefs.GetString("DevLogScreenCapturesObjectPath_" + Application.productName), typeof(DevLogScreenCaptures)) as DevLogScreenCaptures;
-                }
-                return m_ScreenCaptures; 
-            }
-            set { 
-                if (m_ScreenCaptures != value)
-                {
-                    EditorPrefs.SetString("DevLogScreenCapturesObjectPath_" + Application.productName, AssetDatabase.GetAssetPath(value));
-                }
-                m_ScreenCaptures = value; 
-            }
-        }
-
         internal void OnEnable()
         {
             CaptureCamera = AssetDatabase.LoadAssetAtPath(EditorPrefs.GetString("DevLogCaptureCamera_" + Application.productName), typeof(Camera)) as Camera;
@@ -265,12 +240,12 @@ namespace WizardsCode.DevLogger
         private void ImageSelectionGUI()
         {
             EditorGUILayout.BeginHorizontal();
-            for (int i = m_ScreenCaptures.captures.Count - 1; i >= 0; i--)
+            for (int i = ScreenCaptures.captures.Count - 1; i >= 0; i--)
             {
                 EditorGUILayout.BeginVertical();
 
                 EditorGUILayout.BeginHorizontal();
-                DevLogScreenCapture capture = m_ScreenCaptures.captures[i];
+                DevLogScreenCapture capture = ScreenCaptures.captures[i];
                 
                 // TODO This shouldn't be necessary, there is a bug somewhere, this will guard against it until we can squish it
                 if (capture == null)
@@ -281,9 +256,9 @@ namespace WizardsCode.DevLogger
 
                 if (GUILayout.Button(capture.Texture, GUILayout.Width(100), GUILayout.Height(100)))
                 {
-                    m_ScreenCaptures.captures[i].IsSelected = !m_ScreenCaptures.captures[i].IsSelected;
+                    ScreenCaptures.captures[i].IsSelected = !ScreenCaptures.captures[i].IsSelected;
                 }
-                m_ScreenCaptures.captures[i].IsSelected = EditorGUILayout.Toggle(m_ScreenCaptures.captures[i].IsSelected);
+                ScreenCaptures.captures[i].IsSelected = EditorGUILayout.Toggle(ScreenCaptures.captures[i].IsSelected);
                 EditorGUILayout.EndHorizontal();
 
                 if (GUILayout.Button("View"))
@@ -301,7 +276,7 @@ namespace WizardsCode.DevLogger
         {
             if (screenCapture != null)
             {
-                m_ScreenCaptures.captures.Add(screenCapture);
+                ScreenCaptures.captures.Add(screenCapture);
             }
         }
 
