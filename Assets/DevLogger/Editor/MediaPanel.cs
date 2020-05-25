@@ -19,7 +19,6 @@ namespace WizardsCode.DevLogger
         [SerializeField] bool removeRecorder;
         [SerializeField] bool originalFinalBlitToCameraTarget;
         [SerializeField] bool m_IsSaving;
-        [SerializeField] Camera m_Camera;
 
         // Animated GIF setup
         [SerializeField] bool preserveAspect = true; // Automatically compute height from the current aspect ratio
@@ -52,12 +51,12 @@ namespace WizardsCode.DevLogger
         {
             get
             {
-                if (_recorder == null && m_Camera)
+                if (_recorder == null && CaptureCamera)
                 {
-                    _recorder = m_Camera.GetComponent<Recorder>();
+                    _recorder = CaptureCamera.GetComponent<Recorder>();
                     if (_recorder == null)
                     {
-                        _recorder = m_Camera.gameObject.AddComponent<Recorder>();
+                        _recorder = CaptureCamera.gameObject.AddComponent<Recorder>();
                         _recorder.Init();
 
                         PostProcessLayer pp = Camera.main.GetComponent<PostProcessLayer>();
