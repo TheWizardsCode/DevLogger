@@ -8,32 +8,22 @@ using WizardsCode.DevLogger;
 
 namespace WizardsCode.DevLogger
 {
-    public static class DevLogPanel
+    public class DevLogPanel
     {
-        public static DevLogEntries m_DevLog;
-        public static DevLogScreenCaptures m_ScreenCaptures;
+        public DevLogScreenCaptures m_ScreenCaptures;
         static ReorderableList logList;
         static float listLabelWidth = 80;
         static int listDescriptionLines = 6;
         static Vector2 listScrollPosition;
 
-        public static DevLogEntries DevLog
+        public DevLogPanel(DevLogEntries entries)
         {
-            get { return m_DevLog; }
-            set
-            {
-                if (m_DevLog  != value)
-                {
-                    m_DevLog = value;
-                    ConfigureReorderableLogList();
-                } else
-                {
-                    m_DevLog = value;
-                }
-            }
+            DevLog = entries;
         }
 
-        public static void OnGUI()
+        private DevLogEntries DevLog { get; set; }
+
+        public void OnGUI()
         {
             if (logList == null)
             {
@@ -47,18 +37,12 @@ namespace WizardsCode.DevLogger
             }
         }
 
-        internal static void OnEnable()
+        internal void OnEnable()
         {
-            DevLog = AssetDatabase.LoadAssetAtPath(EditorPrefs.GetString("DevLogScriptableObjectPath_" + Application.productName), typeof(DevLogEntries)) as DevLogEntries;
             ConfigureReorderableLogList();
         }
 
-        internal static void OnDisable()
-        {
-            EditorPrefs.SetString("DevLogScriptableObjectPath_" + Application.productName, AssetDatabase.GetAssetPath(DevLog));
-        }
-
-        private static void ConfigureReorderableLogList()
+        private void ConfigureReorderableLogList()
         {
             if (DevLog != null)
             {
@@ -74,7 +58,7 @@ namespace WizardsCode.DevLogger
             }
         }
 
-        private static float ElementHeightCallback(int index)
+        private float ElementHeightCallback(int index)
         {
             float height = EditorGUIUtility.singleLineHeight; // title
             height += EditorGUIUtility.singleLineHeight * listDescriptionLines; // descrption
@@ -87,12 +71,12 @@ namespace WizardsCode.DevLogger
             return height;
         }
 
-        private static void DrawHeader(Rect rect)
+        private void DrawHeader(Rect rect)
         {
             EditorGUI.LabelField(rect, "Entries");
         }
 
-        private static void DrawLogListElement(Rect rect, int index, bool isActive, bool isFocused)
+        private void DrawLogListElement(Rect rect, int index, bool isActive, bool isFocused)
         {
             Entry entry = DevLog.entries[index];
 

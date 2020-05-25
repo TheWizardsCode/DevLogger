@@ -272,6 +272,13 @@ namespace WizardsCode.DevLogger
                 EditorGUILayout.BeginHorizontal();
                 DevLogScreenCapture capture = m_ScreenCaptures.captures[i];
                 
+                // TODO This shouldn't be necessary, there is a bug somewhere, this will guard against it until we can squish it
+                if (capture == null)
+                {
+                    Debug.LogError("Screen Captures has a record to a capture but it is null.");
+                    continue;
+                }
+
                 if (GUILayout.Button(capture.Texture, GUILayout.Width(100), GUILayout.Height(100)))
                 {
                     m_ScreenCaptures.captures[i].IsSelected = !m_ScreenCaptures.captures[i].IsSelected;

@@ -24,6 +24,9 @@ namespace WizardsCode.DevLogger
         [SerializeField] TwitterPanel twitterPanel;
         [SerializeField] GitPanel gitPanel;
         [SerializeField] MediaPanel mediaPanel;
+        [SerializeField] DevLogPanel devLogPanel;
+
+        private DevLogEntries m_DevLogEntries;
 
         private string[] toolbarLabels = { "Entry", "Dev Log", "Git", "Settings" };
         private int selectedTab = 0;
@@ -36,8 +39,11 @@ namespace WizardsCode.DevLogger
 
         private void Awake()
         {
+            m_DevLogEntries = AssetDatabase.LoadAssetAtPath(EditorPrefs.GetString("DevLogScriptableObjectPath_" + Application.productName), typeof(DevLogEntries)) as DevLogEntries;
+            devLogPanel = new DevLogPanel(m_DevLogEntries);
+
             mediaPanel = new MediaPanel();
-            entryPanel = new EntryPanel(mediaPanel);
+            entryPanel = new EntryPanel(m_DevLogEntries, mediaPanel);
             twitterPanel = new TwitterPanel(entryPanel);
             gitPanel = new GitPanel(entryPanel);
         }
@@ -47,7 +53,7 @@ namespace WizardsCode.DevLogger
             EditorApplication.update += Update;
             mediaPanel.OnEnable();
             entryPanel.OnEnable();
-            DevLogPanel.OnEnable();
+            devLogPanel.OnEnable();
             GitSettings.Load();
         }
 
@@ -56,7 +62,6 @@ namespace WizardsCode.DevLogger
             EditorApplication.update -= Update;
             mediaPanel.OnEnable();
             entryPanel.OnDisable();
-            DevLogPanel.OnDisable();
             GitSettings.Save();
         }
 
@@ -79,7 +84,7 @@ namespace WizardsCode.DevLogger
             switch (selectedTab)
             {
                 case 0:
-                    if (mediaPanel.CaptureCamera && DevLogPanel.DevLog != null && mediaPanel.ScreenCaptures != null) {
+                    if (mediaPanel.CaptureCamera && m_DevLogEntries != null && mediaPanel.ScreenCaptures != null) {
                         entryPanel.OnGUI();
                         EditorGUILayout.Space();
                         mediaPanel.OnGUI();
@@ -91,7 +96,7 @@ namespace WizardsCode.DevLogger
                     }
                     break;
                 case 1:
-                    DevLogPanel.OnGUI();
+                    devLogPanel.OnGUI();
                     break;
                 case 2:
                     gitPanel.OnGUI();
@@ -118,13 +123,13 @@ namespace WizardsCode.DevLogger
 
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.PrefixLabel("Dev Log Storage");
-            DevLogPanel.DevLog = EditorGUILayout.ObjectField(DevLogPanel.DevLog, typeof(DevLogEntries), true) as DevLogEntries;
-            if (DevLogPanel.DevLog == null)
+            m_DevLogEntries = EditorGUILayout.ObjectField(m_DevLogEntries, typeof(DevLogEntries), true) as DevLogEntries;
+            if (m_DevLogEntries == null)
             {
                 if (GUILayout.Button("Create"))
                 {
-                    DevLogPanel.DevLog = ScriptableObject.CreateInstance<DevLogEntries>();
-                    AssetDatabase.CreateAsset(DevLogPanel.DevLog, "Assets/Dev Log " + Application.version + ".asset");
+                    m_DevLogEntries = ScriptableObject.CreateInstance<DevLogEntries>();
+                    AssetDatabase.CreateAsset(m_DevLogEntries, "Assets/Dev Log " + Application.version + ".asset");
                     AssetDatabase.SaveAssets();
                 }
             }

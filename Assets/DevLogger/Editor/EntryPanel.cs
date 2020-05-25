@@ -26,8 +26,11 @@ namespace WizardsCode.DevLogger
         [SerializeField] string newMetaDataItem;
         [SerializeField] internal MediaPanel mediaPanel;
 
-        public EntryPanel(MediaPanel mediaPanel)
+        DevLogEntries m_DevLogEntries;
+
+        public EntryPanel(DevLogEntries entries, MediaPanel mediaPanel)
         {
+            m_DevLogEntries = entries;
             this.mediaPanel = mediaPanel;
         }
 
@@ -252,7 +255,7 @@ namespace WizardsCode.DevLogger
                 DevLog.Append(text.ToString(), detailText);
             }
 
-            DevLogPanel.DevLog.entries.Add(entry);
+            m_DevLogEntries.entries.Add(entry);
 
             shortText = "";
             detailText = "";
