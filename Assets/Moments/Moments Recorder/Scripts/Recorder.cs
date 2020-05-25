@@ -481,6 +481,6 @@ namespace Moments
 			return new GifFrame() { Width = target.width, Height = target.height, Data = target.GetPixels32() };
 		}
 
-		#endregion
-	}
+        #endregion
+    }
 }

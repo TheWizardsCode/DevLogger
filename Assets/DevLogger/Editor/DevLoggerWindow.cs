@@ -80,6 +80,7 @@ namespace WizardsCode.DevLogger
         }
 
         private bool showSettings = false;
+        private static bool startCapture;
 
         void Update()
         {
@@ -87,9 +88,29 @@ namespace WizardsCode.DevLogger
         }
 
         #region GUI
-        void OnGUI()
+
+        [MenuItem("Tools/Wizards Code/Capture GIF %#`")]
+        static void CaptureGif()
         {
-            try
+            startCapture = true;
+        }
+
+        [MenuItem("Tools/Wizards Code/Capture GIF", true)]
+        static bool ValidateCaptureGif()
+        {
+            return Application.isPlaying;
+        }
+        private void OnInspectorUpdate()
+        {
+            if (startCapture)
+            {
+                mediaPanel.CaptureGif();
+                startCapture = false;
+            }
+        }
+
+        void OnGUI()
+        {            try
             {
                 selectedTab = GUILayout.Toolbar(selectedTab, toolbarLabels);
                 switch (selectedTab)

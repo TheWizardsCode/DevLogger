@@ -142,23 +142,7 @@ namespace WizardsCode.DevLogger
                     case RecorderState.Recording:
                         if (GUILayout.Button("Save Animated GIF"))
                         {
-                            currentScreenCapture = ScriptableObject.CreateInstance<DevLogScreenCapture>();
-
-                            currentScreenCapture.productName = Application.productName;
-                            currentScreenCapture.version = Application.version;
-                            currentScreenCapture.timestamp = DateTime.Now.ToFileTime();
-                            currentScreenCapture.sceneName = SceneManager.GetActiveScene().name;
-
-                            currentScreenCapture.encoding = DevLogScreenCapture.ImageEncoding.gif;
-                            currentScreenCapture.name = "In Game Footage";
-
-                            Recorder.OnPreProcessingDone = OnProcessingDone;
-                            Recorder.OnFileSaved = OnFileSaved;
-
-                            Recorder.SaveFolder = currentScreenCapture.GetAbsoluteImageFolder();
-                            Recorder.Filename = currentScreenCapture.Filename;
-
-                            Recorder.Save(true);
+                            CaptureGif();
                         }
                         break;
                     case RecorderState.PreProcessing:
@@ -241,6 +225,27 @@ namespace WizardsCode.DevLogger
             }
             EditorGUILayout.EndHorizontal();
             Skin.EndSection();
+        }
+
+        internal void CaptureGif()
+        {
+            currentScreenCapture = ScriptableObject.CreateInstance<DevLogScreenCapture>();
+
+            currentScreenCapture.productName = Application.productName;
+            currentScreenCapture.version = Application.version;
+            currentScreenCapture.timestamp = DateTime.Now.ToFileTime();
+            currentScreenCapture.sceneName = SceneManager.GetActiveScene().name;
+
+            currentScreenCapture.encoding = DevLogScreenCapture.ImageEncoding.gif;
+            currentScreenCapture.name = "In Game Footage";
+
+            Recorder.OnPreProcessingDone = OnProcessingDone;
+            Recorder.OnFileSaved = OnFileSaved;
+
+            Recorder.SaveFolder = currentScreenCapture.GetAbsoluteImageFolder();
+            Recorder.Filename = currentScreenCapture.Filename;
+
+            Recorder.Save(true);
         }
 
         private void ImageSelectionGUI()
