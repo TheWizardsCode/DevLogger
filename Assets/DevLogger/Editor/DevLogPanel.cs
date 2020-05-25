@@ -48,6 +48,7 @@ namespace WizardsCode.DevLogger
                 logList.drawElementCallback = DrawLogListElement;
                 logList.drawHeaderCallback = DrawHeader;
                 logList.elementHeightCallback = ElementHeightCallback;
+                logList.onReorderCallback = SaveReorderedList;
                 logList.displayAdd = false;
 
                 lastEntriesList = Entries;
@@ -56,6 +57,12 @@ namespace WizardsCode.DevLogger
             {
                 logList = null;
             }
+        }
+
+        private void SaveReorderedList(ReorderableList list)
+        {
+            EditorUtility.SetDirty(Entries);
+            AssetDatabase.SaveAssets();
         }
 
         private float ElementHeightCallback(int index)
