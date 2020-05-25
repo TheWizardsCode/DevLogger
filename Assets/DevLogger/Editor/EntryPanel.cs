@@ -205,7 +205,8 @@ namespace WizardsCode.DevLogger
 
         public void AppendDevlog(bool withImage, bool withTweet)
         {
-            Entry entry = new Entry();
+            DevLogEntry entry = ScriptableObject.CreateInstance<DevLogEntry>();
+            entry.name = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString();
 
             entry.shortDescription = shortText;
             StringBuilder text = new StringBuilder(entry.shortDescription);
@@ -240,22 +241,24 @@ namespace WizardsCode.DevLogger
                     if (ScreenCaptures.captures[i].IsSelected)
                     {
                         DevLogScreenCapture capture = ScreenCaptures.captures[i];
-                        mediaFilePaths.Add(capture.Filename);
                         entry.captures.Add(capture);
                     }
                 }
-                
+
                 entry.longDescription = detailText;
 
-                DevLog.Append(text.ToString(), detailText, mediaFilePaths);
+                DevLog.Append(entry);
             }
             else
             {
                 entry.longDescription = detailText;
-                DevLog.Append(text.ToString(), detailText);
+                DevLog.Append(entry);
             }
 
             Entries.entries.Add(entry);
+            AssetDatabase.AddObjectToAsset(entry, Entries);
+            EditorUtility.SetDirty(Entries);
+            AssetDatabase.SaveAssets();
 
             shortText = "";
             detailText = "";

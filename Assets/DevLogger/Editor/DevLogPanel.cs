@@ -78,7 +78,7 @@ namespace WizardsCode.DevLogger
 
         private void DrawLogListElement(Rect rect, int index, bool isActive, bool isFocused)
         {
-            Entry entry = Entries.entries[index];
+            DevLogEntry entry = Entries.entries[index];
 
             Rect labelRect = new Rect(rect.x, rect.y, listLabelWidth, EditorGUIUtility.singleLineHeight);
             EditorGUI.PrefixLabel(labelRect, new GUIContent("Title"));

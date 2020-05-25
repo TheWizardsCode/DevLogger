@@ -327,7 +327,7 @@ namespace WizardsCode.DevLogger
             screenCapture.timestamp = DateTime.Now.ToFileTime();
             screenCapture.sceneName = SceneManager.GetActiveScene().name;
             screenCapture.encoding = DevLogScreenCapture.ImageEncoding.png;
-            screenCapture.name = windowName;
+            screenCapture.name = windowName + " " + screenCapture.timestamp;
 
             EditorWindow window;
             if (windowName.StartsWith("UnityEditor."))
