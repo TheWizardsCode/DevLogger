@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
 using WizardsCode.DevLogger;
-using WizardsCode.DevLogger;
 using WizardsCode.EditorUtils;
 
 namespace WizardsCode.Git

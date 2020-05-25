@@ -89,41 +89,50 @@ namespace WizardsCode.DevLogger
         #region GUI
         void OnGUI()
         {
-            selectedTab = GUILayout.Toolbar(selectedTab, toolbarLabels);
-            switch (selectedTab)
+            try
             {
-                case 0:
-                    if (m_CaptureCamera && m_DevLogEntries != null && m_ScreenCaptures != null) {
-                        entryPanel.ScreenCaptures = m_ScreenCaptures;
-                        entryPanel.Entries = m_DevLogEntries;
-                        entryPanel.OnGUI();
+                selectedTab = GUILayout.Toolbar(selectedTab, toolbarLabels);
+                switch (selectedTab)
+                {
+                    case 0:
+                        if (m_CaptureCamera && m_DevLogEntries != null && m_ScreenCaptures != null)
+                        {
+                            entryPanel.ScreenCaptures = m_ScreenCaptures;
+                            entryPanel.Entries = m_DevLogEntries;
+                            entryPanel.OnGUI();
 
-                        EditorGUILayout.Space();
+                            EditorGUILayout.Space();
 
-                        mediaPanel.CaptureCamera = m_CaptureCamera;
-                        mediaPanel.ScreenCaptures = m_ScreenCaptures;
-                        mediaPanel.OnGUI();
-                        
-                        EditorGUILayout.Space();
+                            mediaPanel.CaptureCamera = m_CaptureCamera;
+                            mediaPanel.ScreenCaptures = m_ScreenCaptures;
+                            mediaPanel.OnGUI();
 
-                        twitterPanel.ScreenCaptures = m_ScreenCaptures;
-                        twitterPanel.OnGUI();
-                    } else
-                    {
+                            EditorGUILayout.Space();
+
+                            twitterPanel.ScreenCaptures = m_ScreenCaptures;
+                            twitterPanel.OnGUI();
+                        }
+                        else
+                        {
+                            SettingsTab();
+                        }
+                        break;
+                    case 1:
+                        devLogPanel.ScreenCaptures = m_ScreenCaptures;
+                        devLogPanel.Entries = m_DevLogEntries;
+                        devLogPanel.OnGUI();
+                        break;
+                    case 2:
+                        gitPanel.OnGUI();
+                        break;
+                    case 3:
                         SettingsTab();
-                    }
-                    break;
-                case 1:
-                    devLogPanel.ScreenCaptures = m_ScreenCaptures;
-                    devLogPanel.Entries = m_DevLogEntries;
-                    devLogPanel.OnGUI();
-                    break;
-                case 2:
-                    gitPanel.OnGUI();
-                    break;
-                case 3:
-                    SettingsTab();
-                    break;
+                        break;
+                }
+            } catch (InvalidCastException)
+            {
+                // this is a workaround. An exception is thrown when a new scene is loaded.
+                Repaint();
             }
         }
 
