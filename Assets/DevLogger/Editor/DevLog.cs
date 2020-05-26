@@ -41,7 +41,7 @@ namespace WizardsCode.DevLogger
                 for (int i = 0; i < entry.captures.Count; i++)
                 {
                     sb.Append("![Screenshot](");
-                    sb.Append(entry.captures[i].GetRelativeImagePath());
+                    sb.Append(entry.captures[i].ImagePath);
                     sb.AppendLine(")");
                     sb.AppendLine();
                 }
@@ -83,6 +83,7 @@ namespace WizardsCode.DevLogger
         {
             string projectPath = Application.dataPath;
             projectPath = projectPath.Replace("Assets", "");
+            Directory.CreateDirectory(projectPath);
             return projectPath;
         }
 

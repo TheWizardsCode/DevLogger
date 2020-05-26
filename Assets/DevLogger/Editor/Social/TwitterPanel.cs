@@ -60,7 +60,7 @@ namespace WizardsCode.DevLogger
                                     if (ScreenCaptures.captures[i].IsSelected)
                                     {
                                         DevLogScreenCapture capture = ScreenCaptures.captures[i];
-                                        mediaFilePaths.Add(capture.GetRelativeImagePath());
+                                        mediaFilePaths.Add(capture.ImagePath);
                                     }
                                 }
 

@@ -1,5 +1,6 @@
 ﻿using Moments;
 using System;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering.PostProcessing;
@@ -29,14 +30,42 @@ namespace WizardsCode.DevLogger
         [SerializeField] int repeat = 0; // -1: no repeat, 0: infinite, >0: repeat count
         [SerializeField] int quality = 15; // Quality of color quantization, lower = better but slower (min 1, max 100)
 
-        public MediaPanel(DevLogScreenCaptures captures, Camera camera)
+        public MediaPanel(DevLogScreenCaptures captures, Camera camera, string rootCapturesFolderPath, bool organizeByProject, bool organizeByScene)
         {
             ScreenCaptures = captures;
             CaptureCamera = camera;
+            m_RootCapturesFolderPath = rootCapturesFolderPath;
+            m_OrganizeByProject = organizeByProject;
+            m_OrganizeByScene = organizeByScene;
         }
 
         internal Camera CaptureCamera { get; set; }
+
+        private string m_RootCapturesFolderPath;
+        private bool m_OrganizeByProject;
+        private bool m_OrganizeByScene;
+
         internal DevLogScreenCaptures ScreenCaptures { get; set; }
+        internal string CapturesFolderPath(DevLogScreenCapture capture) {
+            string path = m_RootCapturesFolderPath;
+            path += Path.DirectorySeparatorChar;
+
+            if (m_OrganizeByProject)
+            {
+                path += capture.productName;
+                path += Path.DirectorySeparatorChar;
+            }
+
+            if (m_OrganizeByScene)
+            {
+                path += capture.sceneName;
+                path += Path.DirectorySeparatorChar;
+            }
+
+            Directory.CreateDirectory(path);
+
+            return path;
+        }
         
         internal void OnEnable()
         {
@@ -91,7 +120,7 @@ namespace WizardsCode.DevLogger
             }
         }
 
-        private void OnFileSaved(int arg1, string arg2)
+        private void OnFileSaved(int workerID, string filePath)
         {
             m_IsSaving = false;
             _recorder.Record();
@@ -233,19 +262,19 @@ namespace WizardsCode.DevLogger
 
             currentScreenCapture.productName = Application.productName;
             currentScreenCapture.version = Application.version;
-            currentScreenCapture.timestamp = DateTime.Now.ToFileTime();
+            currentScreenCapture.timestamp = DateTime.Now;
             currentScreenCapture.sceneName = SceneManager.GetActiveScene().name;
-
             currentScreenCapture.encoding = DevLogScreenCapture.ImageEncoding.gif;
-            currentScreenCapture.name = "In Game Footage";
+            currentScreenCapture.windowName = "In_Game_Footage";
+            currentScreenCapture.name = Application.productName + " v" + Application.version + currentScreenCapture.timestamp.ToLongDateString();
+
+            currentScreenCapture.AbsoluteSaveFolder = CapturesFolderPath(currentScreenCapture);
 
             Recorder.OnPreProcessingDone = OnProcessingDone;
             Recorder.OnFileSaved = OnFileSaved;
 
-            Recorder.SaveFolder = currentScreenCapture.GetAbsoluteImageFolder();
-            Recorder.Filename = currentScreenCapture.Filename;
-
-            Recorder.Save(true);
+            Recorder.SavePath = currentScreenCapture.ImagePath;
+            Recorder.Save();
         }
 
         private void ImageSelectionGUI()
@@ -268,7 +297,7 @@ namespace WizardsCode.DevLogger
                 if (GUILayout.Button("View"))
                 {
                     string filepath = (DevLog.GetAbsoluteDirectory() + capture.Filename).Replace(@"/", @"\");
-                    System.Diagnostics.Process.Start("Explorer.exe", @"/open,""" + filepath);
+                    System.Diagnostics.Process.Start("Explorer.exe", @"/open,""" + capture.ImagePath);
                 }
 
                 EditorGUILayout.EndVertical();
@@ -298,9 +327,8 @@ namespace WizardsCode.DevLogger
 
             if (currentScreenCapture != null && !m_IsSaving && !currentScreenCapture.IsImageSaved)
             {
-                AddToLatestCaptures(currentScreenCapture);
-
                 currentScreenCapture.IsImageSaved = true;
+                AddToLatestCaptures(currentScreenCapture);
             }
         }
 
@@ -329,10 +357,12 @@ namespace WizardsCode.DevLogger
             DevLogScreenCapture screenCapture = ScriptableObject.CreateInstance<DevLogScreenCapture>();
             screenCapture.productName = Application.productName;
             screenCapture.version = Application.version;
-            screenCapture.timestamp = DateTime.Now.ToFileTime();
+            screenCapture.timestamp = DateTime.Now;
             screenCapture.sceneName = SceneManager.GetActiveScene().name;
             screenCapture.encoding = DevLogScreenCapture.ImageEncoding.png;
-            screenCapture.name = windowName + " " + screenCapture.timestamp;
+            screenCapture.windowName = windowName;
+            screenCapture.name = Application.productName + " v" + Application.version + " " + SceneManager.GetActiveScene().name;
+            screenCapture.AbsoluteSaveFolder = CapturesFolderPath(screenCapture);
 
             EditorWindow window;
             if (windowName.StartsWith("UnityEditor."))
@@ -359,7 +389,7 @@ namespace WizardsCode.DevLogger
                 windowTexture.SetPixels(pixels);
 
                 byte[] bytes = windowTexture.EncodeToPNG();
-                System.IO.File.WriteAllBytes(screenCapture.GetRelativeImagePath(), bytes);
+                System.IO.File.WriteAllBytes(screenCapture.ImagePath, bytes);
                 screenCapture.IsImageSaved = true;
 
                 AddToLatestCaptures(screenCapture);

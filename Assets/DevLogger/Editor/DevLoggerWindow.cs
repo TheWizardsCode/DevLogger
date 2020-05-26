@@ -28,6 +28,8 @@ namespace WizardsCode.DevLogger
         DevLogEntries m_DevLogEntries;
         Camera m_CaptureCamera;
 
+        string m_CapturesFolderPath;
+
         private string[] toolbarLabels = { "Entry", "Dev Log", "Git", "Settings" };
         private int selectedTab = 0;
 
@@ -39,6 +41,11 @@ namespace WizardsCode.DevLogger
 
         private void Awake()
         {
+            // todo these keys should be in a constants file
+            m_CapturesFolderPath = EditorPrefs.GetString("DevLogCapturesFolderPath_" + Application.productName);
+            m_OrganizeByProject = EditorPrefs.GetBool("DevLogOrganizeByProject_" + Application.productName);
+            m_OrganizeByScene = EditorPrefs.GetBool("DevLogOrganizeByScene_" + Application.productName);
+
             m_DevLogEntries = AssetDatabase.LoadAssetAtPath(EditorPrefs.GetString("DevLogScriptableObjectPath_" + Application.productName), typeof(DevLogEntries)) as DevLogEntries;
             devLogPanel = new DevLogPanel(m_DevLogEntries);
 
@@ -47,7 +54,7 @@ namespace WizardsCode.DevLogger
             {
                 m_CaptureCamera = Camera.main;
             }
-            mediaPanel = new MediaPanel(m_ScreenCaptures, m_CaptureCamera);
+            mediaPanel = new MediaPanel(m_ScreenCaptures, m_CaptureCamera, m_CapturesFolderPath, m_OrganizeByProject, m_OrganizeByScene);
 
             entryPanel = new EntryPanel(m_DevLogEntries, m_ScreenCaptures);
             twitterPanel = new TwitterPanel(entryPanel);
@@ -69,6 +76,11 @@ namespace WizardsCode.DevLogger
             entryPanel.OnDisable();
             GitSettings.Save();
             AssetDatabase.SaveAssets();
+
+            // todo these keys should be in a constants file
+            EditorPrefs.SetString("DevLogCapturesFolderPath_" + Application.productName, m_CapturesFolderPath);
+            EditorPrefs.SetBool("DevLogOrganizeByProject_" + Application.productName, m_OrganizeByProject);
+            EditorPrefs.SetBool("DevLogOrganizeByScene_" + Application.productName, m_OrganizeByScene);
             EditorPrefs.SetString("DevLogScriptableObjectPath_" + Application.productName, AssetDatabase.GetAssetPath(m_DevLogEntries));
             EditorPrefs.SetString("DevLogScreenCapturesObjectPath_" + Application.productName, AssetDatabase.GetAssetPath(m_ScreenCaptures));
         }
@@ -79,8 +91,9 @@ namespace WizardsCode.DevLogger
             mediaPanel.OnDestroy();
         }
 
-        private bool showSettings = false;
         private static bool startCapture;
+        private bool m_OrganizeByProject = true;
+        private bool m_OrganizeByScene = true;
 
         void Update()
         {
@@ -161,8 +174,29 @@ namespace WizardsCode.DevLogger
 
         public void SettingsTab()
         {
-            EditorGUILayout.BeginVertical("Box");
+            Skin.StartSection("Capture Storage", false);
+
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.PrefixLabel("Captures Save Folder");
+            m_CapturesFolderPath = EditorGUILayout.TextField(m_CapturesFolderPath);
+            if (GUILayout.Button("Browse"))
+            {
+                m_CapturesFolderPath = EditorUtility.OpenFolderPanel("Select a folder in which to save captures", m_CapturesFolderPath, "");
+            }
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.PrefixLabel("File Organizaton");
             EditorGUILayout.BeginVertical();
+            m_OrganizeByProject = EditorGUILayout.ToggleLeft("Organize in Project sub folders (e.g. 'root/Project')", m_OrganizeByProject);
+            m_OrganizeByScene = EditorGUILayout.ToggleLeft("Organize in Scene sub folders (e.g. 'root/Project/Scene')", m_OrganizeByScene);
+            EditorGUILayout.EndVertical();
+            EditorGUILayout.EndHorizontal();
+
+            Skin.EndSection();
+
+
+            Skin.StartSection("Camera", false);
             if (!m_CaptureCamera) m_CaptureCamera = Camera.main;
             if (!m_CaptureCamera)
             {
@@ -173,7 +207,9 @@ namespace WizardsCode.DevLogger
             EditorGUILayout.PrefixLabel("Camera for captures");
             m_CaptureCamera = (Camera)EditorGUILayout.ObjectField(m_CaptureCamera, typeof(Camera), true);
             EditorGUILayout.EndHorizontal();
+            Skin.EndSection();
 
+            Skin.StartSection("Dev Log Objects", false);
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.PrefixLabel("Dev Log Storage");
             m_DevLogEntries = EditorGUILayout.ObjectField(m_DevLogEntries, typeof(DevLogEntries), true) as DevLogEntries;
@@ -201,6 +237,9 @@ namespace WizardsCode.DevLogger
                 }
             }
             EditorGUILayout.EndHorizontal();
+            Skin.EndSection();
+
+            Skin.StartSection("Helpers", false);
 
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Reset"))
@@ -228,10 +267,8 @@ namespace WizardsCode.DevLogger
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.LabelField("Welcome to " + Application.productName + " v" + Application.version);
-            
-            EditorGUILayout.EndVertical();
 
-            EditorGUILayout.EndVertical();
+            Skin.EndSection();
         }
 
         
