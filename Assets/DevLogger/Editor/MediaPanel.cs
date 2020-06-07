@@ -103,7 +103,7 @@ namespace WizardsCode.DevLogger
             }
         }
 
-        internal void OnDestroy()
+        internal void OnImageSelection()
         {
             if (removeRecorder)
             {

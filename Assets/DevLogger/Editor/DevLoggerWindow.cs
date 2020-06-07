@@ -60,9 +60,9 @@ namespace WizardsCode.DevLogger
             GitSettings.Save();
         }
 
-        private void OnDestroy()
+        private void OnImageSelection()
         {
-            mediaPanel.OnDestroy();
+            mediaPanel.OnImageSelection();
         }
 
         private bool showSettings = false;
