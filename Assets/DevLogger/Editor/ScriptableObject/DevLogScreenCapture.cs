@@ -13,30 +13,27 @@ namespace WizardsCode.DevLogger
     {
         public enum ImageEncoding { gif, png }
 
-        [SerializeField]
-        private ImageEncoding _encoding;
-        public ImageEncoding Encoding {
-            get { return _encoding; }
-            set { _encoding = value; }
-        }
-
-        [SerializeField]
-        private string _productName;
-        [SerializeField]
-        private string _version;
-        [SerializeField]
-        private long _timestamp;
-        [SerializeField]
-        private string _sceneName;
-        [SerializeField]
+        public ImageEncoding encoding;
+        public string windowName;
+        public string productName;
+        public string version;
+        public string sceneName;
         public int _width;
-        [SerializeField]
         public int _height;
+        [SerializeField] private string _timestampAsString;
 
         public bool IsImageSaved = false;
         public bool IsSelected = false;
+        public string AbsoluteSaveFolder;
+
+        public DateTime timestamp
+        {
+            get { return DateTime.Parse(_timestampAsString); }
+            set { _timestampAsString = value.ToString(); }
+        }
 
         private Texture2D _texture;
+
         public Texture2D Texture
         {
             get {
@@ -53,7 +50,7 @@ namespace WizardsCode.DevLogger
 
         private void LoadPreviewTexture()
         {
-            Uri uri = new Uri(GetAbsolutePreviewImagePath());
+            Uri uri = new Uri(PreviewImagePath);
             string absoluteUri = uri.AbsoluteUri;
             WWW www = new WWW(absoluteUri);
             do { } while (!www.isDone && string.IsNullOrEmpty(www.error));
@@ -68,57 +65,17 @@ namespace WizardsCode.DevLogger
             }
         }
 
-        void Awake()
+        public string PreviewImagePath
         {
-            _productName = Application.productName;
-            _version = Application.version;
-            _timestamp = DateTime.Now.ToFileTime();
-            _sceneName = SceneManager.GetActiveScene().name;
+            get { return AbsoluteSaveFolder + Filename.Replace(".gif", ".png"); } 
         }
 
         /// <summary>
-        /// Get the absolute filepath and filename to the image for this capture.
+        /// The full image path, including filename.
         /// </summary>
-        /// <returns></returns>
-        public string GetAbsoluteImagePath()
+        public string ImagePath
         {
-            return GetAbsoluteImageFolder() + Filename;
-        }
-
-        /// <summary>
-        /// Get the absolute filepath and filename to the preview image for this capture.
-        /// </summary>
-        /// <returns></returns>
-        public string GetAbsolutePreviewImagePath()
-        {
-            return GetAbsoluteImageFolder() + Filename.Replace(".gif", ".png");
-        }
-
-        /// <summary>
-        /// Get the path to the folder in which the project is stored
-        /// </summary>
-        /// <returns></returns>
-        public string GetAbsoluteImageFolder()
-        {
-            string projectPath = Application.dataPath;
-            projectPath = projectPath.Replace("Assets", "");
-            return projectPath + GetRelativeImageFolder();
-        }
-
-        public string GetRelativeImageFolder()
-        {
-            string relativePath = "DevLog/";
-            Directory.CreateDirectory(relativePath);
-            return relativePath;
-        }
-
-        /// <summary>
-        /// Get the relative filepath and filename to the image for this capture.
-        /// </summary>
-        /// <returns></returns>
-        public string GetRelativeImagePath()
-        {
-            return GetRelativeImageFolder() + Filename;
+            get { return AbsoluteSaveFolder + Filename; }
         }
 
         public string Filename
@@ -126,17 +83,17 @@ namespace WizardsCode.DevLogger
             get
             {
                 StringBuilder sb = new StringBuilder();
-                sb.Append(name);
+                sb.Append(windowName);
                 sb.Append("_");
-                sb.Append(_productName);
+                sb.Append(productName);
                 sb.Append("_");
-                sb.Append(_sceneName);
+                sb.Append(sceneName);
                 sb.Append("_v");
-                sb.Append(_version);
+                sb.Append(version);
                 sb.Append("_");
-                sb.Append(_timestamp);
+                sb.Append(timestamp.ToFileTime());
                 sb.Append(".");
-                sb.Append(Encoding);
+                sb.Append(encoding);
                 return sb.ToString();
             }
         }

@@ -16,7 +16,7 @@ namespace WizardsCode.DevLogger
     [Serializable]
     public class EntryPanel
     {
-        [SerializeField] Vector2 windowScrollPos;
+        [SerializeField] Vector2 windowScrollPos = Vector2.zero;
         [SerializeField] internal string shortText = "";
         [SerializeField] string detailText = "";
         [SerializeField] string uiStatusText = "";
@@ -24,12 +24,15 @@ namespace WizardsCode.DevLogger
         [SerializeField] List<string> suggestedMetaData;
         [SerializeField] List<bool> selectedMetaData;
         [SerializeField] string newMetaDataItem;
-        [SerializeField] internal MediaPanel mediaPanel;
 
-        public EntryPanel(MediaPanel mediaPanel)
+        public EntryPanel(DevLogEntries entries, DevLogScreenCaptures screenCaptures)
         {
-            this.mediaPanel = mediaPanel;
+            Entries = entries;
+            ScreenCaptures = screenCaptures;
         }
+
+        internal DevLogEntries Entries { get; set; }
+        internal DevLogScreenCaptures ScreenCaptures { get; set; }
 
         internal void OnEnable()
         {
@@ -153,9 +156,9 @@ namespace WizardsCode.DevLogger
                 EditorGUILayout.BeginHorizontal();
 
                 bool hasSelection = false;
-                for (int i = 0; i < mediaPanel.ScreenCaptures.Count; i++)
+                for (int i = 0; i < ScreenCaptures.Count; i++)
                 {
-                    if (mediaPanel.ScreenCaptures.captures[i])
+                    if (ScreenCaptures.captures[i])
                     {
                         hasSelection = true;
                         break;
@@ -202,7 +205,8 @@ namespace WizardsCode.DevLogger
 
         public void AppendDevlog(bool withImage, bool withTweet)
         {
-            Entry entry = new Entry();
+            DevLogEntry entry = ScriptableObject.CreateInstance<DevLogEntry>();
+            entry.name = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString();
 
             entry.shortDescription = shortText;
             StringBuilder text = new StringBuilder(entry.shortDescription);
@@ -232,27 +236,29 @@ namespace WizardsCode.DevLogger
             if (withImage)
             {
                 List<string> mediaFilePaths = new List<string>();
-                for (int i = 0; i < mediaPanel.ScreenCaptures.Count; i++)
+                for (int i = 0; i < ScreenCaptures.Count; i++)
                 {
-                    if (mediaPanel.ScreenCaptures.captures[i].IsSelected)
+                    if (ScreenCaptures.captures[i].IsSelected)
                     {
-                        DevLogScreenCapture capture = mediaPanel.ScreenCaptures.captures[i];
-                        mediaFilePaths.Add(capture.Filename);
+                        DevLogScreenCapture capture = ScreenCaptures.captures[i];
                         entry.captures.Add(capture);
                     }
                 }
-                
+
                 entry.longDescription = detailText;
 
-                DevLog.Append(text.ToString(), detailText, mediaFilePaths);
+                DevLog.Append(entry);
             }
             else
             {
                 entry.longDescription = detailText;
-                DevLog.Append(text.ToString(), detailText);
+                DevLog.Append(entry);
             }
 
-            DevLogPanel.DevLog.entries.Add(entry);
+            Entries.entries.Add(entry);
+            AssetDatabase.AddObjectToAsset(entry, Entries);
+            EditorUtility.SetDirty(Entries);
+            AssetDatabase.SaveAssets();
 
             shortText = "";
             detailText = "";

@@ -79,31 +79,9 @@ namespace Moments
 		public RecorderState State { get; private set; }
 
 		/// <summary>
-		/// The folder to save the gif to. No trailing slash.
+		/// The folder and filename to save the gif to.
 		/// </summary>
-		public string SaveFolder { get; set; }
-
-		string _filename;
-		/// <summary>
-		/// The filename to save the gif to. If null a filename will be generated.
-		/// </summary>
-		public string Filename
-		{
-			get
-			{
-				if (_filename == null)
-				{
-					string timestamp = DateTime.Now.ToString("yyyyMMddHHmmssffff");
-					_filename = "GifCapture-" + timestamp + ".gif";
-				}
-
-				return _filename;
-			}
-			set
-			{
-				_filename = value;
-			}
-		}
+		public string SavePath { get; set; }
 
 		/// <
 		/// summary>
@@ -257,32 +235,14 @@ namespace Moments
 		}
 
 		/// <summary>
-		/// Saves the stored frames to a gif file. The filename will automatically be generated.
-		/// Recording will be paused and won't resume automatically. You can use the 
-		/// <code>OnPreProcessingDone</code> callback to be notified when the pre-processing
-		/// step has finished.
-		/// </summary>
-		/// <param name="withPreview">If true save a preview file with the same filename but in png format (and with .png extension).</param>
-		public void Save(bool withPreview)
-		{
-			Save(Filename, withPreview);
-		}
-
-		/// <summary>
 		/// Saves the stored frames to a gif file. If the filename is null or empty, an unique one
 		/// will be generated. You don't need to add the .gif extension to the name. Recording will
 		/// be paused and won't resume automatically. You can use the <code>OnPreProcessingDone</code>
 		/// callback to be notified when the pre-processing step has finished.
 		/// </summary>
 		/// <param name="filename">File name without extension</param>
-		/// /// <param name="withPreview">If true save a preview file with the same filename but in png format (and with .png extension).</param>
-		public void Save(string filename, bool withPreview)
+		public void Save()
 		{
-			if (string.IsNullOrEmpty(filename))
-			{
-				throw new ArgumentException("Filename cannot be null or empty");
-			}
-
 			if (State == RecorderState.PreProcessing)
 			{
 				Debug.LogWarning("Attempting to save during the pre-processing step.");
@@ -296,12 +256,11 @@ namespace Moments
 			}
 
 			State = RecorderState.PreProcessing;
-			SavePreview(SaveFolder.TrimEnd('/') + "/" + filename);
-
-			StartCoroutine(PreProcess(filename));
+			SavePreview();
+			StartCoroutine(PreProcess());
 		}
 
-		private void SavePreview(string filename)
+		private void SavePreview()
 		{
 			RenderTexture oldRT = RenderTexture.active;
 
@@ -320,7 +279,7 @@ namespace Moments
 			RenderTexture.active = oldRT;
 
 			byte[] bytes = target.EncodeToPNG();
-			System.IO.File.WriteAllBytes(filename.Replace(".gif", ".png"), bytes);
+			System.IO.File.WriteAllBytes(SavePath.Replace(".gif", ".png"), bytes);
 			Flush(target);
 		}
 
@@ -393,11 +352,11 @@ namespace Moments
 			m_Time = 0f;
 
 			// Make sure the output folder is set or use the default one
-			if (string.IsNullOrEmpty(SaveFolder))
+			if (string.IsNullOrEmpty(SavePath))
 			{
-				#if UNITY_EDITOR
-				SaveFolder = Application.dataPath; // Defaults to the asset folder in the editor for faster access to the gif file
-				#else
+                #if UNITY_EDITOR
+                SavePath = Application.dataPath; // Defaults to the asset folder in the editor for faster access to the gif file
+                #else
 				SaveFolder = Application.persistentDataPath;
 				#endif
 			}
@@ -425,9 +384,8 @@ namespace Moments
 		}
 
 		// Pre-processing coroutine to extract frame data and send everything to a separate worker thread
-		IEnumerator PreProcess(string filename)
+		IEnumerator PreProcess()
 		{
-			string filepath = SaveFolder.TrimEnd('/') + "/" + filename; 
 			List<GifFrame> frames = new List<GifFrame>(m_Frames.Count);
 
 			// Get a temporary texture to read RenderTexture data
@@ -462,7 +420,7 @@ namespace Moments
 			{
 				m_Encoder = encoder,
 				m_Frames = frames,
-				m_FilePath = filepath,
+				m_FilePath = SavePath,
 				m_OnFileSaved = OnFileSaved,
 				m_OnFileSaveProgress = OnFileSaveProgress
 			};
@@ -481,6 +439,6 @@ namespace Moments
 			return new GifFrame() { Width = target.width, Height = target.height, Data = target.GetPixels32() };
 		}
 
-		#endregion
-	}
+        #endregion
+    }
 }

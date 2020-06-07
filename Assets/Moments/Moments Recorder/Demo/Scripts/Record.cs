@@ -64,19 +64,6 @@ public class Record : MonoBehaviour
 		//m_Recorder.FlushMemory();
 	}
 
-	void Update()
-	{
-		if (Input.GetKeyDown(KeyCode.Space))
-		{
-			// Compress & save the buffered frames to a gif file. We should check the State
-			// of the Recorder before saving, but for the sake of this example we won't, so
-			// you'll see a warning in the console if you try saving while the Recorder is
-			// processing another gif.
-			m_Recorder.Save(false);
-			m_Progress = 0f;
-		}
-	}
-
 	void OnGUI()
 	{
 		GUILayout.BeginHorizontal();

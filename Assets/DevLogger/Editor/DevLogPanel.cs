@@ -8,33 +8,25 @@ using WizardsCode.DevLogger;
 
 namespace WizardsCode.DevLogger
 {
-    public static class DevLogPanel
-    {
-        public static DevLogEntries m_DevLog;
-        public static DevLogScreenCaptures m_ScreenCaptures;
-        static ReorderableList logList;
-        static float listLabelWidth = 80;
-        static int listDescriptionLines = 6;
-        static Vector2 listScrollPosition;
+    public class DevLogPanel
+    {   
+        ReorderableList logList;
+        float listLabelWidth = 80;
+        int listDescriptionLines = 6;
+        Vector2 listScrollPosition;
 
-        public static DevLogEntries DevLog
+        public DevLogPanel(DevLogEntries entries)
         {
-            get { return m_DevLog; }
-            set
-            {
-                if (m_DevLog  != value)
-                {
-                    m_DevLog = value;
-                    ConfigureReorderableLogList();
-                } else
-                {
-                    m_DevLog = value;
-                }
-            }
+            Entries = entries;
         }
 
-        public static void OnGUI()
+        internal DevLogEntries Entries { get; set; }
+        internal DevLogScreenCaptures ScreenCaptures { get; set; }
+
+        public void OnGUI()
         {
+            ConfigureReorderableLogList();
+
             if (logList == null)
             {
                 EditorGUILayout.LabelField("Setup your log in the 'Settings' Tab.");
@@ -47,39 +39,38 @@ namespace WizardsCode.DevLogger
             }
         }
 
-        internal static void OnEnable()
+        private DevLogEntries lastEntriesList;
+        private void ConfigureReorderableLogList()
         {
-            DevLog = AssetDatabase.LoadAssetAtPath(EditorPrefs.GetString("DevLogScriptableObjectPath_" + Application.productName), typeof(DevLogEntries)) as DevLogEntries;
-            ConfigureReorderableLogList();
-        }
-
-        internal static void OnDisable()
-        {
-            EditorPrefs.SetString("DevLogScriptableObjectPath_" + Application.productName, AssetDatabase.GetAssetPath(DevLog));
-        }
-
-        private static void ConfigureReorderableLogList()
-        {
-            if (DevLog != null)
+            if (Entries != lastEntriesList)
             {
-                logList = new ReorderableList(DevLog.entries, typeof(DevLogEntry), true, true, true, true);
+                logList = new ReorderableList(Entries.entries, typeof(DevLogEntry), true, true, true, true);
                 logList.drawElementCallback = DrawLogListElement;
                 logList.drawHeaderCallback = DrawHeader;
                 logList.elementHeightCallback = ElementHeightCallback;
+                logList.onReorderCallback = SaveReorderedList;
                 logList.displayAdd = false;
+
+                lastEntriesList = Entries;
             }
-            else
+            else if (Entries == null)
             {
                 logList = null;
             }
         }
 
-        private static float ElementHeightCallback(int index)
+        private void SaveReorderedList(ReorderableList list)
+        {
+            EditorUtility.SetDirty(Entries);
+            AssetDatabase.SaveAssets();
+        }
+
+        private float ElementHeightCallback(int index)
         {
             float height = EditorGUIUtility.singleLineHeight; // title
             height += EditorGUIUtility.singleLineHeight * listDescriptionLines; // descrption
-            height += EditorGUIUtility.singleLineHeight * DevLog.entries[index].metaData.Count; // meta data
-            height += EditorGUIUtility.singleLineHeight * DevLog.entries[index].captures.Count; // capture
+            height += EditorGUIUtility.singleLineHeight * Entries.entries[index].metaData.Count; // meta data
+            height += EditorGUIUtility.singleLineHeight * Entries.entries[index].captures.Count; // capture
             height += EditorGUIUtility.singleLineHeight;// Commit Hash
             height += EditorGUIUtility.singleLineHeight;// Tweeted
             height += EditorGUIUtility.singleLineHeight;// Date
@@ -87,14 +78,14 @@ namespace WizardsCode.DevLogger
             return height;
         }
 
-        private static void DrawHeader(Rect rect)
+        private void DrawHeader(Rect rect)
         {
             EditorGUI.LabelField(rect, "Entries");
         }
 
-        private static void DrawLogListElement(Rect rect, int index, bool isActive, bool isFocused)
+        private void DrawLogListElement(Rect rect, int index, bool isActive, bool isFocused)
         {
-            Entry entry = DevLog.entries[index];
+            DevLogEntry entry = Entries.entries[index];
 
             Rect labelRect = new Rect(rect.x, rect.y, listLabelWidth, EditorGUIUtility.singleLineHeight);
             EditorGUI.PrefixLabel(labelRect, new GUIContent("Title"));
@@ -107,7 +98,7 @@ namespace WizardsCode.DevLogger
             EditorGUI.TextArea(fieldRect, entry.longDescription);
 
             labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight * listDescriptionLines, labelRect.width, labelRect.height);
-            if (DevLog.entries[index].metaData.Count != 0)
+            if (Entries.entries[index].metaData.Count != 0)
             {
                 EditorGUI.PrefixLabel(labelRect, new GUIContent("Meta Data"));
                 for (int i = 0; i < entry.metaData.Count; i++)
@@ -117,18 +108,18 @@ namespace WizardsCode.DevLogger
                 }
             }
 
-            labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight * DevLog.entries[index].metaData.Count, labelRect.width, labelRect.height);
-            if (DevLog.entries[index].captures.Count != 0)
+            labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight * Entries.entries[index].metaData.Count, labelRect.width, labelRect.height);
+            if (Entries.entries[index].captures.Count != 0)
             {
                 EditorGUI.PrefixLabel(labelRect, new GUIContent("Captures"));
                 for (int i = 0; i < entry.captures.Count; i++)
                 {
                     fieldRect = new Rect(fieldRect.x, labelRect.y + EditorGUIUtility.singleLineHeight * i, fieldRect.width, EditorGUIUtility.singleLineHeight);
-                    EditorGUI.TextField(fieldRect, entry.captures[i].Filename);
+                    EditorGUI.ObjectField(fieldRect, entry.captures[i], typeof(ScreenCapture), false);
                 }
             }
 
-            labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight * DevLog.entries[index].captures.Count, labelRect.width, labelRect.height);
+            labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight * Entries.entries[index].captures.Count, labelRect.width, labelRect.height);
             EditorGUI.PrefixLabel(labelRect, new GUIContent("Commit"));
             fieldRect = new Rect(fieldRect.x, labelRect.y, fieldRect.width, EditorGUIUtility.singleLineHeight);
             EditorGUI.TextArea(fieldRect, entry.commitHash);

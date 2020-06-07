@@ -14,47 +14,42 @@ namespace WizardsCode.DevLogger
     {
         public const string STORAGE_DIRECTORY = "DevLog/";
 
-        /// <summary>
-        /// Append an entry to the current DevLog.
-        /// </summary>
-        /// <param name="shortText">The short text content of this log entry.</param>
-        /// <param name="mediaFilePath">The path to a media file to include as an image. If null no image will be included.</param>
-        [Obsolete("Use Append(Entry entry) instead")]
-        public static void Append(string shortText, string detailText, List<string> mediaFilePaths = null)
+        public static void Append(DevLogEntry entry)
         {
-            StringBuilder entry = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
 
             Directory.CreateDirectory(STORAGE_DIRECTORY);
 
             if (!File.Exists(GetRelativeCurrentFilePath()))
             {
-                entry.Append(GetDevLogIntro());
+                sb.Append(GetDevLogIntro());
             }
-            
-            entry.Append(GetNewEntryHeading());
-            entry.AppendLine(shortText);
-            entry.AppendLine();
 
-            if (!string.IsNullOrEmpty(detailText))
+            sb.Append(GetNewEntryHeading());
+            sb.AppendLine(entry.shortDescription);
+            sb.AppendLine();
+
+            if (!string.IsNullOrEmpty(entry.longDescription))
             {
-                entry.AppendLine("### Details");
-                entry.AppendLine(detailText);
-                entry.AppendLine();
+                sb.AppendLine("### Details");
+                sb.AppendLine(entry.longDescription);
+                sb.AppendLine();
             }
 
-            if (mediaFilePaths != null) {
-                for (int i = 0; i < mediaFilePaths.Count; i++)
+            if (entry.captures != null)
+            {
+                for (int i = 0; i < entry.captures.Count; i++)
                 {
-                    entry.Append("![Screenshot](");
-                    entry.Append(mediaFilePaths[i]);
-                    entry.AppendLine(")");
-                    entry.AppendLine();
+                    sb.Append("![Screenshot](");
+                    sb.Append(entry.captures[i].ImagePath);
+                    sb.AppendLine(")");
+                    sb.AppendLine();
                 }
             }
 
             using (StreamWriter file = File.AppendText(GetRelativeCurrentFilePath()))
             {
-                file.Write(entry.ToString());
+                file.Write(sb.ToString());
                 file.Close();
             }
         }
@@ -88,6 +83,7 @@ namespace WizardsCode.DevLogger
         {
             string projectPath = Application.dataPath;
             projectPath = projectPath.Replace("Assets", "");
+            Directory.CreateDirectory(projectPath);
             return projectPath;
         }
 

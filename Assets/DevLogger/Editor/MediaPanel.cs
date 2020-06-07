@@ -1,8 +1,10 @@
 ﻿using Moments;
 using System;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering.PostProcessing;
+using UnityEngine.SceneManagement;
 using WizardsCode.EditorUtils;
 
 namespace WizardsCode.DevLogger
@@ -19,7 +21,6 @@ namespace WizardsCode.DevLogger
         [SerializeField] bool removeRecorder;
         [SerializeField] bool originalFinalBlitToCameraTarget;
         [SerializeField] bool m_IsSaving;
-        [SerializeField] Camera m_Camera;
 
         // Animated GIF setup
         [SerializeField] bool preserveAspect = true; // Automatically compute height from the current aspect ratio
@@ -29,40 +30,43 @@ namespace WizardsCode.DevLogger
         [SerializeField] int repeat = 0; // -1: no repeat, 0: infinite, >0: repeat count
         [SerializeField] int quality = 15; // Quality of color quantization, lower = better but slower (min 1, max 100)
 
-        DevLogScreenCaptures m_ScreenCaptures;
+        public MediaPanel(DevLogScreenCaptures captures, Camera camera, string rootCapturesFolderPath, bool organizeByProject, bool organizeByScene)
+        {
+            ScreenCaptures = captures;
+            CaptureCamera = camera;
+            m_RootCapturesFolderPath = rootCapturesFolderPath;
+            m_OrganizeByProject = organizeByProject;
+            m_OrganizeByScene = organizeByScene;
+        }
+
+        internal Camera CaptureCamera { get; set; }
+
+        private string m_RootCapturesFolderPath;
+        private bool m_OrganizeByProject;
+        private bool m_OrganizeByScene;
+
+        internal DevLogScreenCaptures ScreenCaptures { get; set; }
+        internal string CapturesFolderPath(DevLogScreenCapture capture) {
+            string path = m_RootCapturesFolderPath;
+            path += Path.DirectorySeparatorChar;
+
+            if (m_OrganizeByProject)
+            {
+                path += capture.productName;
+                path += Path.DirectorySeparatorChar;
+            }
+
+            if (m_OrganizeByScene)
+            {
+                path += capture.sceneName;
+                path += Path.DirectorySeparatorChar;
+            }
+
+            Directory.CreateDirectory(path);
+
+            return path;
+        }
         
-        public Camera CaptureCamera
-        {
-            get {
-
-                if (m_Camera == null)
-                {
-                    m_Camera = Camera.main;
-                }
-                
-                return m_Camera; 
-            }
-            set { m_Camera = value; }
-        }
-
-        public DevLogScreenCaptures ScreenCaptures
-        {
-            get { 
-                if (m_ScreenCaptures == null)
-                {
-                    m_ScreenCaptures = AssetDatabase.LoadAssetAtPath(EditorPrefs.GetString("DevLogScreenCapturesObjectPath_" + Application.productName), typeof(DevLogScreenCaptures)) as DevLogScreenCaptures;
-                }
-                return m_ScreenCaptures; 
-            }
-            set { 
-                if (m_ScreenCaptures != value)
-                {
-                    EditorPrefs.SetString("DevLogScreenCapturesObjectPath_" + Application.productName, AssetDatabase.GetAssetPath(value));
-                }
-                m_ScreenCaptures = value; 
-            }
-        }
-
         internal void OnEnable()
         {
             CaptureCamera = AssetDatabase.LoadAssetAtPath(EditorPrefs.GetString("DevLogCaptureCamera_" + Application.productName), typeof(Camera)) as Camera;
@@ -77,12 +81,12 @@ namespace WizardsCode.DevLogger
         {
             get
             {
-                if (_recorder == null && m_Camera)
+                if (_recorder == null && CaptureCamera)
                 {
-                    _recorder = m_Camera.GetComponent<Recorder>();
+                    _recorder = CaptureCamera.GetComponent<Recorder>();
                     if (_recorder == null)
                     {
-                        _recorder = m_Camera.gameObject.AddComponent<Recorder>();
+                        _recorder = CaptureCamera.gameObject.AddComponent<Recorder>();
                         _recorder.Init();
 
                         PostProcessLayer pp = Camera.main.GetComponent<PostProcessLayer>();
@@ -116,7 +120,7 @@ namespace WizardsCode.DevLogger
             }
         }
 
-        private void OnFileSaved(int arg1, string arg2)
+        private void OnFileSaved(int workerID, string filePath)
         {
             m_IsSaving = false;
             _recorder.Record();
@@ -167,17 +171,7 @@ namespace WizardsCode.DevLogger
                     case RecorderState.Recording:
                         if (GUILayout.Button("Save Animated GIF"))
                         {
-                            currentScreenCapture = ScriptableObject.CreateInstance<DevLogScreenCapture>();
-                            currentScreenCapture.Encoding = DevLogScreenCapture.ImageEncoding.gif;
-                            currentScreenCapture.name = "In Game Footage";
-
-                            Recorder.OnPreProcessingDone = OnProcessingDone;
-                            Recorder.OnFileSaved = OnFileSaved;
-
-                            Recorder.SaveFolder = currentScreenCapture.GetAbsoluteImageFolder();
-                            Recorder.Filename = currentScreenCapture.Filename;
-
-                            Recorder.Save(true);
+                            CaptureGif();
                         }
                         break;
                     case RecorderState.PreProcessing:
@@ -262,27 +256,48 @@ namespace WizardsCode.DevLogger
             Skin.EndSection();
         }
 
+        internal void CaptureGif()
+        {
+            currentScreenCapture = ScriptableObject.CreateInstance<DevLogScreenCapture>();
+
+            currentScreenCapture.productName = Application.productName;
+            currentScreenCapture.version = Application.version;
+            currentScreenCapture.timestamp = DateTime.Now;
+            currentScreenCapture.sceneName = SceneManager.GetActiveScene().name;
+            currentScreenCapture.encoding = DevLogScreenCapture.ImageEncoding.gif;
+            currentScreenCapture.windowName = "In_Game_Footage";
+            currentScreenCapture.name = Application.productName + " v" + Application.version + currentScreenCapture.timestamp.ToLongDateString();
+
+            currentScreenCapture.AbsoluteSaveFolder = CapturesFolderPath(currentScreenCapture);
+
+            Recorder.OnPreProcessingDone = OnProcessingDone;
+            Recorder.OnFileSaved = OnFileSaved;
+
+            Recorder.SavePath = currentScreenCapture.ImagePath;
+            Recorder.Save();
+        }
+
         private void ImageSelectionGUI()
         {
             EditorGUILayout.BeginHorizontal();
-            for (int i = m_ScreenCaptures.captures.Count - 1; i >= 0; i--)
+            for (int i = ScreenCaptures.captures.Count - 1; i >= 0; i--)
             {
                 EditorGUILayout.BeginVertical();
 
                 EditorGUILayout.BeginHorizontal();
-                DevLogScreenCapture capture = m_ScreenCaptures.captures[i];
+                DevLogScreenCapture capture = ScreenCaptures.captures[i];
                 
                 if (GUILayout.Button(capture.Texture, GUILayout.Width(100), GUILayout.Height(100)))
                 {
-                    m_ScreenCaptures.captures[i].IsSelected = !m_ScreenCaptures.captures[i].IsSelected;
+                    ScreenCaptures.captures[i].IsSelected = !ScreenCaptures.captures[i].IsSelected;
                 }
-                m_ScreenCaptures.captures[i].IsSelected = EditorGUILayout.Toggle(m_ScreenCaptures.captures[i].IsSelected);
+                ScreenCaptures.captures[i].IsSelected = EditorGUILayout.Toggle(ScreenCaptures.captures[i].IsSelected);
                 EditorGUILayout.EndHorizontal();
 
                 if (GUILayout.Button("View"))
                 {
                     string filepath = (DevLog.GetAbsoluteDirectory() + capture.Filename).Replace(@"/", @"\");
-                    System.Diagnostics.Process.Start("Explorer.exe", @"/open,""" + filepath);
+                    System.Diagnostics.Process.Start("Explorer.exe", @"/open,""" + capture.ImagePath);
                 }
 
                 EditorGUILayout.EndVertical();
@@ -294,7 +309,12 @@ namespace WizardsCode.DevLogger
         {
             if (screenCapture != null)
             {
-                m_ScreenCaptures.captures.Add(screenCapture);
+                AssetDatabase.AddObjectToAsset(screenCapture, ScreenCaptures);
+                
+                ScreenCaptures.captures.Add(screenCapture);
+                EditorUtility.SetDirty(ScreenCaptures);
+
+                AssetDatabase.SaveAssets();
             }
         }
 
@@ -307,12 +327,8 @@ namespace WizardsCode.DevLogger
 
             if (currentScreenCapture != null && !m_IsSaving && !currentScreenCapture.IsImageSaved)
             {
-                AddToLatestCaptures(currentScreenCapture);
-
-                AssetDatabase.AddObjectToAsset(currentScreenCapture, DATABASE_PATH);
-                AssetDatabase.SaveAssets();
-
                 currentScreenCapture.IsImageSaved = true;
+                AddToLatestCaptures(currentScreenCapture);
             }
         }
 
@@ -339,8 +355,14 @@ namespace WizardsCode.DevLogger
         public void CaptureWindowScreenshot(string windowName)
         {
             DevLogScreenCapture screenCapture = ScriptableObject.CreateInstance<DevLogScreenCapture>();
-            screenCapture.Encoding = DevLogScreenCapture.ImageEncoding.png;
-            screenCapture.name = windowName;
+            screenCapture.productName = Application.productName;
+            screenCapture.version = Application.version;
+            screenCapture.timestamp = DateTime.Now;
+            screenCapture.sceneName = SceneManager.GetActiveScene().name;
+            screenCapture.encoding = DevLogScreenCapture.ImageEncoding.png;
+            screenCapture.windowName = windowName;
+            screenCapture.name = Application.productName + " v" + Application.version + " " + SceneManager.GetActiveScene().name;
+            screenCapture.AbsoluteSaveFolder = CapturesFolderPath(screenCapture);
 
             EditorWindow window;
             if (windowName.StartsWith("UnityEditor."))
@@ -367,13 +389,10 @@ namespace WizardsCode.DevLogger
                 windowTexture.SetPixels(pixels);
 
                 byte[] bytes = windowTexture.EncodeToPNG();
-                System.IO.File.WriteAllBytes(screenCapture.GetRelativeImagePath(), bytes);
+                System.IO.File.WriteAllBytes(screenCapture.ImagePath, bytes);
                 screenCapture.IsImageSaved = true;
 
                 AddToLatestCaptures(screenCapture);
-
-                AssetDatabase.AddObjectToAsset(screenCapture, DATABASE_PATH);
-                AssetDatabase.SaveAssets();
 
                 // TODO This used to be in the window, but now it's not so how do we get focus back?
                 // this.Focus();

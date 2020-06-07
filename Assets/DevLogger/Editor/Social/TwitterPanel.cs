@@ -15,6 +15,8 @@ namespace WizardsCode.DevLogger
         [SerializeField] EntryPanel entryPanel;
         string m_StatusText;
 
+        internal DevLogScreenCaptures ScreenCaptures { get; set; }
+
         public TwitterPanel(EntryPanel entryPanel)
         {
             this.entryPanel = entryPanel;
@@ -48,17 +50,17 @@ namespace WizardsCode.DevLogger
                             }
                         }
 
-                        if (entryPanel.mediaPanel.ScreenCaptures != null && entryPanel.mediaPanel.ScreenCaptures.Count > 0)
+                        if (ScreenCaptures != null && ScreenCaptures.Count > 0)
                         {
                             if (GUILayout.Button("Tweet (and DevLog) with image(s) and text"))
                             {
                                 List<string> mediaFilePaths = new List<string>();
-                                for (int i = 0; i < entryPanel.mediaPanel.ScreenCaptures.Count; i++)
+                                for (int i = 0; i < ScreenCaptures.Count; i++)
                                 {
-                                    if (entryPanel.mediaPanel.ScreenCaptures.captures[i].IsSelected)
+                                    if (ScreenCaptures.captures[i].IsSelected)
                                     {
-                                        DevLogScreenCapture capture = entryPanel.mediaPanel.ScreenCaptures.captures[i];
-                                        mediaFilePaths.Add(capture.GetRelativeImagePath());
+                                        DevLogScreenCapture capture = ScreenCaptures.captures[i];
+                                        mediaFilePaths.Add(capture.ImagePath);
                                     }
                                 }
 
