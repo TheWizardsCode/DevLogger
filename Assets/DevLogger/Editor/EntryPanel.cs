@@ -194,12 +194,6 @@ namespace WizardsCode.DevLogger
                 string filepath = DevLog.GetAbsoluteProjectDirectory() + DevLog.GetRelativeCurrentFilePath();
                 System.Diagnostics.Process.Start(filepath);
             }
-
-            if (GUILayout.Button("Open Media Folder"))
-            {
-                string filepath = DevLog.GetAbsoluteDirectory().Replace(@"/", @"\");
-                System.Diagnostics.Process.Start("Explorer.exe", @"/open,""" + filepath);
-            }
             EditorGUILayout.EndHorizontal();
         }
 

@@ -128,7 +128,7 @@ namespace WizardsCode.DevLogger
                 switch (selectedTab)
                 {
                     case 0:
-                        if (m_CaptureCamera && m_DevLogEntries != null && m_ScreenCaptures != null)
+                        if (m_DevLogEntries != null && m_ScreenCaptures != null)
                         {
                             entryPanel.ScreenCaptures = m_ScreenCaptures;
                             entryPanel.Entries = m_DevLogEntries;
@@ -177,10 +177,15 @@ namespace WizardsCode.DevLogger
 
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.PrefixLabel("Captures Save Folder");
+            string originalPath = m_CapturesFolderPath;
             m_CapturesFolderPath = EditorGUILayout.TextField(m_CapturesFolderPath);
             if (GUILayout.Button("Browse"))
             {
                 m_CapturesFolderPath = EditorUtility.OpenFolderPanel("Select a folder in which to save captures", m_CapturesFolderPath, "");
+            }
+            if (m_CapturesFolderPath != originalPath)
+            {
+                mediaPanel.capturesFolder = m_CapturesFolderPath;
             }
             EditorGUILayout.EndHorizontal();
 
@@ -199,7 +204,7 @@ namespace WizardsCode.DevLogger
             if (!m_CaptureCamera) m_CaptureCamera = Camera.main;
             if (!m_CaptureCamera)
             {
-                EditorGUILayout.LabelField("No main camera in scene, please select tag a camera as MainCamera or select a camera here.");
+                EditorGUILayout.LabelField("No main camera in scene, please tag a camera as MainCamera or select a camera here.");
             }
 
             EditorGUILayout.BeginHorizontal();

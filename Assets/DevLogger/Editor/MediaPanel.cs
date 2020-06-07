@@ -34,20 +34,25 @@ namespace WizardsCode.DevLogger
         {
             ScreenCaptures = captures;
             CaptureCamera = camera;
-            m_RootCapturesFolderPath = rootCapturesFolderPath;
+            capturesFolder = rootCapturesFolderPath;
             m_OrganizeByProject = organizeByProject;
             m_OrganizeByScene = organizeByScene;
         }
 
         internal Camera CaptureCamera { get; set; }
 
-        private string m_RootCapturesFolderPath;
         private bool m_OrganizeByProject;
         private bool m_OrganizeByScene;
 
+        internal string capturesFolder
+        {
+            get;
+            set;
+        }
+
         internal DevLogScreenCaptures ScreenCaptures { get; set; }
         internal string CapturesFolderPath(DevLogScreenCapture capture) {
-            string path = m_RootCapturesFolderPath;
+            string path = capturesFolder;
             path += Path.DirectorySeparatorChar;
 
             if (m_OrganizeByProject)
@@ -81,6 +86,11 @@ namespace WizardsCode.DevLogger
         {
             get
             {
+                if (!CaptureCamera)
+                {
+                    CaptureCamera = Camera.main;
+                }
+
                 if (_recorder == null && CaptureCamera)
                 {
                     _recorder = CaptureCamera.GetComponent<Recorder>();
@@ -255,7 +265,7 @@ namespace WizardsCode.DevLogger
             EditorGUILayout.EndHorizontal();
             Skin.EndSection();
         }
-
+        
         internal void CaptureGif()
         {
             currentScreenCapture = ScriptableObject.CreateInstance<DevLogScreenCapture>();
@@ -279,6 +289,8 @@ namespace WizardsCode.DevLogger
 
         private void ImageSelectionGUI()
         {
+            EditorGUILayout.BeginVertical();
+
             EditorGUILayout.BeginHorizontal();
             for (int i = ScreenCaptures.captures.Count - 1; i >= 0; i--)
             {
@@ -296,13 +308,18 @@ namespace WizardsCode.DevLogger
 
                 if (GUILayout.Button("View"))
                 {
-                    string filepath = (DevLog.GetAbsoluteDirectory() + capture.Filename).Replace(@"/", @"\");
-                    System.Diagnostics.Process.Start("Explorer.exe", @"/open,""" + capture.ImagePath);
+                    System.Diagnostics.Process.Start("Explorer.exe", string.Format("/open, \"{0}\"", capture.ImagePath));
                 }
 
                 EditorGUILayout.EndVertical();
             }
             EditorGUILayout.EndHorizontal();
+
+            if (GUILayout.Button("Open Media Folder"))
+            {
+                System.Diagnostics.Process.Start("Explorer.exe", string.Format("/open, \"{0}\"", capturesFolder.Replace(@"/", @"\")));
+            }
+            EditorGUILayout.EndVertical();
         }
 
         private void AddToLatestCaptures(DevLogScreenCapture screenCapture)

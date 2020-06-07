@@ -75,7 +75,10 @@ namespace WizardsCode.DevLogger
         /// </summary>
         public string ImagePath
         {
-            get { return AbsoluteSaveFolder + Filename; }
+            get {
+                string path = (AbsoluteSaveFolder + Filename).Replace("/", "\\");
+                return path; 
+            }
         }
 
         public string Filename
