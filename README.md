@@ -18,7 +18,7 @@ DevLogger is a Unity Plugin that helps you keep a DevLog while working on your p
   1. `Window -> Package Manager`
   2. Click the '+" in the top left
   3. Select 'Add package from Git URL'
-  4. Paste in `https://github.com/TheWizardsCode/Character.git#release/stable`
+  4. Paste in `https://github.com/TheWizardsCode/DevLogger.git#release/stable`
 
 ## Twitter Setup
 
