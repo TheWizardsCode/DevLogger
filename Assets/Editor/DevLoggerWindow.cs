@@ -21,6 +21,7 @@ namespace WizardsCode.DevLogger
     {
         EntryPanel entryPanel;
         TwitterPanel twitterPanel;
+        DiscordPanel discordPanel;
         GitPanel gitPanel;
         MediaPanel mediaPanel;
         DevLogPanel devLogPanel;
@@ -58,6 +59,7 @@ namespace WizardsCode.DevLogger
 
             entryPanel = new EntryPanel(m_DevLogEntries, m_ScreenCaptures);
             twitterPanel = new TwitterPanel(entryPanel);
+            discordPanel = new DiscordPanel(entryPanel);
             gitPanel = new GitPanel(entryPanel);
         }
 
@@ -142,8 +144,13 @@ namespace WizardsCode.DevLogger
 
                             EditorGUILayout.Space();
 
-                            twitterPanel.ScreenCaptures = m_ScreenCaptures;
+                            twitterPanel.screenCaptures = m_ScreenCaptures;
                             twitterPanel.OnGUI();
+
+                            EditorGUILayout.Space();
+
+                            discordPanel.screenCaptures = m_ScreenCaptures;
+                            discordPanel.OnGUI();
                         }
                         else
                         {

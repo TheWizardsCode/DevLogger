@@ -71,7 +71,6 @@ Install/
 # Core Unity
 Assets/*
 !Assets/3DTBD
-!Assets/DevLogger
 !Assets/Moments
 ProjectSettings
 Screenshots/
