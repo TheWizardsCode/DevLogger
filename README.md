@@ -25,37 +25,13 @@ See [below](#using-devlogger) for usage guide
   3. Select 'Add package from Git URL'
   4. Paste in `https://github.com/TheWizardsCode/DevLogger.git#release/stable`
   
-# Installation Of Devlopment Code
+# Installation Of Development Code
 
   1. Clone the repo into your preferred location
   2. `Window -> Package Manager`
   3. Click the '+" in the top left
   4. Select 'Add package from disk ...'
   5. Point to the directory containing your development
-
-## Twitter Setup
-
-If you want to tweet from within DevLogger you will need to setup authentication
-for Twitter but following these steps:
-
-  1. Create a developer account on Twitter http://dev.twitter.com
-  2. Register DevLogger at http://dev.twitter.com/apps/new
-  3. Get the Consumer Token and Secret for the app
-  4. Generate an Access Token and Access Token Secret
-  5. In the DevLogger window expand the Twitter section
-  6. Enter the consumer key and secret as well as the Access token and secret
-  7. The twitter section will change to the twitter controls
-
-# Release Process
-
-We use [PackageTools](https://github.com/3dtbd/unity-package-tools) to create our releases. To build a release:
-
-  0. Alongside your working repository checkout the `release/stable` branch of this repo
-  1. Update (at least) the version number in the `PackageManifestConfig` in the root of the `Assets` folder
-  2. Click `Generate VersionConstants.cs` in the inspector
-  3. Commit the new constants file to Git
-  4. Click `Export Package Source`
-  5. Commit and push the changes in your release project to GitHub
 
 # Using DevLogger
 
@@ -103,7 +79,7 @@ Note it takes a short while for animated gifs to be processed, the will not appe
 
 ### Twitter
 
-To use Twitter you need to setup keys to allow the application to access your twitter account. If this is not setup yet the UI will present the fields to enter these keys. To get these keys you will need to register a [developer account with Twitter](https://developer.twitter.com/en/apps).
+To use Twitter you need to setup keys to allow the application to access your twitter account. If this is not setup yet the UI will present the fields to enter these keys. See below for instructions on how to create these tokens.
 
 Once configured this section will allow you to post the short description with hashtags (see above) and up to 4 images or 1 animated gif to Twitter. Note animated gifs have a limit of 15Mb so keep them small. We'd love someone to integrate a service such as Giphy.com :-)
 
@@ -116,3 +92,28 @@ When a DevLog entry is made it will appear in this tab along with the meta data 
 The Git tab enables you to view the git logs for this project. This is only tested on Windows, we welcome reports and patches for other platforms.
 
 You can click a button on the log entries to copy the data over to the DevLog entry fields. 
+
+# Twitter Setup
+
+If you want to tweet from within DevLogger you will need to setup authentication
+for Twitter but following these steps:
+
+  1. Create a developer account on Twitter http://dev.twitter.com
+  2. Register DevLogger at http://dev.twitter.com/apps/new
+  3. Get the Consumer Token and Secret for the app
+  4. Generate an Access Token and Access Token Secret
+  5. In the DevLogger window expand the Twitter section
+  6. Enter the consumer key and secret as well as the Access token and secret
+  7. The twitter section will change to the twitter controls
+  
+
+# Release Process
+
+We use [PackageTools](https://github.com/3dtbd/unity-package-tools) to create our releases. To build a release:
+
+  0. Alongside your working repository checkout the `release/stable` branch of this repo
+  1. Update (at least) the version number in the `PackageManifestConfig` in the root of the `Assets` folder
+  2. Click `Generate VersionConstants.cs` in the inspector
+  3. Commit the new constants file to Git
+  4. Click `Export Package Source`
+  5. Commit and push the changes in your release project to GitHub
