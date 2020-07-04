@@ -1,3 +1,4 @@
+
 A DevLog is an important communication device. It ensures that team members are aware of the work
 you have done, and have a record of how you did it. It can also be used for marketing purposes, 
 keeping everyone informed of what you are working on and the progress made.
@@ -6,11 +7,15 @@ DevLogger is a Unity Plugin that helps you keep a DevLog while working on your p
 
 # Features
 
+See [below](#using-devlogger) for usage guide
+
   * Capture in-game screenshots
   * Capture in-game animated GIFs
   * Capture in-editor windows image (scene view, hierarchy window etc.)
   * Post timed notes, with or without images, to a markdown DevLog
-  * Post update, with or without images, to Twitter
+  * Manage hashtags
+  * Create Dev Log entries from Git commits
+  * Post updates, with or without images, to Twitter
   * Open Source contributions welcome - lets be more productive together
 
 # Installation Of Latest Release
@@ -54,76 +59,60 @@ We use [PackageTools](https://github.com/3dtbd/unity-package-tools) to create ou
 
 # Using DevLogger
 
-## Capture an in-game ScreenShot or Animated GIFs
+When you first install you need to setup the storage databases:
 
-When in play mode you can capture screenshots or animated GIFs right from within
-the editor. GIFs will capture a portion of the most recent gameplay together with
-a still from the middle of that segment. Stills will be captured at the point the
-button is pressed.
+  1. Select a location to store your captured images in "Captures Save Folder". You can, optionally, have your captures saved by project and scene subfolders.
+  2. Create a DevLog Scriptable Object to organize your DevLog files. The easiest way to do this is simply click the "Create" button on the setup screen. The Scriptable Object will be created in the root of your Assets folder. You can move it if you want to.
+  3. Create a Screen Capture Scriptable Object to organize your Screen Captures. The easiest way to do this is simply click the "Create" button on the setup screen. The Scriptable Object will be created in the root of your Assets folder. You can move it if you want to.
+  
+Once these steps are completed the Entry UI will be displayed.
 
-  1. Setup the view that you want to capture in the game window
-  2. Click the "Game View" or "Animated GIF" button
+## Entry Tab
 
-Captured images are displayed in the `Media Capture` section for use in DevLog and Twitter
-entries.
+The entry tab is where you will spend most of your time. It consists of the following sections:
 
-Screenshots are stored in the `DevLog` folder in the root of your project.
+### Log Entry
 
-## Capture In-Editor Screenshots
+This has the short and long text for your log entry. Bear in mind that the short entry will be used when posting to social media. The detail entry will be used in the Dev Log only.
 
-When not on play mode you can capture shots of editor windows and then use those images in
-DevLog entries.
+### Meta Data
 
-  1. Simply hit one of the buttons in the "Media Capture"
+The meta data section defines Hashtags, URLs and Git commit hashes that should be used alongside your descriptive text. Hashtags and URLs will be used in social media postings as well, so be aware that they will consume your character limit.
 
-## Record a Log Entry
+### Posting
 
-Log entries are stored in files in the `DevLog` folder in the root of your project.
-In summary:
+This section are where actions for posting to your dev log will appear when a valid entry is available.
 
-  1. Enter your log entry text into the field. 
-  2. Click "Tweet with text only" or "Tweet with text and image"
-  3. If tweeting with an image select the desired image in the file selection dialog
+### Data
 
-To add an entry to the DevLog type a short description into the Log Entry text box.
-DevLogs are supposed to be short at this point. The goal is to record a quick status
-update so you know what you did and when. Click either the `DevLog (no tweet) with 
-text only` or the `DevLog (no Tweet) with selected image and text` button to record
-the DevLog in the file.
+Here you can access the DevLog in MarkDown format.
 
-Note that, if your log entry is short enough, you can also post a DevLog as a Tweet.
-Doing this (see below) will automatically record the entry in your DevLog file as
-well as send it to Twitter.
+### Media
 
-If you choose the `with image` option then the image selected in the `Media Capture`
-section is linked to the entry. See below for details on how you capture screenshots
-and animated GIFs.
+This section shows thumbnails of the media files you have collected. Each thumbnail can be selected for inclusion in a develog or social media post. You can also view the images full size or open the media storage folder from here.
 
-## Send a Tweet
+### Capture
 
-As noted above you can optionally send a DevLog entry to Twitter as well as record it
-in your local DevLog file. When sending the entry to twitter appropriate hashtags will
-also be added. As with DevLog entries you can optionally include a still image or an 
-animated GIF.
+When in Edit mode this section has a number of buttons enabling you to capture various editor windows. The captures will appear in the Media section (above) when complete.
 
-  1. Enter your log entry text into the field. 
-  2. Click "Tweet with text only" or "Tweet with text and image"
-  3. If tweeting with an image select the desired image in the file selection dialog
+When in Run mode this section allows you to capture stills and animated gifs. These captures will also appear in the Media section. 
 
-The text entered must be shorter than the 140 chars minus the length of 
-the selected hashtags. If it is too long the tweet buttons will not be 
-available to you.
+Animated Gifs will capture a defined number of seconds before the capture button was pressed. That is, pressing the button does not mark the start of the capture, rather it marks the end of the capture. The quality and duration of the capture is configurable in the editor window.
 
+Note it takes a short while for animated gifs to be processed, the will not appear in the media section until processing is complete.
 
-# Known Issues
+### Twitter
 
-Here are the known issues we are tracking and intend to fix (patches welcome to speed things up).
-If you are facing an issue that is not in this list but it blocking work please open a GitHub issue
-and report it - preferably with a patch to fix it, but don't worry, just telling us it is important
-to you is helpful.
+To use Twitter you need to setup keys to allow the application to access your twitter account. If this is not setup yet the UI will present the fields to enter these keys. To get these keys you will need to register a [developer account with Twitter](https://developer.twitter.com/en/apps).
 
-  * No known breaking bugs at this time (of course there are bugs)
+Once configured this section will allow you to post the short description with hashtags (see above) and up to 4 images or 1 animated gif to Twitter. Note animated gifs have a limit of 15Mb so keep them small. We'd love someone to integrate a service such as Giphy.com :-)
 
+## Dev Log Tab
 
+When a DevLog entry is made it will appear in this tab along with the meta data and images posted with it. You can edit the information here. You can also change the order the devlogs will appear in the final output.
 
+## Git Tab
 
+The Git tab enables you to view the git logs for this project. This is only tested on Windows, we welcome reports and patches for other platforms.
+
+You can click a button on the log entries to copy the data over to the DevLog entry fields. 
