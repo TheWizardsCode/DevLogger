@@ -13,10 +13,12 @@ DevLogger is a Unity Plugin that helps you keep a DevLog while working on your p
   * Post update, with or without images, to Twitter
   * Open Source contributions welcome - lets be more productive together
 
-# Setup
+# Installation
 
-Simply checkout this repository into your project. Then open DevLogger using
-``` -> Wizards Code -> Dev Logger```
+  1. `Window -> Package Manager`
+  2. Click the '+" in the top left
+  3. Select 'Add package from Git URL'
+  4. Paste in `https://github.com/TheWizardsCode/DevLogger.git#release/stable`
 
 ## Twitter Setup
 
@@ -30,6 +32,17 @@ for Twitter but following these steps:
   5. In the DevLogger window expand the Twitter section
   6. Enter the consumer key and secret as well as the Access token and secret
   7. The twitter section will change to the twitter controls
+
+# Release Process
+
+We use [PackageTools](https://github.com/3dtbd/unity-package-tools) to create our releases. To build a release:
+
+  0. Alongside your working repository checkout the `release/stable` branch of this repo
+  1. Update (at least) the version number in the `PackageManifestConfig` in the root of the `Assets` folder
+  2. Click `Generate VersionConstants.cs` in the inspector
+  3. Commit the new constants file to Git
+  4. Click `Export Package Source`
+  5. Commit and push the changes in your release project to GitHub
 
 # Using DevLogger
 
