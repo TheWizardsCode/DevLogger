@@ -13,12 +13,20 @@ DevLogger is a Unity Plugin that helps you keep a DevLog while working on your p
   * Post update, with or without images, to Twitter
   * Open Source contributions welcome - lets be more productive together
 
-# Installation
+# Installation Of Latest Release
 
   1. `Window -> Package Manager`
   2. Click the '+" in the top left
   3. Select 'Add package from Git URL'
   4. Paste in `https://github.com/TheWizardsCode/DevLogger.git#release/stable`
+  
+# Installation Of Devlopment Code
+
+  1. Clone the repo into your preferred location
+  2. `Window -> Package Manager`
+  3. Click the '+" in the top left
+  4. Select 'Add package from disk ...'
+  5. Point to the directory containing your development
 
 ## Twitter Setup
 
