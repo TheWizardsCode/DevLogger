@@ -20,3 +20,7 @@ Imagine a scenario in which someone asks on DIscord how to do something, you nee
 
 ![Screenshot](D:\tmp\DevLogger\SampleScene\UnityEditor.InspectorWindow_DevLogger_SampleScene_v1.0_132383804940000000.png)
 
+## Saturday 4 July 2020, 19:30
+
+Discord integration is done. Can post with text, images and animated gifs. Using a configurable username to any channel that has a webhook enabled for the bot.
+
