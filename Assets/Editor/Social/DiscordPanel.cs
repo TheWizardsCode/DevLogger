@@ -17,13 +17,13 @@ namespace WizardsCode.DevLogger
         [SerializeField] bool isConfigured = false;
         [SerializeField] bool showDiscord = false;
         [SerializeField] EntryPanel entryPanel;
-        [SerializeField] string username = "Dev Logger (test)";
-        [SerializeField] string url;
+        [SerializeField] static string username = "Dev Logger (test)";
+        [SerializeField] static string url;
 
 
         internal DevLogScreenCaptures screenCaptures { get; set; }
 
-        UnityWebRequest www;
+        static UnityWebRequest www;
 
         public DiscordPanel(EntryPanel entryPanel)
         {
@@ -100,7 +100,12 @@ namespace WizardsCode.DevLogger
             EditorGUILayout.EndVertical();
         }
 
-        public void PostMessage(Message message)
+        public static void PostEntry(DevLogEntry entry)
+        {
+            PostMessage(new Message(username, entry));
+        }
+
+        private static void PostMessage(Message message)
         {
             List<IMultipartFormSection> formData = new List<IMultipartFormSection>();
             formData.Add(new MultipartFormDataSection("username", message.username));
@@ -115,7 +120,7 @@ namespace WizardsCode.DevLogger
             EditorApplication.update += PostRequestUpdate;
         }
 
-        void PostRequestUpdate()
+        static void PostRequestUpdate()
         {
             if (!www.isDone)
                 return;
@@ -140,6 +145,29 @@ namespace WizardsCode.DevLogger
         public string bodyText;
         public string username;
         public List<ImageContent> files = new List<ImageContent>();
+
+        internal Message(string username, DevLogEntry entry)
+        {
+            this.username = username;
+
+            this.introText = entry.shortDescription;
+            for (int i = 0; i < entry.metaData.Count; i++)
+            {
+                if (!entry.metaData[i].StartsWith("#"))
+                {
+                    introText += " " + entry.metaData[i];
+                }
+            }
+
+            this.bodyText = entry.longDescription;
+
+            for (int i = 0; i < entry.captures.Count; i++)
+            {
+                DevLogScreenCapture capture = entry.captures[i];
+                ImageContent image = new ImageContent("File" + i, capture);
+                files.Add(image);
+            }
+        }
 
         /// <summary>
         /// Create a new Discord message.
@@ -167,36 +195,44 @@ namespace WizardsCode.DevLogger
             for (int i = 0; i < screenCaptures.Count; i++)
             {
                 DevLogScreenCapture capture = screenCaptures.captures[i];
-                if (!screenCaptures.captures[i].IsSelected)
+                if (!capture.IsSelected)
                 {
                     continue;
                 }
 
-                ImageContent image = new ImageContent();
-                image.name = "File" + i;
-                image.filepath = capture.ImagePath;
-                image.filename = Path.GetFileName(capture.ImagePath);
-                image.fileData = File.ReadAllBytes(image.filepath);
-                if (image.filepath.EndsWith("jpg")) {
-                    image.contentType = "image/jpg";
-                } 
-                else if (image.filepath.EndsWith("png"))
-                {
-                    image.contentType = "image/png";
-                }
-
+                ImageContent image = new ImageContent("File" + i, capture);
                 files.Add(image);
             }
         }
     }
 
     [Serializable]
-    public struct ImageContent
+    public class ImageContent
     {
         public string name;
         public string filepath;
         public string filename;
         public byte[] fileData;
         public string contentType;
+
+        internal ImageContent (string name, DevLogScreenCapture capture)
+        {
+            this.name = name;
+            this.filepath = capture.ImagePath;
+            this.filename = Path.GetFileName(capture.ImagePath);
+            this.fileData = File.ReadAllBytes(this.filepath);
+            if (this.filepath.EndsWith("jpg"))
+            {
+                this.contentType = "image/jpg";
+            }
+            else if (this.filepath.EndsWith("png"))
+            {
+                this.contentType = "image/png";
+            }
+            else if (this.filepath.EndsWith("gif"))
+            {
+                this.contentType = "image/gif";
+            }
+        }
     }
 }

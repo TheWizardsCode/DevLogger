@@ -32,3 +32,71 @@ DevLogger is now able to post to discord as well as Twitter and a local markdown
 
 Add the Long Entry text to the Discord posts and remove the hashtags (but leave URLs)
 
+## Saturday 4 July 2020, 23:38
+
+0.2.3 will have on demand twitter and discord posting from the devlog panel
+
+![Screenshot](D:\tmp\DevLogger\SampleScene\WizardsCode.DevLogger.DevLoggerWindow_DevLogger_SampleScene_v1.0_132383805220000000.png)
+
+![Screenshot](D:\tmp\DevLogger\SampleScene\In_Game_Footage_DevLogger_SampleScene_v1.0_132383817270000000.gif)
+
+![Screenshot](D:\tmp\DevLogger\SampleScene\WizardsCode.DevLogger.DevLoggerWindow_DevLogger_SampleScene_v1.0_132383897970000000.png)
+
+## Saturday 4 July 2020, 23:43
+
+Test
+
+![Screenshot](D:\tmp\DevLogger\SampleScene\WizardsCode.DevLogger.DevLoggerWindow_DevLogger_SampleScene_v1.0_132383805220000000.png)
+
+![Screenshot](D:\tmp\DevLogger\SampleScene\In_Game_Footage_DevLogger_SampleScene_v1.0_132383817270000000.gif)
+
+![Screenshot](D:\tmp\DevLogger\SampleScene\WizardsCode.DevLogger.DevLoggerWindow_DevLogger_SampleScene_v1.0_132383897970000000.png)
+
+## Saturday 4 July 2020, 23:44
+
+test
+
+![Screenshot](D:\tmp\DevLogger\SampleScene\UnityEditor.InspectorWindow_DevLogger_SampleScene_v1.0_132383804940000000.png)
+
+![Screenshot](D:\tmp\DevLogger\SampleScene\WizardsCode.DevLogger.DevLoggerWindow_DevLogger_SampleScene_v1.0_132383805220000000.png)
+
+![Screenshot](D:\tmp\DevLogger\SampleScene\WizardsCode.DevLogger.DevLoggerWindow_DevLogger_SampleScene_v1.0_132383897970000000.png)
+
+## Saturday 4 July 2020, 23:55
+
+test
+
+![Screenshot](D:\tmp\DevLogger\SampleScene\UnityEditor.InspectorWindow_DevLogger_SampleScene_v1.0_132383804940000000.png)
+
+![Screenshot](D:\tmp\DevLogger\SampleScene\WizardsCode.DevLogger.DevLoggerWindow_DevLogger_SampleScene_v1.0_132383805220000000.png)
+
+![Screenshot](D:\tmp\DevLogger\SampleScene\WizardsCode.DevLogger.DevLoggerWindow_DevLogger_SampleScene_v1.0_132383897970000000.png)
+
+## Sunday 5 July 2020, 00:13
+
+Test on demand posting.
+
+![Screenshot](D:\tmp\DevLogger\SampleScene\UnityEditor.SceneHierarchyWindow_DevLogger_SampleScene_v1.0_132383804330000000.png)
+
+![Screenshot](D:\tmp\DevLogger\SampleScene\WizardsCode.DevLogger.DevLoggerWindow_DevLogger_SampleScene_v1.0_132383805220000000.png)
+
+![Screenshot](D:\tmp\DevLogger\SampleScene\In_Game_Footage_DevLogger_SampleScene_v1.0_132383817270000000.gif)
+
+![Screenshot](D:\tmp\DevLogger\SampleScene\WizardsCode.DevLogger.DevLoggerWindow_DevLogger_SampleScene_v1.0_132383897970000000.png)
+
+## Sunday 5 July 2020, 00:58
+
+Test timestamping post tweet
+
+![Screenshot](D:\tmp\DevLogger\SampleScene\UnityEditor.SceneHierarchyWindow_DevLogger_SampleScene_v1.0_132383804330000000.png)
+
+![Screenshot](D:\tmp\DevLogger\SampleScene\WizardsCode.DevLogger.DevLoggerWindow_DevLogger_SampleScene_v1.0_132383805220000000.png)
+
+![Screenshot](D:\tmp\DevLogger\SampleScene\In_Game_Footage_DevLogger_SampleScene_v1.0_132383817270000000.gif)
+
+![Screenshot](D:\tmp\DevLogger\SampleScene\WizardsCode.DevLogger.DevLoggerWindow_DevLogger_SampleScene_v1.0_132383897970000000.png)
+
+## Sunday 5 July 2020, 00:59
+
+Test Timestamping post tweet
+

@@ -22,6 +22,7 @@ MonoBehaviour:
   captures: []
   commitHash: 
   tweeted: 0
+  lastTweetFileTime: 0
 --- !u!114 &-5034860452252757136
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -43,7 +44,29 @@ MonoBehaviour:
   - https://bit.ly/UnityDevLogger
   captures: []
   commitHash: 
+  tweeted: 1
+  lastTweetFileTime: 0
+--- !u!114 &-1383429541918839936
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa508ee653f80ef478ab4842c6bb02ba, type: 3}
+  m_Name: 7/5/2020 12:59 AM
+  m_EditorClassIdentifier: 
+  shortDescription: Test Timestamping post tweet
+  longDescription: 
+  metaData:
+  - '#IndieGame'
+  - '#MadeWithUnity'
+  captures: []
+  commitHash: 
   tweeted: 0
+  lastTweetFileTime: 0
 --- !u!114 &-993016919206714112
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -63,7 +86,30 @@ MonoBehaviour:
   metaData: []
   captures: []
   commitHash: 
-  tweeted: 0
+  tweeted: 1
+  lastTweetFileTime: 0
+--- !u!114 &-876955894161342256
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa508ee653f80ef478ab4842c6bb02ba, type: 3}
+  m_Name: 7/4/2020 11:43 PM
+  m_EditorClassIdentifier: 
+  shortDescription: Test
+  longDescription: 
+  metaData: []
+  captures:
+  - {fileID: -3233854347543472266, guid: 05858a10e16c9844398a86e68477527f, type: 2}
+  - {fileID: 5869663719730215203, guid: 05858a10e16c9844398a86e68477527f, type: 2}
+  - {fileID: -3372679148547513590, guid: 05858a10e16c9844398a86e68477527f, type: 2}
+  commitHash: 
+  tweeted: 1
+  lastTweetFileTime: 0
 --- !u!114 &-284636512389619061
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -84,6 +130,7 @@ MonoBehaviour:
   - {fileID: -1433452705736160578, guid: 05858a10e16c9844398a86e68477527f, type: 2}
   commitHash: 
   tweeted: 0
+  lastTweetFileTime: 0
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -100,7 +147,8 @@ MonoBehaviour:
   - {fileID: -5034860452252757136}
   - {fileID: -993016919206714112}
   - {fileID: 374282915631882679}
-  - {fileID: -6245345118550789431}
+  - {fileID: 7982829083501196979}
+  - {fileID: -1383429541918839936}
 --- !u!114 &374282915631882679
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -124,3 +172,123 @@ MonoBehaviour:
   captures: []
   commitHash: 
   tweeted: 1
+  lastTweetFileTime: 0
+--- !u!114 &3306263297375989967
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa508ee653f80ef478ab4842c6bb02ba, type: 3}
+  m_Name: 7/4/2020 11:44 PM
+  m_EditorClassIdentifier: 
+  shortDescription: test
+  longDescription: 
+  metaData: []
+  captures:
+  - {fileID: -1433452705736160578, guid: 05858a10e16c9844398a86e68477527f, type: 2}
+  - {fileID: -3233854347543472266, guid: 05858a10e16c9844398a86e68477527f, type: 2}
+  - {fileID: -3372679148547513590, guid: 05858a10e16c9844398a86e68477527f, type: 2}
+  commitHash: 
+  tweeted: 0
+  lastTweetFileTime: 0
+--- !u!114 &3365724033022084666
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa508ee653f80ef478ab4842c6bb02ba, type: 3}
+  m_Name: 7/4/2020 11:55 PM
+  m_EditorClassIdentifier: 
+  shortDescription: test
+  longDescription: 
+  metaData:
+  - '#IndieGame'
+  - '#MadeWithUnity'
+  captures:
+  - {fileID: -1433452705736160578, guid: 05858a10e16c9844398a86e68477527f, type: 2}
+  - {fileID: -3233854347543472266, guid: 05858a10e16c9844398a86e68477527f, type: 2}
+  - {fileID: -3372679148547513590, guid: 05858a10e16c9844398a86e68477527f, type: 2}
+  commitHash: 
+  tweeted: 1
+  lastTweetFileTime: 0
+--- !u!114 &7982829083501196979
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa508ee653f80ef478ab4842c6bb02ba, type: 3}
+  m_Name: 7/5/2020 12:13 AM
+  m_EditorClassIdentifier: 
+  shortDescription: Test on demand posting.
+  longDescription: 
+  metaData:
+  - '#IndieGame'
+  - '#MadeWithUnity'
+  captures:
+  - {fileID: -5873256520110982140, guid: 05858a10e16c9844398a86e68477527f, type: 2}
+  - {fileID: -3233854347543472266, guid: 05858a10e16c9844398a86e68477527f, type: 2}
+  - {fileID: 5869663719730215203, guid: 05858a10e16c9844398a86e68477527f, type: 2}
+  - {fileID: -3372679148547513590, guid: 05858a10e16c9844398a86e68477527f, type: 2}
+  commitHash: 
+  tweeted: 0
+  lastTweetFileTime: 0
+--- !u!114 &8348417530351204799
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa508ee653f80ef478ab4842c6bb02ba, type: 3}
+  m_Name: 7/4/2020 11:38 PM
+  m_EditorClassIdentifier: 
+  shortDescription: 0.2.3 will have on demand twitter and discord posting from the
+    devlog panel
+  longDescription: 
+  metaData: []
+  captures:
+  - {fileID: -3233854347543472266, guid: 05858a10e16c9844398a86e68477527f, type: 2}
+  - {fileID: 5869663719730215203, guid: 05858a10e16c9844398a86e68477527f, type: 2}
+  - {fileID: -3372679148547513590, guid: 05858a10e16c9844398a86e68477527f, type: 2}
+  commitHash: 
+  tweeted: 0
+  lastTweetFileTime: 0
+--- !u!114 &8636390139549906890
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa508ee653f80ef478ab4842c6bb02ba, type: 3}
+  m_Name: 7/5/2020 12:58 AM
+  m_EditorClassIdentifier: 
+  shortDescription: Test timestamping post tweet
+  longDescription: 
+  metaData:
+  - '#IndieGame'
+  - '#MadeWithUnity'
+  captures:
+  - {fileID: -5873256520110982140, guid: 05858a10e16c9844398a86e68477527f, type: 2}
+  - {fileID: -3233854347543472266, guid: 05858a10e16c9844398a86e68477527f, type: 2}
+  - {fileID: 5869663719730215203, guid: 05858a10e16c9844398a86e68477527f, type: 2}
+  - {fileID: -3372679148547513590, guid: 05858a10e16c9844398a86e68477527f, type: 2}
+  commitHash: 
+  tweeted: 0
+  lastTweetFileTime: 0
