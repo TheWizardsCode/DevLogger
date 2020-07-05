@@ -15,7 +15,8 @@ See [below](#using-devlogger) for usage guide
   * Post timed notes, with or without images, to a markdown DevLog
   * Manage hashtags
   * Create Dev Log entries from Git commits
-  * Post updates, with or without images, to Twitter
+  * Post updates, with or without images (with or without animated GIFs), to Twitter
+  * Post updates, with or without images (including animated GIFs) to Discord
   * Open Source contributions welcome - lets be more productive together
 
 # Installation Of Latest Release
@@ -83,6 +84,12 @@ To use Twitter you need to setup keys to allow the application to access your tw
 
 Once configured this section will allow you to post the short description with hashtags (see above) and up to 4 images or 1 animated gif to Twitter. Note animated gifs have a limit of 15Mb so keep them small. We'd love someone to integrate a service such as Giphy.com :-)
 
+### Discord
+
+To use Discord you must [setup a webhook](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks) and configure Dev Logger to use this WebHook. This section will present the configuration screen if it is not already configured.
+
+Once correctly configured you can post text and images using this section of the UI.
+
 ## Dev Log Tab
 
 When a DevLog entry is made it will appear in this tab along with the meta data and images posted with it. You can edit the information here. You can also change the order the devlogs will appear in the final output.
@@ -106,6 +113,18 @@ for Twitter but following these steps:
   6. Enter the consumer key and secret as well as the Access token and secret
   7. The twitter section will change to the twitter controls
   
+# Discord Setup
+
+If you want to post to Discord using DevLogger you will need to [setup a Discord Webhook](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks) as follows;
+
+  1. Navigatge to your server in Discord
+  2. Open the Settings page
+  3. Click the Webhooks tab
+  4. Click the "Create Webhook" button
+  5. Choose the channel the webhook posts to
+  6. Name the webhook
+  7. Copy the Webhook URL
+  8. Paste the URL into the configuration box in the DevLogger window
 
 # Release Process
 

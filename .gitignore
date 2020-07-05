@@ -71,3 +71,6 @@ Install/
 # Core Unity
 ProjectSettings
 Screenshots/
+
+# Package Manager Generated
+Assets/Generated
