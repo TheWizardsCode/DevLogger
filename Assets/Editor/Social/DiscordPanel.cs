@@ -79,7 +79,16 @@ namespace WizardsCode.DevLogger
 
                     if (GUILayout.Button(buttonText))
                     {
-                        Message message = new Message(username, entryPanel.shortText + entryPanel.GetSelectedMetaData(), screenCaptures);
+                        Message message;
+                        if (string.IsNullOrEmpty(entryPanel.detailText))
+                        {
+                            message = new Message(username, entryPanel.shortText + entryPanel.GetSelectedMetaData(false), screenCaptures);
+                        } 
+                        else
+                        {
+                            message = new Message(username, entryPanel.shortText + entryPanel.GetSelectedMetaData(false), entryPanel.detailText, screenCaptures);
+                        }
+                        
                         PostMessage(message);
                     }
                 }
@@ -95,7 +104,7 @@ namespace WizardsCode.DevLogger
         {
             List<IMultipartFormSection> formData = new List<IMultipartFormSection>();
             formData.Add(new MultipartFormDataSection("username", message.username));
-            formData.Add(new MultipartFormDataSection("content", message.content));
+            formData.Add(new MultipartFormDataSection("content", message.introText + "\n" + message.bodyText));
             for (int i = 0; i < message.files.Count; i++)
             {
                 formData.Add(new MultipartFormFileSection(message.files[i].name, message.files[i].fileData, message.files[i].filename, message.files[i].contentType));
@@ -127,14 +136,33 @@ namespace WizardsCode.DevLogger
     [Serializable]
     public class Message
     {
-        public string content;
+        public string introText;
+        public string bodyText;
         public string username;
         public List<ImageContent> files = new List<ImageContent>();
 
-        internal Message(string username, string content, DevLogScreenCaptures screenCaptures)
+        /// <summary>
+        /// Create a new Discord message.
+        /// </summary>
+        /// <param name="username">The unsername to use when posting.</param>
+        /// <param name="introText">The intro text that will appear before the first image, if there is one.</param>
+        /// <param name="bodyText">The main body text.</param>
+        /// <param name="screenCaptures">The set of available and selected screen captures that may be shared as part of the message.</param>
+        internal Message(string username, string introText, string bodyText, DevLogScreenCaptures screenCaptures) : this (username, introText, screenCaptures)
+        {
+            this.bodyText = bodyText;
+        }
+
+        /// <summary>
+        /// Create a new Discord message.
+        /// </summary>
+        /// <param name="username">The unsername to use when posting.</param>
+        /// <param name="introText">The intro text that will appear before the first image, if there is one.</param>
+        /// <param name="screenCaptures">The set of available and selected screen captures that may be shared as part of the message.</param>
+        internal Message(string username, string introText, DevLogScreenCaptures screenCaptures)
         {
             this.username = username;
-            this.content = content;
+            this.introText = introText;
 
             for (int i = 0; i < screenCaptures.Count; i++)
             {

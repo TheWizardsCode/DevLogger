@@ -24,3 +24,11 @@ Imagine a scenario in which someone asks on DIscord how to do something, you nee
 
 Discord integration is done. Can post with text, images and animated gifs. Using a configurable username to any channel that has a webhook enabled for the bot.
 
+## Saturday 4 July 2020, 21:11
+
+DevLogger is now able to post to discord as well as Twitter and a local markdown file. An Open Source Unity Editor Extension designed to make keeping DevLogs easy.
+
+## Saturday 4 July 2020, 21:36
+
+Add the Long Entry text to the Discord posts and remove the hashtags (but leave URLs)
+

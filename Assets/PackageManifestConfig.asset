@@ -22,7 +22,7 @@ MonoBehaviour:
   legacyPackageDestinationPath: 
   packageName: org.wizardscode.devlogger
   displayName: Wizards Code - DevLogger
-  packageVersion: 0.2.0
+  packageVersion: 0.2.1
   unityVersion: 2019.4
   description: Open source Editor tool for managing DevLogs in Unity.
   category: Scripts

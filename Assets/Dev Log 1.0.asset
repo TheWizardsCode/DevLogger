@@ -1,5 +1,27 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-6245345118550789431
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa508ee653f80ef478ab4842c6bb02ba, type: 3}
+  m_Name: 7/4/2020 9:36 PM
+  m_EditorClassIdentifier: 
+  shortDescription: Add the Long Entry text to the Discord posts and remove the hashtags
+    (but leave URLs)
+  longDescription: 
+  metaData:
+  - '#IndieGame'
+  - '#MadeWithUnity'
+  - https://bit.ly/UnityDevLogger
+  captures: []
+  commitHash: 
+  tweeted: 0
 --- !u!114 &-5034860452252757136
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -77,3 +99,28 @@ MonoBehaviour:
   entries:
   - {fileID: -5034860452252757136}
   - {fileID: -993016919206714112}
+  - {fileID: 374282915631882679}
+  - {fileID: -6245345118550789431}
+--- !u!114 &374282915631882679
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa508ee653f80ef478ab4842c6bb02ba, type: 3}
+  m_Name: 7/4/2020 9:11 PM
+  m_EditorClassIdentifier: 
+  shortDescription: DevLogger is now able to post to discord as well as Twitter and
+    a local markdown file. An Open Source Unity Editor Extension designed to make
+    keeping DevLogs easy.
+  longDescription: 
+  metaData:
+  - '#IndieGame'
+  - '#MadeWithUnity'
+  - https://bit.ly/UnityDevLogger
+  captures: []
+  commitHash: 
+  tweeted: 1

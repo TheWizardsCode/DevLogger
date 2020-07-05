@@ -18,7 +18,7 @@ namespace WizardsCode.DevLogger
     {
         [SerializeField] Vector2 windowScrollPos = Vector2.zero;
         [SerializeField] internal string shortText = "";
-        [SerializeField] string detailText = "";
+        [SerializeField] internal string detailText = "";
         [SerializeField] string uiStatusText = "";
         [SerializeField] string gitCommit = "";
         [SerializeField] List<string> suggestedMetaData;
@@ -99,12 +99,12 @@ namespace WizardsCode.DevLogger
         /// Get a string containing all the selected hashtags for this tweet.
         /// </summary>
         /// <returns>Space separated list of hashtags</returns>
-        public string GetSelectedMetaData()
+        public string GetSelectedMetaData(bool includeHashtags = true)
         {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < suggestedMetaData.Count; i++)
             {
-                if (selectedMetaData[i])
+                if (selectedMetaData[i] && (includeHashtags || !suggestedMetaData[i].StartsWith("#")))
                 {
                     sb.Append(" ");
                     sb.Append(suggestedMetaData[i]);
