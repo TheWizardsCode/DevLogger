@@ -22,6 +22,26 @@ MonoBehaviour:
   captures: []
   commitHash: 
   tweeted: 0
+--- !u!114 &-993016919206714112
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa508ee653f80ef478ab4842c6bb02ba, type: 3}
+  m_Name: 7/4/2020 7:30 PM
+  m_EditorClassIdentifier: 
+  shortDescription: Discord integration is done. Can post with text, images and animated
+    gifs. Using a configurable username to any channel that has a webhook enabled
+    for the bot.
+  longDescription: 
+  metaData: []
+  captures: []
+  commitHash: 
+  tweeted: 0
 --- !u!114 &-284636512389619061
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -56,4 +76,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entries:
   - {fileID: -5034860452252757136}
-  - {fileID: -284636512389619061}
+  - {fileID: -993016919206714112}

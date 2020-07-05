@@ -46,6 +46,29 @@ MonoBehaviour:
   IsImageSaved: 1
   IsSelected: 0
   AbsoluteSaveFolder: D:/tmp\DevLogger\SampleScene\
+--- !u!114 &-3372679148547513590
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 666102f216d105742a44e712852bead6, type: 3}
+  m_Name: DevLogger v1.0 SampleScene
+  m_EditorClassIdentifier: 
+  encoding: 1
+  windowName: WizardsCode.DevLogger.DevLoggerWindow
+  productName: DevLogger
+  version: 1.0
+  sceneName: SampleScene
+  _width: 0
+  _height: 0
+  _timestampAsString: 7/4/2020 7:29:57 PM
+  IsImageSaved: 1
+  IsSelected: 0
+  AbsoluteSaveFolder: D:/tmp\DevLogger\SampleScene\
 --- !u!114 &-3289925725779508038
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -136,7 +159,7 @@ MonoBehaviour:
   _height: 0
   _timestampAsString: 7/4/2020 4:54:54 PM
   IsImageSaved: 1
-  IsSelected: 1
+  IsSelected: 0
   AbsoluteSaveFolder: D:/tmp\DevLogger\SampleScene\
 --- !u!114 &11400000
 MonoBehaviour:
@@ -161,6 +184,7 @@ MonoBehaviour:
   - {fileID: -1433452705736160578}
   - {fileID: -3233854347543472266}
   - {fileID: 5869663719730215203}
+  - {fileID: -3372679148547513590}
 --- !u!114 &1370175038354631826
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -251,5 +275,5 @@ MonoBehaviour:
   _height: 0
   _timestampAsString: 7/4/2020 5:15:27 PM
   IsImageSaved: 1
-  IsSelected: 0
+  IsSelected: 1
   AbsoluteSaveFolder: D:/tmp\DevLogger\SampleScene\
