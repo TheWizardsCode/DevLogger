@@ -147,8 +147,7 @@ MonoBehaviour:
   - {fileID: -5034860452252757136}
   - {fileID: -993016919206714112}
   - {fileID: 374282915631882679}
-  - {fileID: 7982829083501196979}
-  - {fileID: -1383429541918839936}
+  - {fileID: 5510801695314803418}
 --- !u!114 &374282915631882679
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -218,6 +217,30 @@ MonoBehaviour:
   - {fileID: -3372679148547513590, guid: 05858a10e16c9844398a86e68477527f, type: 2}
   commitHash: 
   tweeted: 1
+  lastTweetFileTime: 0
+--- !u!114 &5510801695314803418
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa508ee653f80ef478ab4842c6bb02ba, type: 3}
+  m_Name: 7/5/2020 10:35 AM
+  m_EditorClassIdentifier: 
+  shortDescription: Post to Twitter and Discord at any time from the Dev Log tab
+    of DevLogger.
+  longDescription: v0.2.2 add the ability to post to Twitter and Discord any time,
+    not just when creating a new entry. To Use this feature create a Dev Log entry
+    as you normally would then, when it is time to post to social media, switch to
+    the Dev Log tab, select the entry you want to post and click the buttons to post
+    to the services of choice.
+  metaData: []
+  captures: []
+  commitHash: 
+  tweeted: 0
   lastTweetFileTime: 0
 --- !u!114 &7982829083501196979
 MonoBehaviour:

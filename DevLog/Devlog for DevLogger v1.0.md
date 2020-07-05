@@ -100,3 +100,10 @@ Test timestamping post tweet
 
 Test Timestamping post tweet
 
+## Sunday 5 July 2020, 10:35
+
+Post to Twitter and Discord at any time from the Dev Log tab of DevLogger.
+
+### Details
+v0.2.2 add the ability to post to Twitter and Discord any time, not just when creating a new entry. To Use this feature create a Dev Log entry as you normally would then, when it is time to post to social media, switch to the Dev Log tab, select the entry you want to post and click the buttons to post to the services of choice.
+
