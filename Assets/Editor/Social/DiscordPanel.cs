@@ -18,7 +18,7 @@ namespace WizardsCode.DevLogger
         [SerializeField] bool showDiscord = false;
         [SerializeField] EntryPanel entryPanel;
         [SerializeField] string username = "Dev Logger (test)";
-        [SerializeField] string url = "https://discordapp.com/api/webhooks/728866049247936553/276VvGRuNgW1YB9orDOjnEEPYaHlcLE3KAA-14XKbyMGhneiBCMR6OzSiW-rWstLMYF9?wait=true";
+        [SerializeField] string url;
 
 
         internal DevLogScreenCaptures screenCaptures { get; set; }
@@ -28,6 +28,24 @@ namespace WizardsCode.DevLogger
         public DiscordPanel(EntryPanel entryPanel)
         {
             this.entryPanel = entryPanel;
+        }
+
+        public const string EDITOR_PREFS_DISCORD_IS_CONFIGURED = "DiscordIsConfigured_";
+        public const string EDITOR_PREFS_DISCORD_USERNAME = "DiscordUsername_";
+        public const string EDITOR_PREFS_DISCORD_WEBHOOK_URL = "DiscordWebhookURL_";
+
+        internal void OnDisable()
+        {
+            EditorPrefs.SetBool(EDITOR_PREFS_DISCORD_IS_CONFIGURED + Application.productName, isConfigured);
+            EditorPrefs.SetString(EDITOR_PREFS_DISCORD_USERNAME + Application.productName, username);
+            EditorPrefs.SetString(EDITOR_PREFS_DISCORD_WEBHOOK_URL + Application.productName, url);
+        }
+
+        internal void OnEnable()
+        {
+            isConfigured = EditorPrefs.GetBool(EDITOR_PREFS_DISCORD_IS_CONFIGURED + Application.productName, false);
+            username = EditorPrefs.GetString(EDITOR_PREFS_DISCORD_USERNAME + Application.productName, "Dev Logger");
+            url = EditorPrefs.GetString(EDITOR_PREFS_DISCORD_WEBHOOK_URL + Application.productName, url);
         }
 
         public void OnGUI()

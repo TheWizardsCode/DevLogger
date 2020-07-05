@@ -68,6 +68,7 @@ namespace WizardsCode.DevLogger
             EditorApplication.update += Update;
             mediaPanel.OnEnable();
             entryPanel.OnEnable();
+            discordPanel.OnEnable();
             GitSettings.Load();
         }
 
@@ -76,6 +77,7 @@ namespace WizardsCode.DevLogger
             EditorApplication.update -= Update;
             mediaPanel.OnEnable();
             entryPanel.OnDisable();
+            discordPanel.OnDisable();
             GitSettings.Save();
             AssetDatabase.SaveAssets();
 
