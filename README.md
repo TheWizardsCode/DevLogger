@@ -36,6 +36,8 @@ See [below](#using-devlogger) for usage guide
 
 # Using DevLogger
 
+Open the Dev Logger window using `Tools -> Wizards Code -> Dev Logger`.
+
 When you first install you need to setup the storage databases:
 
   1. Select a location to store your captured images in "Captures Save Folder". You can, optionally, have your captures saved by project and scene subfolders.
