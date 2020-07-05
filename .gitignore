@@ -69,8 +69,5 @@ bin/
 Install/
 
 # Core Unity
-Assets/*
-!Assets/3DTBD
-!Assets/Moments
 ProjectSettings
 Screenshots/

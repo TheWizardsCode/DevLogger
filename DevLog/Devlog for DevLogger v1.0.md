@@ -14,3 +14,9 @@ test2
 
 Started work on v0.2.0 The key new feature for this version will be posting DevLog entries to a Discord server.
 
+## Saturday 4 July 2020, 16:55
+
+Imagine a scenario in which someone asks on DIscord how to do something, you need a screen shot. Throw it into your Devog as documentation.
+
+![Screenshot](D:\tmp\DevLogger\SampleScene\UnityEditor.InspectorWindow_DevLogger_SampleScene_v1.0_132383804940000000.png)
+
