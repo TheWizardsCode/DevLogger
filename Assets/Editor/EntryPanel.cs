@@ -224,7 +224,8 @@ namespace WizardsCode.DevLogger
             if (withTweet)
             {
                 entry.tweeted = true;
-                text.Append("\n\n[This DevLog entry was Tweeted.]");
+                entry.lastTweetFileTime = DateTime.Now.ToFileTimeUtc();
+                text.Append("\n\n[This DevLog entry was Tweeted at " + entry.lastTweetPrettyTime + ".]");
             }
 
             if (withImage)

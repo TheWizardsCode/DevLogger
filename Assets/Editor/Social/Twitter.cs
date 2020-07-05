@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
+using WizardsCode.DevLogger;
 
 namespace WizardsCode.Social
 {
@@ -96,6 +97,49 @@ namespace WizardsCode.Social
         }
 
         /// <summary>
+        /// Publish a tweet from an existing DevLog entry.
+        /// </summary>
+        /// <param name="entry">The DevLog entry to tweet.</param>
+        /// <param name="response">The response from Twitter.</param>
+        /// <returns>True if succesfully published.</returns>
+        internal static bool PublishTweet(DevLogEntry entry, out string response)
+        {
+            string tweet = entry.shortDescription;
+            for (int i = 0; i < entry.metaData.Count; i++)
+            {
+                tweet += " " + entry.metaData[i];
+            }
+
+            if (entry.captures == null || entry.captures.Count <= 0)
+            {
+                if (PublishTweet(tweet, out response))
+                {
+                    entry.tweeted = true;
+                    return true;
+                } else
+                {
+                    return false;
+                }
+            } 
+            else 
+            {
+                List<string> files = new List<string>();
+                for (int i = 0; i < entry.captures.Count; i++)
+                {
+                    files.Add(entry.captures[i].ImagePath);
+                }
+                if (PublishTweetWithMedia(tweet, files, out response))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
+        /// <summary>
         /// Publish a text only tweet. See the console for error details.
         /// </summary>
         /// <param name="status">The text of the tweet.</param>
@@ -131,6 +175,14 @@ namespace WizardsCode.Social
         static string mediaIDs;
         public static bool PublishTweetWithMedia(string status, List<string> filePaths, out string response)
         {
+            if (string.IsNullOrEmpty(status) || status.Length > 280)
+            {
+                response = string.Format("Text of tweet too long or too short at {0} chars.", status.Length);
+                Debug.LogError(response);
+
+                return false;
+            }
+
             if (filePaths.Count > 4)
             {
                 response = "Error sending Tweet: Can only attach four images to a tweet.";

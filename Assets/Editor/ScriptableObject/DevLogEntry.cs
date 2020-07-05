@@ -10,6 +10,8 @@ namespace WizardsCode.DevLogger
     /// </summary>
     public class DevLogEntry : ScriptableObject
     {
+        [SerializeField, Tooltip("The date and time the log entry was created.")]
+        public DateTime created = DateTime.Now;
         [SerializeField, Tooltip("The short description of this entry used as the summary for an entry in both the log an dsocial media content.")]
         public string shortDescription = "";
         [SerializeField, Tooltip("The long description of this entry used as the detail for a Dev Log entry.")]
@@ -20,9 +22,16 @@ namespace WizardsCode.DevLogger
         public List<DevLogScreenCapture> captures = new List<DevLogScreenCapture>();
         [SerializeField, Tooltip("The commit hash related to this change in the project.")]
         public string commitHash = "";
-        [SerializeField, Tooltip("Has this entry been tweeted?")]
-        public bool tweeted = false;
-        [SerializeField, Tooltip("The date and time the log entry was created.")]
-        public DateTime created = DateTime.Now;
+        [SerializeField, Tooltip("Whether this entry has every been tweeted.")]
+        public bool tweeted;
+        [SerializeField, Tooltip("The date and time (UTC file time) this entry was last tweeted.")]
+        public long lastTweetFileTime;
+
+        public string lastTweetPrettyTime { 
+            get
+            {
+                return DateTime.FromFileTimeUtc(lastTweetFileTime).ToLocalTime().ToString("dddd dd-MMM-yyyy HH:MM");
+            }
+        }
     }
 }

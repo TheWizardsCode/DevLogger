@@ -5,6 +5,7 @@ using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
 using WizardsCode.DevLogger;
+using WizardsCode.Social;
 
 namespace WizardsCode.DevLogger
 {
@@ -33,6 +34,25 @@ namespace WizardsCode.DevLogger
             }
             else
             {
+                if (logList.index >= 0)
+                {
+                    string response;
+                    if (GUILayout.Button("Tweet Selected Entry", GUILayout.Height(50)))
+                    {
+                        if (Twitter.PublishTweet(Entries.entries[logList.index], out response)) {
+                            Entries.entries[logList.index].tweeted = true;
+                            Entries.entries[logList.index].lastTweetFileTime = DateTime.Now.ToFileTimeUtc();
+                        } else
+                        {
+                            // TODO Handle failed tweet gracefully
+                            Debug.LogWarning("Tweet failed. Not currently handling this gracefully. Response " + response);
+                        }
+                    }
+                    if (GUILayout.Button("Post to Discord", GUILayout.Height(50)))
+                    {
+                        DiscordPanel.PostEntry(Entries.entries[logList.index]);
+                    }
+                }
                 listScrollPosition = EditorGUILayout.BeginScrollView(listScrollPosition);
                 logList.DoLayoutList();
                 EditorGUILayout.EndScrollView();
@@ -88,8 +108,13 @@ namespace WizardsCode.DevLogger
             DevLogEntry entry = Entries.entries[index];
 
             Rect labelRect = new Rect(rect.x, rect.y, listLabelWidth, EditorGUIUtility.singleLineHeight);
-            EditorGUI.PrefixLabel(labelRect, new GUIContent("Title"));
+            EditorGUI.PrefixLabel(labelRect, new GUIContent("Created"));
             Rect fieldRect = new Rect(labelRect.x + listLabelWidth, labelRect.y, rect.width - listLabelWidth, labelRect.height);
+            EditorGUI.LabelField(fieldRect, entry.created.ToString("dd MMM yyyy"));
+
+            labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight, labelRect.width, labelRect.height);
+            EditorGUI.PrefixLabel(labelRect, new GUIContent("Title"));
+            fieldRect = new Rect(fieldRect.x, labelRect.y, fieldRect.width, EditorGUIUtility.singleLineHeight * listDescriptionLines);
             EditorGUI.TextField(fieldRect, entry.shortDescription);
 
             labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight, labelRect.width, labelRect.height);
@@ -128,12 +153,12 @@ namespace WizardsCode.DevLogger
             EditorGUI.PrefixLabel(labelRect, new GUIContent("Tweeted"));
             fieldRect = new Rect(fieldRect.x, labelRect.y, fieldRect.width, EditorGUIUtility.singleLineHeight);
             EditorGUI.Toggle(fieldRect, entry.tweeted);
-
-            labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight, labelRect.width, labelRect.height);
-            EditorGUI.PrefixLabel(labelRect, new GUIContent("Created"));
-            fieldRect = new Rect(fieldRect.x, labelRect.y, fieldRect.width, EditorGUIUtility.singleLineHeight);
-            EditorGUI.LabelField(fieldRect, entry.created.ToString("dd MMM yyyy"));
+            if (entry.tweeted)
+            {
+                Rect timeRect = new Rect(fieldRect.x + 50, fieldRect.y, fieldRect.width - 50, fieldRect.height);
+                EditorGUI.LabelField(timeRect, entry.lastTweetPrettyTime);
+            }
+            
         }
-
     }
 }
