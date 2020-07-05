@@ -14,9 +14,12 @@ namespace WizardsCode.DevLogger
     [Serializable]
     public class DiscordPanel
     {
+        [SerializeField] bool isConfigured = false;
         [SerializeField] bool showDiscord = false;
         [SerializeField] EntryPanel entryPanel;
+        [SerializeField] string username = "Dev Logger (test)";
         [SerializeField] string url = "https://discordapp.com/api/webhooks/728866049247936553/276VvGRuNgW1YB9orDOjnEEPYaHlcLE3KAA-14XKbyMGhneiBCMR6OzSiW-rWstLMYF9?wait=true";
+
 
         internal DevLogScreenCaptures screenCaptures { get; set; }
 
@@ -33,7 +36,22 @@ namespace WizardsCode.DevLogger
             showDiscord = EditorGUILayout.Foldout(showDiscord, "Discord", EditorStyles.foldout);
             if (showDiscord)
             {
-                if (!string.IsNullOrEmpty(entryPanel.shortText))
+                if (string.IsNullOrEmpty(url) || string.IsNullOrEmpty(username) || !isConfigured)
+                {
+                    isConfigured = false; 
+
+                    EditorGUILayout.PrefixLabel("Bot Username");
+                    username = EditorGUILayout.TextField(username);
+
+                    EditorGUILayout.PrefixLabel("Webhook URL");
+                    url = EditorGUILayout.TextField(url);
+
+                    if (GUILayout.Button("Save"))
+                    {
+                        isConfigured = true;
+                    }
+                }
+                else if (!string.IsNullOrEmpty(entryPanel.shortText))
                 {
                     string buttonText = "Post to Discord";
                     if (screenCaptures != null && screenCaptures.Count > 0)
@@ -43,7 +61,7 @@ namespace WizardsCode.DevLogger
 
                     if (GUILayout.Button(buttonText))
                     {
-                        Message message = new Message("Dev Logger (test)", entryPanel.shortText + entryPanel.GetSelectedMetaData(), screenCaptures);
+                        Message message = new Message(username, entryPanel.shortText + entryPanel.GetSelectedMetaData(), screenCaptures);
                         PostMessage(message);
                     }
                 }
@@ -58,6 +76,7 @@ namespace WizardsCode.DevLogger
         public void PostMessage(Message message)
         {
             List<IMultipartFormSection> formData = new List<IMultipartFormSection>();
+            formData.Add(new MultipartFormDataSection("username", message.username));
             formData.Add(new MultipartFormDataSection("content", message.content));
             for (int i = 0; i < message.files.Count; i++)
             {
