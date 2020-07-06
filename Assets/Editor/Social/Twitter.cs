@@ -554,10 +554,6 @@ namespace WizardsCode.Social
     [Serializable]
     internal class MediaStatusResponse
     {
-        public Int64 media_id;
-        public string media_id_string;
-        public int expires_after_secs;
-        public int size;
         public ProcessingInfo processingInfo;
 
         public MediaStatusResponse()
@@ -582,9 +578,8 @@ namespace WizardsCode.Social
 
     [Serializable]
     internal class ProcessingInfo { 
-        public string state;
-        public int check_after_secs;
-        public int progress_percent;
+        public string state = null;
+        public int check_after_secs = 2;
         public MediaError error;
 
         public ProcessingInfo()
@@ -596,8 +591,8 @@ namespace WizardsCode.Social
     [Serializable]
     internal class MediaError {
         public int code;
-        public string name;
-        public string message;
+        public string name = "";
+        public string message = "";
     }
 
 }

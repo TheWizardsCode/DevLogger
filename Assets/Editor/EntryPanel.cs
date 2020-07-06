@@ -19,7 +19,6 @@ namespace WizardsCode.DevLogger
         [SerializeField] Vector2 windowScrollPos = Vector2.zero;
         [SerializeField] internal string shortText = "";
         [SerializeField] internal string detailText = "";
-        [SerializeField] string uiStatusText = "";
         [SerializeField] string gitCommit = "";
         [SerializeField] List<string> suggestedMetaData;
         [SerializeField] List<bool> selectedMetaData;

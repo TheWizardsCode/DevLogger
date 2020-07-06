@@ -22,6 +22,7 @@ namespace WizardsCode.DevLogger
         EntryPanel entryPanel;
         TwitterPanel twitterPanel;
         DiscordPanel discordPanel;
+        SchedulingPanel m_SchedulingPanel;
         GitPanel gitPanel;
         MediaPanel mediaPanel;
         DevLogPanel devLogPanel;
@@ -31,7 +32,7 @@ namespace WizardsCode.DevLogger
 
         string m_CapturesFolderPath;
 
-        private string[] toolbarLabels = { "Entry", "Dev Log", "Git", "Settings" };
+        private string[] toolbarLabels = { "Entry", "Dev Log", "Schedule", "Git", "Settings" };
         private int selectedTab = 0;
 
         [UnityEditor.MenuItem("Tools/Wizards Code/Dev Logger")]
@@ -60,6 +61,7 @@ namespace WizardsCode.DevLogger
             entryPanel = new EntryPanel(m_DevLogEntries, m_ScreenCaptures);
             twitterPanel = new TwitterPanel(entryPanel);
             discordPanel = new DiscordPanel(entryPanel);
+            m_SchedulingPanel = new SchedulingPanel();
             gitPanel = new GitPanel(entryPanel);
         }
 
@@ -69,6 +71,7 @@ namespace WizardsCode.DevLogger
             mediaPanel.OnEnable();
             entryPanel.OnEnable();
             discordPanel.OnEnable();
+            m_SchedulingPanel.OnEnable();
             GitSettings.Load();
         }
 
@@ -78,6 +81,7 @@ namespace WizardsCode.DevLogger
             mediaPanel.OnEnable();
             entryPanel.OnDisable();
             discordPanel.OnDisable();
+            m_SchedulingPanel.OnDisable();
             GitSettings.Save();
             AssetDatabase.SaveAssets();
 
@@ -101,6 +105,12 @@ namespace WizardsCode.DevLogger
         void Update()
         {
             mediaPanel.Update();
+            if (m_SchedulingPanel == null)
+            {
+                m_SchedulingPanel = new SchedulingPanel();
+                m_SchedulingPanel.OnEnable();
+            }
+            m_SchedulingPanel.Update();
         }
 
         #region GUI
@@ -126,7 +136,8 @@ namespace WizardsCode.DevLogger
         }
 
         void OnGUI()
-        {            try
+        {            
+            try
             {
                 selectedTab = GUILayout.Toolbar(selectedTab, toolbarLabels);
                 switch (selectedTab)
@@ -167,9 +178,12 @@ namespace WizardsCode.DevLogger
                         devLogPanel.OnGUI();
                         break;
                     case 2:
-                        gitPanel.OnGUI();
+                        m_SchedulingPanel.OnGUI();
                         break;
                     case 3:
+                        gitPanel.OnGUI();
+                        break;
+                    case 4:
                         SettingsTab();
                         break;
                 }
@@ -283,10 +297,6 @@ namespace WizardsCode.DevLogger
 
             Skin.EndSection();
         }
-
-        
-
-
         #endregion
 
     }
