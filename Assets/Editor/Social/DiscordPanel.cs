@@ -20,7 +20,6 @@ namespace WizardsCode.DevLogger
         [SerializeField] static string username = "Dev Logger (test)";
         [SerializeField] static string url;
 
-
         internal DevLogScreenCaptures screenCaptures { get; set; }
 
         static UnityWebRequest www;
@@ -30,22 +29,18 @@ namespace WizardsCode.DevLogger
             this.entryPanel = entryPanel;
         }
 
-        public const string EDITOR_PREFS_DISCORD_IS_CONFIGURED = "DiscordIsConfigured_";
-        public const string EDITOR_PREFS_DISCORD_USERNAME = "DiscordUsername_";
-        public const string EDITOR_PREFS_DISCORD_WEBHOOK_URL = "DiscordWebhookURL_";
-
         internal void OnDisable()
         {
-            EditorPrefs.SetBool(EDITOR_PREFS_DISCORD_IS_CONFIGURED + Application.productName, isConfigured);
-            EditorPrefs.SetString(EDITOR_PREFS_DISCORD_USERNAME + Application.productName, username);
-            EditorPrefs.SetString(EDITOR_PREFS_DISCORD_WEBHOOK_URL + Application.productName, url);
+            EditorPrefs.SetBool(Discord.EDITOR_PREFS_DISCORD_IS_CONFIGURED + Application.productName, isConfigured);
+            EditorPrefs.SetString(Discord.EDITOR_PREFS_DISCORD_USERNAME + Application.productName, username);
+            EditorPrefs.SetString(Discord.EDITOR_PREFS_DISCORD_WEBHOOK_URL + Application.productName, url);
         }
 
         internal void OnEnable()
         {
-            isConfigured = EditorPrefs.GetBool(EDITOR_PREFS_DISCORD_IS_CONFIGURED + Application.productName, false);
-            username = EditorPrefs.GetString(EDITOR_PREFS_DISCORD_USERNAME + Application.productName, "Dev Logger");
-            url = EditorPrefs.GetString(EDITOR_PREFS_DISCORD_WEBHOOK_URL + Application.productName, url);
+            isConfigured = EditorPrefs.GetBool(Discord.EDITOR_PREFS_DISCORD_IS_CONFIGURED + Application.productName, false);
+            username = EditorPrefs.GetString(Discord.EDITOR_PREFS_DISCORD_USERNAME + Application.productName, "Dev Logger");
+            url = EditorPrefs.GetString(Discord.EDITOR_PREFS_DISCORD_WEBHOOK_URL + Application.productName);
         }
 
         public void OnGUI()
@@ -89,7 +84,7 @@ namespace WizardsCode.DevLogger
                             message = new Message(username, entryPanel.shortText + entryPanel.GetSelectedMetaData(false), entryPanel.detailText, screenCaptures);
                         }
                         
-                        PostMessage(message);
+                        Discord.PostMessage(message);
                     }
                 }
                 else
@@ -98,141 +93,6 @@ namespace WizardsCode.DevLogger
                 }
             }
             EditorGUILayout.EndVertical();
-        }
-
-        public static void PostEntry(DevLogEntry entry)
-        {
-            PostMessage(new Message(username, entry));
-        }
-
-        private static void PostMessage(Message message)
-        {
-            List<IMultipartFormSection> formData = new List<IMultipartFormSection>();
-            formData.Add(new MultipartFormDataSection("username", message.username));
-            formData.Add(new MultipartFormDataSection("content", message.introText + "\n" + message.bodyText));
-            for (int i = 0; i < message.files.Count; i++)
-            {
-                formData.Add(new MultipartFormFileSection(message.files[i].name, message.files[i].fileData, message.files[i].filename, message.files[i].contentType));
-            }
-            www = UnityWebRequest.Post(url, formData);
-            
-            AsyncOperation asyncOperation = www.SendWebRequest();
-            EditorApplication.update += PostRequestUpdate;
-        }
-
-        static void PostRequestUpdate()
-        {
-            if (!www.isDone)
-                return;
-
-            if (www.isNetworkError || www.isHttpError)
-            {
-                Debug.LogError(www.error);
-            }
-            else
-            {
-                Debug.Log(www.downloadHandler.text);
-            }
-            www.Dispose();
-            EditorApplication.update -= PostRequestUpdate;
-        }
-    }
-
-    [Serializable]
-    public class Message
-    {
-        public string introText;
-        public string bodyText;
-        public string username;
-        public List<ImageContent> files = new List<ImageContent>();
-
-        internal Message(string username, DevLogEntry entry)
-        {
-            this.username = username;
-
-            this.introText = entry.shortDescription;
-            for (int i = 0; i < entry.metaData.Count; i++)
-            {
-                if (!entry.metaData[i].StartsWith("#"))
-                {
-                    introText += " " + entry.metaData[i];
-                }
-            }
-
-            this.bodyText = entry.longDescription;
-
-            for (int i = 0; i < entry.captures.Count; i++)
-            {
-                DevLogScreenCapture capture = entry.captures[i];
-                ImageContent image = new ImageContent("File" + i, capture);
-                files.Add(image);
-            }
-        }
-
-        /// <summary>
-        /// Create a new Discord message.
-        /// </summary>
-        /// <param name="username">The unsername to use when posting.</param>
-        /// <param name="introText">The intro text that will appear before the first image, if there is one.</param>
-        /// <param name="bodyText">The main body text.</param>
-        /// <param name="screenCaptures">The set of available and selected screen captures that may be shared as part of the message.</param>
-        internal Message(string username, string introText, string bodyText, DevLogScreenCaptures screenCaptures) : this (username, introText, screenCaptures)
-        {
-            this.bodyText = bodyText;
-        }
-
-        /// <summary>
-        /// Create a new Discord message.
-        /// </summary>
-        /// <param name="username">The unsername to use when posting.</param>
-        /// <param name="introText">The intro text that will appear before the first image, if there is one.</param>
-        /// <param name="screenCaptures">The set of available and selected screen captures that may be shared as part of the message.</param>
-        internal Message(string username, string introText, DevLogScreenCaptures screenCaptures)
-        {
-            this.username = username;
-            this.introText = introText;
-
-            for (int i = 0; i < screenCaptures.Count; i++)
-            {
-                DevLogScreenCapture capture = screenCaptures.captures[i];
-                if (!capture.IsSelected)
-                {
-                    continue;
-                }
-
-                ImageContent image = new ImageContent("File" + i, capture);
-                files.Add(image);
-            }
-        }
-    }
-
-    [Serializable]
-    public class ImageContent
-    {
-        public string name;
-        public string filepath;
-        public string filename;
-        public byte[] fileData;
-        public string contentType;
-
-        internal ImageContent (string name, DevLogScreenCapture capture)
-        {
-            this.name = name;
-            this.filepath = capture.ImagePath;
-            this.filename = Path.GetFileName(capture.ImagePath);
-            this.fileData = File.ReadAllBytes(this.filepath);
-            if (this.filepath.EndsWith("jpg"))
-            {
-                this.contentType = "image/jpg";
-            }
-            else if (this.filepath.EndsWith("png"))
-            {
-                this.contentType = "image/png";
-            }
-            else if (this.filepath.EndsWith("gif"))
-            {
-                this.contentType = "image/gif";
-            }
         }
     }
 }

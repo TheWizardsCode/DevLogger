@@ -17,6 +17,7 @@ See [below](#using-devlogger) for usage guide
   * Create Dev Log entries from Git commits
   * Post updates, with or without images (with or without animated GIFs), to Twitter
   * Post updates, with or without images (including animated GIFs) to Discord
+  * Create schedules for posting and get reminders of when you are due to post
   * Open Source contributions welcome - lets be more productive together
 
 # Installation Of Latest Release
@@ -95,6 +96,10 @@ Once correctly configured you can post text and images using this section of the
 ## Dev Log Tab
 
 When a DevLog entry is made it will appear in this tab along with the meta data and images posted with it. You can edit the information here. You can also change the order the devlogs will appear in the final output.
+
+## Schedule Tab
+
+You can setup a schedule for publishing your tweets
 
 ## Git Tab
 

@@ -22,15 +22,28 @@ namespace WizardsCode.DevLogger
         public List<DevLogScreenCapture> captures = new List<DevLogScreenCapture>();
         [SerializeField, Tooltip("The commit hash related to this change in the project.")]
         public string commitHash = "";
+        [SerializeField, Tooltip("Whether or not this entry is intended for posting to social media.")]
+        public bool social = false;
         [SerializeField, Tooltip("Whether this entry has every been tweeted.")]
         public bool tweeted;
         [SerializeField, Tooltip("The date and time (UTC file time) this entry was last tweeted.")]
         public long lastTweetFileTime;
+        [SerializeField, Tooltip("Whether this entry has every been posted to Discord.")]
+        public bool discordPost;
+        [SerializeField, Tooltip("The date and time (UTC file time) this entry was last tweeted.")]
+        public long lastDiscordPostFileTime;
 
         public string lastTweetPrettyTime { 
             get
             {
                 return DateTime.FromFileTimeUtc(lastTweetFileTime).ToLocalTime().ToString("dddd dd-MMM-yyyy HH:MM");
+            }
+        }
+        public string lastDiscordPostPrettyTime
+        {
+            get
+            {
+                return DateTime.FromFileTimeUtc(lastDiscordPostFileTime).ToLocalTime().ToString("dddd dd-MMM-yyyy HH:MM");
             }
         }
     }

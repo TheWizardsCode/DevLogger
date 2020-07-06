@@ -23,9 +23,16 @@ namespace WizardsCode.DevLogger
         [SerializeField, Tooltip("The twitter hashtags to use when posting to Twitter on this schedule. This will be in addition to any hashtags defined in the post itself.")]
         internal string m_TwitterHashtag = "#ScreenshotSaturday";
 
+        [Header("Discord")]
+        [SerializeField, Tooltip("Whether to post to Discord on this schedule.")]
+        internal bool m_PostToDiscord = true;
+
+        [Header("Entry")]
+        [SerializeField, Tooltip("The Dev Log entry to post.")]
+        internal DevLogEntry m_DevLogEntry;
+
         [SerializeField, HideInInspector]
         internal long m_LastDoneDateTime;
-
 
         internal bool IsDue
         {

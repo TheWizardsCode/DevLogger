@@ -115,6 +115,7 @@ namespace WizardsCode.Social
                 if (PublishTweet(tweet, out response))
                 {
                     entry.tweeted = true;
+                    entry.lastTweetFileTime = DateTime.Now.ToFileTimeUtc();
                     return true;
                 } else
                 {
@@ -128,14 +129,7 @@ namespace WizardsCode.Social
                 {
                     files.Add(entry.captures[i].ImagePath);
                 }
-                if (PublishTweetWithMedia(tweet, files, out response))
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return PublishTweetWithMedia(tweet, files, out response);
             }
         }
 
