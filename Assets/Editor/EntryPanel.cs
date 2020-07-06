@@ -19,6 +19,7 @@ namespace WizardsCode.DevLogger
         [SerializeField] Vector2 windowScrollPos = Vector2.zero;
         [SerializeField] internal string shortText = "";
         [SerializeField] internal string detailText = "";
+        [SerializeField] bool isSocial = false;
         [SerializeField] string gitCommit = "";
         [SerializeField] List<string> suggestedMetaData;
         [SerializeField] List<bool> selectedMetaData;
@@ -143,9 +144,10 @@ namespace WizardsCode.DevLogger
             EditorGUILayout.EndVertical();
 
 
-            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.BeginVertical();
+            isSocial = EditorGUILayout.Toggle("Social?", isSocial);
             gitCommit = EditorGUILayout.TextField("Git Commit", gitCommit);
-            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.EndVertical();
             EditorGUILayout.EndHorizontal();
         }
 
@@ -203,6 +205,8 @@ namespace WizardsCode.DevLogger
 
             entry.shortDescription = shortText;
             StringBuilder text = new StringBuilder(entry.shortDescription);
+
+            entry.isSocial = isSocial;
 
             if (!string.IsNullOrEmpty(gitCommit))
             {

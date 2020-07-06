@@ -23,7 +23,7 @@ namespace WizardsCode.DevLogger
         [SerializeField, Tooltip("The commit hash related to this change in the project.")]
         public string commitHash = "";
         [SerializeField, Tooltip("Whether or not this entry is intended for posting to social media.")]
-        public bool social = false;
+        public bool isSocial = false;
         [SerializeField, Tooltip("Whether this entry has every been tweeted.")]
         public bool tweeted;
         [SerializeField, Tooltip("The date and time (UTC file time) this entry was last tweeted.")]

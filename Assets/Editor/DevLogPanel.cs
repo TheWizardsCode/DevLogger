@@ -156,7 +156,7 @@ namespace WizardsCode.DevLogger
             labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight, labelRect.width, labelRect.height);
             EditorGUI.PrefixLabel(labelRect, new GUIContent("Social?"));
             fieldRect = new Rect(fieldRect.x, labelRect.y, fieldRect.width, EditorGUIUtility.singleLineHeight);
-            entry.social = EditorGUI.Toggle(fieldRect, entry.social);
+            entry.isSocial = EditorGUI.Toggle(fieldRect, entry.isSocial);
             
             labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight, labelRect.width, labelRect.height);
             EditorGUI.PrefixLabel(labelRect, new GUIContent("Tweeted?"));
