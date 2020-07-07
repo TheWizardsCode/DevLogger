@@ -8,7 +8,7 @@ namespace org.WizardsCode.DevLogger.Editor
 		/// <summary>
 		/// The semantic version
 		/// </summary>
-		public const string VERSION = "0.2.2";
+		public const string VERSION = "0.2.3";
 
 		/// <summary>
 		/// The branch of GIT this package was published from.
@@ -18,16 +18,16 @@ namespace org.WizardsCode.DevLogger.Editor
 		/// <summary>
 		/// The current GIT commit hash this package was published on.
 		/// </summary>
-		public const string GIT_COMMIT = "4f5b60f9bd7077ab435e0dc6356fe1fd96dedd69";
+		public const string GIT_COMMIT = "65d3fca729c1af9ec604b5a0133b7225400bd31d";
 
 		/// <summary>
 		/// The UTC human-readable date this package was published at.
 		/// </summary>
-		public const string PUBLISH_DATE = "Sunday, July 5, 2020";
+		public const string PUBLISH_DATE = "Tuesday, July 7, 2020";
 
 		/// <summary>
 		/// The UTC time this package was published at.
 		/// </summary>
-		public const string PUBLISH_TIME = "07/05/2020 17:24:40";
+		public const string PUBLISH_TIME = "07/07/2020 08:06:28";
 	}
 }

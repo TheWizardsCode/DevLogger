@@ -174,3 +174,10 @@ testete
 
 ![Screenshot](D:\tmp\DevLogger\SampleScene\In_Game_Footage_DevLogger_SampleScene_v1.0_132383817270000000.gif)
 
+## Tuesday 7 July 2020, 01:08
+
+Create scheduled reminders to post to Twitter and Discord.
+
+### Details
+Create a schedule of reminders, mark Dev Log entries as suitable for social media, quickly select a post at an appropriate time (or rely on the auto select process) and click post when the button is enabled. Never forget, or be unprepared, to post again!
+

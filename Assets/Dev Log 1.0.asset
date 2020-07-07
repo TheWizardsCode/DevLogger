@@ -263,6 +263,34 @@ MonoBehaviour:
   lastTweetFileTime: 132385807886316495
   discordPost: 1
   lastDiscordPostFileTime: 132385807886511628
+--- !u!114 &-394096443042062930
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa508ee653f80ef478ab4842c6bb02ba, type: 3}
+  m_Name: 7/7/2020 1:08 AM
+  m_EditorClassIdentifier: 
+  shortDescription: Create scheduled reminders to post to Twitter and Discord.
+  longDescription: Create a schedule of reminders, mark Dev Log entries as suitable
+    for social media, quickly select a post at an appropriate time (or rely on the
+    auto select process) and click post when the button is enabled. Never forget,
+    or be unprepared, to post again!
+  metaData:
+  - '#IndieGame'
+  - '#MadeWithUnity'
+  - https://bit.ly/UnityDevLogger
+  captures: []
+  commitHash: 
+  isSocial: 1
+  tweeted: 0
+  lastTweetFileTime: 0
+  discordPost: 0
+  lastDiscordPostFileTime: 0
 --- !u!114 &-284636512389619061
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -304,9 +332,7 @@ MonoBehaviour:
   - {fileID: -993016919206714112}
   - {fileID: 374282915631882679}
   - {fileID: 5510801695314803418}
-  - {fileID: -1539953751706292547}
-  - {fileID: -530485168719244184}
-  - {fileID: -5965402235020695038}
+  - {fileID: -394096443042062930}
 --- !u!114 &374282915631882679
 MonoBehaviour:
   m_ObjectHideFlags: 0
