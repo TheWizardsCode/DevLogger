@@ -10,11 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f5d529006fca0564d8f3141f071e6a9f, type: 3}
-  m_Name: Dev Log Scheduled Event 1
+  m_Name: Dev Log Scheduled Event
   m_EditorClassIdentifier: 
   m_ScheduleType: 0
-  m_DayOfWeek: 6
-  m_TimeOfDay: 68400
+  m_DayOfWeek: 2
+  m_TimeOfDay: 180
   m_PostToTwitter: 1
   m_TwitterHashtag: '#ScreenshotSaturday'
-  m_LastDoneDateTime: 0
+  m_PostToDiscord: 1
+  m_DevLogGUID: 354bdf0674064454fa5ecf012f714df5
+  m_LastDoneDateTime: 132385825766713515
+  m_DevLogEntry: {fileID: -5965402235020695038, guid: 354bdf0674064454fa5ecf012f714df5,
+    type: 2}

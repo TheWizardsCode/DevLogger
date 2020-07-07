@@ -61,7 +61,7 @@ namespace WizardsCode.DevLogger
             entryPanel = new EntryPanel(m_DevLogEntries, m_ScreenCaptures);
             twitterPanel = new TwitterPanel(entryPanel);
             discordPanel = new DiscordPanel(entryPanel);
-            m_SchedulingPanel = new SchedulingPanel();
+            m_SchedulingPanel = new SchedulingPanel(m_DevLogEntries);
             gitPanel = new GitPanel(entryPanel);
         }
 
@@ -107,7 +107,7 @@ namespace WizardsCode.DevLogger
             mediaPanel.Update();
             if (m_SchedulingPanel == null)
             {
-                m_SchedulingPanel = new SchedulingPanel();
+                m_SchedulingPanel = new SchedulingPanel(m_DevLogEntries);
                 m_SchedulingPanel.OnEnable();
             }
             m_SchedulingPanel.Update();

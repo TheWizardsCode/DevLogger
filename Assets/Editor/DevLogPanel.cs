@@ -171,7 +171,7 @@ namespace WizardsCode.DevLogger
             labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight, labelRect.width, labelRect.height);
             EditorGUI.PrefixLabel(labelRect, new GUIContent("Discord?"));
             fieldRect = new Rect(fieldRect.x, labelRect.y, fieldRect.width, EditorGUIUtility.singleLineHeight);
-            EditorGUI.Toggle(fieldRect, entry.tweeted);
+            EditorGUI.Toggle(fieldRect, entry.discordPost);
             if (entry.discordPost)
             {
                 Rect timeRect = new Rect(fieldRect.x + 20, fieldRect.y, fieldRect.width - 50, fieldRect.height);

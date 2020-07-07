@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 namespace WizardsCode.DevLogger
@@ -21,18 +22,38 @@ namespace WizardsCode.DevLogger
         [SerializeField, Tooltip("Whether to post to Twitter on this schedule.")]
         internal bool m_PostToTwitter = true;
         [SerializeField, Tooltip("The twitter hashtags to use when posting to Twitter on this schedule. This will be in addition to any hashtags defined in the post itself.")]
-        internal string m_TwitterHashtag = "#ScreenshotSaturday";
+        internal string m_TwitterHashtag = "";
 
         [Header("Discord")]
         [SerializeField, Tooltip("Whether to post to Discord on this schedule.")]
         internal bool m_PostToDiscord = true;
 
-        [Header("Entry")]
-        [SerializeField, Tooltip("The Dev Log entry to post.")]
-        internal DevLogEntry m_DevLogEntry;
+        [SerializeField]
+        internal string m_DevLogGUID;        
 
-        [SerializeField, HideInInspector]
+        [SerializeField]
         internal long m_LastDoneDateTime;
+
+        [HideInInspector]
+        public DevLogEntry m_DevLogEntry; // TODO Hmmm.. this needs to be public so FindProperty in SchedulingPanel works :-(
+        internal DevLogEntry devLogEntry
+        {
+            get
+            {
+                if (m_DevLogEntry == null)
+                {
+                    m_DevLogEntry = AssetDatabase.LoadAssetAtPath<DevLogEntry>(AssetDatabase.GUIDToAssetPath(m_DevLogGUID));
+                }
+                return m_DevLogEntry;
+            }
+            set
+            {
+                if (AssetDatabase.TryGetGUIDAndLocalFileIdentifier(value, out string guid, out long localId)) {
+                    m_DevLogEntry = value;
+                    m_DevLogGUID = guid;
+                }
+            }
+        }
 
         internal bool IsDue
         {

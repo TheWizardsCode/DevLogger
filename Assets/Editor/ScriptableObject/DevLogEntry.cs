@@ -33,6 +33,28 @@ namespace WizardsCode.DevLogger
         [SerializeField, Tooltip("The date and time (UTC file time) this entry was last tweeted.")]
         public long lastDiscordPostFileTime;
 
+        /// <summary>
+        /// The title is the first line or sentence of the short description.
+        /// If there is no line break or period then the whole of the short description
+        /// is returned.
+        /// </summary>
+        public string title
+        {
+            get {
+                int lineBreak = shortDescription.IndexOf("\n");
+                int period = shortDescription.IndexOf(".");
+                if (lineBreak > 0)
+                {
+                    return shortDescription.Substring(0, lineBreak + 1).Trim();
+                }
+                else if (period > 0)
+                {
+                    return shortDescription.Substring(0, period + 1).Trim();
+                }
+                return shortDescription.Trim();
+            }
+        }
+
         public string lastTweetPrettyTime { 
             get
             {

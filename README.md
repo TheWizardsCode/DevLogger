@@ -99,7 +99,16 @@ When a DevLog entry is made it will appear in this tab along with the meta data 
 
 ## Schedule Tab
 
-You can setup a schedule for publishing your tweets
+You can setup a schedule for publishing your tweets and discord posts here. This is not fully integrated into the editor yet. At the time of writing you need
+to create a Schedule Entry using `Create -> Wizards Code -> Dev Log Scheduled Event`. These will automatically appear in the Schedule tab. From there you can 
+set the time, day, channels to post to and Dev Log entry to post.
+
+Note that for a Dev Log Entry to be available in the list for a schedules event it must have the "Social" flag set and 
+
+For Twitter the short text, meta data and images will be used. You can also set special hashtags for the scheduled event (e.g. #ScreenshotSaturday). For Discord the Short and Long text plus, URLs (but not hashtags) from meta data will be used.
+
+Posts are not automatically sent, but when it is past time to send a "Post" button will display. Clicking this button will post to Twitter and Discord as configured.
+You can have as many scheduled events
 
 ## Git Tab
 

@@ -67,27 +67,27 @@ namespace WizardsCode.Social {
         {
             AddDefaultOAuthParams(parameters, consumerKey, consumerSecret);
 
-            parameters.Add("oauth_token", accessToken);
-            parameters.Add("oauth_token_secret", accessSecret);
+            parameters["oauth_token"] = accessToken;
+            parameters["oauth_token_secret"] = accessSecret;
 
             return GetFinalOAuthHeader(httpRequestType, apiURL, parameters);
         }
 
         private static void AddDefaultOAuthParams(Dictionary<string, string> parameters, string consumerKey, string consumerSecret)
         {
-            parameters.Add("oauth_version", "1.0");
-            parameters.Add("oauth_nonce", GenerateNonce());
-            parameters.Add("oauth_timestamp", GenerateTimeStamp());
-            parameters.Add("oauth_signature_method", "HMAC-SHA1");
-            parameters.Add("oauth_consumer_key", consumerKey);
-            parameters.Add("oauth_consumer_secret", consumerSecret);
+            parameters["oauth_version"] = "1.0";
+            parameters["oauth_nonce"] = GenerateNonce();
+            parameters["oauth_timestamp"] = GenerateTimeStamp();
+            parameters["oauth_signature_method"] = "HMAC-SHA1";
+            parameters["oauth_consumer_key"] = consumerKey;
+            parameters["oauth_consumer_secret"] = consumerSecret;
         }
 
         private static string GetFinalOAuthHeader(string HTTPRequestType, string URL, Dictionary<string, string> parameters)
         {
             // Add the signature to the oauth parameters
             string signature = GenerateSignature(HTTPRequestType, URL, parameters);
-            parameters.Add("oauth_signature", signature);
+            parameters["oauth_signature"] = signature;
 
             StringBuilder authHeaderBuilder = new StringBuilder();
             authHeaderBuilder.AppendFormat("OAuth realm=\"{0}\"", "Twitter API");
