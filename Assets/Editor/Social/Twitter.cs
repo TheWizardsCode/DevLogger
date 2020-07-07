@@ -115,6 +115,7 @@ namespace WizardsCode.Social
                 if (PublishTweet(tweet, out response))
                 {
                     entry.tweeted = true;
+                    entry.lastTweetFileTime = DateTime.Now.ToFileTimeUtc();
                     return true;
                 } else
                 {
@@ -128,11 +129,13 @@ namespace WizardsCode.Social
                 {
                     files.Add(entry.captures[i].ImagePath);
                 }
+
                 if (PublishTweetWithMedia(tweet, files, out response))
                 {
+                    entry.tweeted = true;
+                    entry.lastTweetFileTime = DateTime.Now.ToFileTimeUtc();
                     return true;
-                }
-                else
+                } else
                 {
                     return false;
                 }
@@ -211,6 +214,7 @@ namespace WizardsCode.Social
                 if (string.IsNullOrEmpty(mediaID))
                 {
                     response = "Failed to upload media: " + response;
+                    Debug.Log(response);
                     return false;
                 }
 
@@ -487,22 +491,23 @@ namespace WizardsCode.Social
                 if (!ApiGetRequest(UploadMediaURL, mediaParameters, out response))
                 {
                     status = new MediaStatusResponse();
-                    status.processingInfo.error.code = 256;
-                    status.processingInfo.error.message = "API error: " + response;
+                    status.processing_info.error.code = 256;
+                    status.processing_info.error.message = "API error: " + response;
                     return status;
                 }
 
                 status = JsonUtility.FromJson<MediaStatusResponse>(response);
 
-                if (status.processingInfo != null)
+                if (status.processing_info != null)
                 {
-                    if (status.processingInfo.state == "failed")
+                    if (status.processing_info.state == "failed")
                     {
-                        response = "Failed to upload media: " + status.processingInfo.error.message;
+                        response = "Failed to upload media: " + status.processing_info.error.message;
                         isFinished = true;
-                    } else if (status.processingInfo.check_after_secs > 0)
+                    } else if (status.processing_info.state != "succeeded" 
+                        && status.processing_info.check_after_secs > 0)
                     {
-                        float checkTime = Time.realtimeSinceStartup + status.processingInfo.check_after_secs;
+                        float checkTime = Time.realtimeSinceStartup + status.processing_info.check_after_secs;
                         while (Time.realtimeSinceStartup < checkTime) {
                             // waiting
                         }
@@ -554,22 +559,18 @@ namespace WizardsCode.Social
     [Serializable]
     internal class MediaStatusResponse
     {
-        public Int64 media_id;
-        public string media_id_string;
-        public int expires_after_secs;
-        public int size;
-        public ProcessingInfo processingInfo;
+        public ProcessingInfo processing_info;
 
         public MediaStatusResponse()
         {
-            this.processingInfo = new ProcessingInfo();
+            this.processing_info = new ProcessingInfo();
         }
 
         public bool IsError
         {
             get
             {
-                if (processingInfo.error != null && processingInfo.error.code != 0)
+                if (processing_info.error != null && processing_info.error.code != 0)
                 {
                     return true;
                 } else
@@ -582,9 +583,8 @@ namespace WizardsCode.Social
 
     [Serializable]
     internal class ProcessingInfo { 
-        public string state;
-        public int check_after_secs;
-        public int progress_percent;
+        public string state = null;
+        public int check_after_secs = 2;
         public MediaError error;
 
         public ProcessingInfo()
@@ -596,8 +596,8 @@ namespace WizardsCode.Social
     [Serializable]
     internal class MediaError {
         public int code;
-        public string name;
-        public string message;
+        public string name = "";
+        public string message = "";
     }
 
 }

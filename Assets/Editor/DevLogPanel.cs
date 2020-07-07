@@ -50,7 +50,9 @@ namespace WizardsCode.DevLogger
                     }
                     if (GUILayout.Button("Post to Discord", GUILayout.Height(50)))
                     {
-                        DiscordPanel.PostEntry(Entries.entries[logList.index]);
+                        Discord.PostEntry(Entries.entries[logList.index]);
+                        Entries.entries[logList.index].discordPost = true;
+                        Entries.entries[logList.index].lastDiscordPostFileTime = DateTime.Now.ToFileTimeUtc();
                     }
                 }
                 listScrollPosition = EditorGUILayout.BeginScrollView(listScrollPosition);
@@ -88,12 +90,14 @@ namespace WizardsCode.DevLogger
         private float ElementHeightCallback(int index)
         {
             float height = EditorGUIUtility.singleLineHeight; // title
+            height += EditorGUIUtility.singleLineHeight;// Date
             height += EditorGUIUtility.singleLineHeight * listDescriptionLines; // descrption
             height += EditorGUIUtility.singleLineHeight * Entries.entries[index].metaData.Count; // meta data
             height += EditorGUIUtility.singleLineHeight * Entries.entries[index].captures.Count; // capture
             height += EditorGUIUtility.singleLineHeight;// Commit Hash
+            height += EditorGUIUtility.singleLineHeight;// Social Flag
             height += EditorGUIUtility.singleLineHeight;// Tweeted
-            height += EditorGUIUtility.singleLineHeight;// Date
+            height += EditorGUIUtility.singleLineHeight;// Discord
             height += 10; // space
             return height;
         }
@@ -108,28 +112,28 @@ namespace WizardsCode.DevLogger
             DevLogEntry entry = Entries.entries[index];
 
             Rect labelRect = new Rect(rect.x, rect.y, listLabelWidth, EditorGUIUtility.singleLineHeight);
-            EditorGUI.PrefixLabel(labelRect, new GUIContent("Created"));
-            Rect fieldRect = new Rect(labelRect.x + listLabelWidth, labelRect.y, rect.width - listLabelWidth, labelRect.height);
-            EditorGUI.LabelField(fieldRect, entry.created.ToString("dd MMM yyyy"));
-
-            labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight, labelRect.width, labelRect.height);
             EditorGUI.PrefixLabel(labelRect, new GUIContent("Title"));
-            fieldRect = new Rect(fieldRect.x, labelRect.y, fieldRect.width, EditorGUIUtility.singleLineHeight * listDescriptionLines);
-            EditorGUI.TextField(fieldRect, entry.shortDescription);
+            Rect fieldRect = new Rect(labelRect.x + listLabelWidth, labelRect.y, rect.width - listLabelWidth, labelRect.height);
+            entry.shortDescription = EditorGUI.TextField(fieldRect, entry.shortDescription);
 
             labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight, labelRect.width, labelRect.height);
             EditorGUI.PrefixLabel(labelRect, new GUIContent("Description"));
             fieldRect = new Rect(fieldRect.x, labelRect.y, fieldRect.width, EditorGUIUtility.singleLineHeight * listDescriptionLines);
-            EditorGUI.TextArea(fieldRect, entry.longDescription);
+            entry.longDescription = EditorGUI.TextArea(fieldRect, entry.longDescription);
 
             labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight * listDescriptionLines, labelRect.width, labelRect.height);
+            EditorGUI.PrefixLabel(labelRect, new GUIContent("Created"));
+            fieldRect = new Rect(fieldRect.x, labelRect.y, fieldRect.width, labelRect.height);
+            EditorGUI.LabelField(fieldRect, entry.created.ToString("dd MMM yyyy"));
+
+            labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight, labelRect.width, labelRect.height);
             if (Entries.entries[index].metaData.Count != 0)
             {
                 EditorGUI.PrefixLabel(labelRect, new GUIContent("Meta Data"));
                 for (int i = 0; i < entry.metaData.Count; i++)
                 {
                     fieldRect = new Rect(fieldRect.x, labelRect.y + EditorGUIUtility.singleLineHeight * i, fieldRect.width, EditorGUIUtility.singleLineHeight);
-                    EditorGUI.TextField(fieldRect, entry.metaData[i]);
+                    entry.metaData[i] = EditorGUI.TextField(fieldRect, entry.metaData[i]);
                 }
             }
 
@@ -150,15 +154,29 @@ namespace WizardsCode.DevLogger
             EditorGUI.TextArea(fieldRect, entry.commitHash);
 
             labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight, labelRect.width, labelRect.height);
-            EditorGUI.PrefixLabel(labelRect, new GUIContent("Tweeted"));
+            EditorGUI.PrefixLabel(labelRect, new GUIContent("Social?"));
+            fieldRect = new Rect(fieldRect.x, labelRect.y, fieldRect.width, EditorGUIUtility.singleLineHeight);
+            entry.isSocial = EditorGUI.Toggle(fieldRect, entry.isSocial);
+            
+            labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight, labelRect.width, labelRect.height);
+            EditorGUI.PrefixLabel(labelRect, new GUIContent("Tweeted?"));
             fieldRect = new Rect(fieldRect.x, labelRect.y, fieldRect.width, EditorGUIUtility.singleLineHeight);
             EditorGUI.Toggle(fieldRect, entry.tweeted);
             if (entry.tweeted)
             {
-                Rect timeRect = new Rect(fieldRect.x + 50, fieldRect.y, fieldRect.width - 50, fieldRect.height);
-                EditorGUI.LabelField(timeRect, entry.lastTweetPrettyTime);
+                Rect timeRect = new Rect(fieldRect.x + 20, fieldRect.y, fieldRect.width - 50, fieldRect.height);
+                EditorGUI.LabelField(timeRect, " most recent " + entry.lastTweetPrettyTime);
             }
-            
+
+            labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight, labelRect.width, labelRect.height);
+            EditorGUI.PrefixLabel(labelRect, new GUIContent("Discord?"));
+            fieldRect = new Rect(fieldRect.x, labelRect.y, fieldRect.width, EditorGUIUtility.singleLineHeight);
+            EditorGUI.Toggle(fieldRect, entry.discordPost);
+            if (entry.discordPost)
+            {
+                Rect timeRect = new Rect(fieldRect.x + 20, fieldRect.y, fieldRect.width - 50, fieldRect.height);
+                EditorGUI.LabelField(timeRect, "most recent" + entry.lastDiscordPostPrettyTime);
+            }
         }
     }
 }

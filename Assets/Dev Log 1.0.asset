@@ -21,8 +21,37 @@ MonoBehaviour:
   - https://bit.ly/UnityDevLogger
   captures: []
   commitHash: 
+  isSocial: 0
   tweeted: 0
   lastTweetFileTime: 0
+  discordPost: 0
+  lastDiscordPostFileTime: 0
+--- !u!114 &-5965402235020695038
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa508ee653f80ef478ab4842c6bb02ba, type: 3}
+  m_Name: 7/7/2020 1:02 AM
+  m_EditorClassIdentifier: 
+  shortDescription: testete
+  longDescription: 
+  metaData:
+  - '#IndieGame'
+  - '#MadeWithUnity'
+  - https://bit.ly/WizardsCodeCharacters
+  captures:
+  - {fileID: 5869663719730215203, guid: 05858a10e16c9844398a86e68477527f, type: 2}
+  commitHash: 
+  isSocial: 1
+  tweeted: 0
+  lastTweetFileTime: 0
+  discordPost: 0
+  lastDiscordPostFileTime: 0
 --- !u!114 &-5034860452252757136
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -36,7 +65,7 @@ MonoBehaviour:
   m_Name: 7/4/2020 12:21 AM
   m_EditorClassIdentifier: 
   shortDescription: Started work on v0.2.0 The key new feature for this version will
-    be posting DevLog entries to a Discord server.
+    be posting Discord. entries to a Discord server.
   longDescription: 
   metaData:
   - '#IndieGame'
@@ -44,8 +73,64 @@ MonoBehaviour:
   - https://bit.ly/UnityDevLogger
   captures: []
   commitHash: 
+  isSocial: 0
   tweeted: 1
   lastTweetFileTime: 0
+  discordPost: 0
+  lastDiscordPostFileTime: 0
+--- !u!114 &-2968178578384053856
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa508ee653f80ef478ab4842c6bb02ba, type: 3}
+  m_Name: 7/6/2020 6:50 PM
+  m_EditorClassIdentifier: 
+  shortDescription: Testing scehdule selection.
+  longDescription: 
+  metaData:
+  - '#IndieGame'
+  - '#MadeWithUnity'
+  - https://bit.ly/WizardsCodeCharacters
+  captures: []
+  commitHash: 
+  isSocial: 1
+  tweeted: 0
+  lastTweetFileTime: 0
+  discordPost: 0
+  lastDiscordPostFileTime: 0
+--- !u!114 &-1539953751706292547
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa508ee653f80ef478ab4842c6bb02ba, type: 3}
+  m_Name: 7/6/2020 11:59 PM
+  m_EditorClassIdentifier: 
+  shortDescription: make hashtag work
+  longDescription: 
+  metaData:
+  - '#IndieGame'
+  - '#MadeWithUnity'
+  - https://bit.ly/WizardsCodeCharacters
+  - 
+  - ScreenshotSaturday
+  captures:
+  - {fileID: 5869663719730215203, guid: 05858a10e16c9844398a86e68477527f, type: 2}
+  commitHash: 
+  isSocial: 1
+  tweeted: 0
+  lastTweetFileTime: 0
+  discordPost: 1
+  lastDiscordPostFileTime: 132385788505909822
 --- !u!114 &-1383429541918839936
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -63,10 +148,15 @@ MonoBehaviour:
   metaData:
   - '#IndieGame'
   - '#MadeWithUnity'
+  - 
+  - ScreenshotSaturday
   captures: []
   commitHash: 
-  tweeted: 0
+  isSocial: 0
+  tweeted: 1
   lastTweetFileTime: 0
+  discordPost: 0
+  lastDiscordPostFileTime: 0
 --- !u!114 &-993016919206714112
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -86,8 +176,11 @@ MonoBehaviour:
   metaData: []
   captures: []
   commitHash: 
+  isSocial: 1
   tweeted: 1
   lastTweetFileTime: 0
+  discordPost: 0
+  lastDiscordPostFileTime: 0
 --- !u!114 &-876955894161342256
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -108,8 +201,68 @@ MonoBehaviour:
   - {fileID: 5869663719730215203, guid: 05858a10e16c9844398a86e68477527f, type: 2}
   - {fileID: -3372679148547513590, guid: 05858a10e16c9844398a86e68477527f, type: 2}
   commitHash: 
+  isSocial: 0
   tweeted: 1
   lastTweetFileTime: 0
+  discordPost: 0
+  lastDiscordPostFileTime: 0
+--- !u!114 &-530845077112840024
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa508ee653f80ef478ab4842c6bb02ba, type: 3}
+  m_Name: 7/5/2020 7:38 PM
+  m_EditorClassIdentifier: 
+  shortDescription: test short
+  longDescription: test long test long test long test long test long test long test
+    long test long test long test long test long test long test long test long test
+    long test long test long
+  metaData:
+  - '#IndieGame'
+  - '#MadeWithUnity'
+  - https://bit.ly/UnityEnviro
+  - https://bit.ly/UnityTFP
+  captures:
+  - {fileID: -1433452705736160578, guid: 05858a10e16c9844398a86e68477527f, type: 2}
+  - {fileID: -3372679148547513590, guid: 05858a10e16c9844398a86e68477527f, type: 2}
+  commitHash: 
+  isSocial: 0
+  tweeted: 0
+  lastTweetFileTime: 0
+  discordPost: 0
+  lastDiscordPostFileTime: 0
+--- !u!114 &-530485168719244184
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa508ee653f80ef478ab4842c6bb02ba, type: 3}
+  m_Name: 7/7/2020 12:02 AM
+  m_EditorClassIdentifier: 
+  shortDescription: hashtag
+  longDescription: 
+  metaData:
+  - '#IndieGame'
+  - '#MadeWithUnity'
+  - https://bit.ly/WizardsCodeCharacters
+  - ScreenshotSaturday
+  captures:
+  - {fileID: 5869663719730215203, guid: 05858a10e16c9844398a86e68477527f, type: 2}
+  commitHash: 
+  isSocial: 1
+  tweeted: 1
+  lastTweetFileTime: 132385807886316495
+  discordPost: 1
+  lastDiscordPostFileTime: 132385807886511628
 --- !u!114 &-284636512389619061
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -129,8 +282,11 @@ MonoBehaviour:
   captures:
   - {fileID: -1433452705736160578, guid: 05858a10e16c9844398a86e68477527f, type: 2}
   commitHash: 
+  isSocial: 0
   tweeted: 0
   lastTweetFileTime: 0
+  discordPost: 0
+  lastDiscordPostFileTime: 0
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -147,8 +303,10 @@ MonoBehaviour:
   - {fileID: -5034860452252757136}
   - {fileID: -993016919206714112}
   - {fileID: 374282915631882679}
-  - {fileID: 7982829083501196979}
-  - {fileID: -1383429541918839936}
+  - {fileID: 5510801695314803418}
+  - {fileID: -1539953751706292547}
+  - {fileID: -530485168719244184}
+  - {fileID: -5965402235020695038}
 --- !u!114 &374282915631882679
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -171,8 +329,39 @@ MonoBehaviour:
   - https://bit.ly/UnityDevLogger
   captures: []
   commitHash: 
+  isSocial: 1
   tweeted: 1
   lastTweetFileTime: 0
+  discordPost: 0
+  lastDiscordPostFileTime: 0
+--- !u!114 &2317504842133202892
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa508ee653f80ef478ab4842c6bb02ba, type: 3}
+  m_Name: 7/6/2020 11:04 PM
+  m_EditorClassIdentifier: 
+  shortDescription: test
+  longDescription: 
+  metaData:
+  - '#IndieGame'
+  - '#MadeWithUnity'
+  - https://bit.ly/WizardsCodeCharacters
+  - 
+  - ScreenshotSaturday
+  captures:
+  - {fileID: 5869663719730215203, guid: 05858a10e16c9844398a86e68477527f, type: 2}
+  commitHash: 
+  isSocial: 1
+  tweeted: 0
+  lastTweetFileTime: 0
+  discordPost: 1
+  lastDiscordPostFileTime: 132385771856910196
 --- !u!114 &3306263297375989967
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -193,8 +382,11 @@ MonoBehaviour:
   - {fileID: -3233854347543472266, guid: 05858a10e16c9844398a86e68477527f, type: 2}
   - {fileID: -3372679148547513590, guid: 05858a10e16c9844398a86e68477527f, type: 2}
   commitHash: 
+  isSocial: 0
   tweeted: 0
   lastTweetFileTime: 0
+  discordPost: 0
+  lastDiscordPostFileTime: 0
 --- !u!114 &3365724033022084666
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -217,8 +409,146 @@ MonoBehaviour:
   - {fileID: -3233854347543472266, guid: 05858a10e16c9844398a86e68477527f, type: 2}
   - {fileID: -3372679148547513590, guid: 05858a10e16c9844398a86e68477527f, type: 2}
   commitHash: 
+  isSocial: 0
   tweeted: 1
   lastTweetFileTime: 0
+  discordPost: 0
+  lastDiscordPostFileTime: 0
+--- !u!114 &3992388502587021274
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa508ee653f80ef478ab4842c6bb02ba, type: 3}
+  m_Name: 7/6/2020 12:59 AM
+  m_EditorClassIdentifier: 
+  shortDescription: twst
+  longDescription: 
+  metaData:
+  - '#IndieGame'
+  - '#MadeWithUnity'
+  - https://bit.ly/WizardsCodeCharacters
+  captures: []
+  commitHash: 
+  isSocial: 1
+  tweeted: 0
+  lastTweetFileTime: 0
+  discordPost: 0
+  lastDiscordPostFileTime: 0
+--- !u!114 &4067207950290168482
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa508ee653f80ef478ab4842c6bb02ba, type: 3}
+  m_Name: 7/6/2020 11:46 PM
+  m_EditorClassIdentifier: 
+  shortDescription: Test again
+  longDescription: 
+  metaData:
+  - '#IndieGame'
+  - '#MadeWithUnity'
+  - https://bit.ly/WizardsCodeCharacters
+  - 
+  - ScreenshotSaturday
+  captures:
+  - {fileID: 5869663719730215203, guid: 05858a10e16c9844398a86e68477527f, type: 2}
+  commitHash: 
+  isSocial: 1
+  tweeted: 0
+  lastTweetFileTime: 0
+  discordPost: 1
+  lastDiscordPostFileTime: 132385782616766468
+--- !u!114 &4445770237232674414
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa508ee653f80ef478ab4842c6bb02ba, type: 3}
+  m_Name: 7/6/2020 6:41 PM
+  m_EditorClassIdentifier: 
+  shortDescription: Testing scheduling with no sentences
+  longDescription: 
+  metaData:
+  - '#IndieGame'
+  - '#MadeWithUnity'
+  - https://bit.ly/WizardsCodeCharacters
+  captures: []
+  commitHash: 
+  isSocial: 1
+  tweeted: 0
+  lastTweetFileTime: 0
+  discordPost: 0
+  lastDiscordPostFileTime: 0
+--- !u!114 &5510801695314803418
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa508ee653f80ef478ab4842c6bb02ba, type: 3}
+  m_Name: 7/5/2020 10:35 AM
+  m_EditorClassIdentifier: 
+  shortDescription: Post to Twitter and Discord at any time from the Dev Log tab
+    of DevLogger.
+  longDescription: v0.2.2 add the ability to post to Twitter and Discord any time,
+    not just when creating a new entry. To Use this feature create a Dev Log entry
+    as you normally would then, when it is time to post to social media, switch to
+    the Dev Log tab, select the entry you want to post and click the buttons to post
+    to the services of choice.
+  metaData:
+  - https://bit.ly/UnityDevLogger
+  - '#MadeWithUnity'
+  captures: []
+  commitHash: 
+  isSocial: 1
+  tweeted: 1
+  lastTweetFileTime: 132385742355862107
+  discordPost: 1
+  lastDiscordPostFileTime: 132385742355892035
+--- !u!114 &5923486981523423671
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa508ee653f80ef478ab4842c6bb02ba, type: 3}
+  m_Name: 7/6/2020 11:54 PM
+  m_EditorClassIdentifier: 
+  shortDescription: Eventually it will work
+  longDescription: 
+  metaData:
+  - '#IndieGame'
+  - '#MadeWithUnity'
+  - https://bit.ly/WizardsCodeCharacters
+  - 
+  - ScreenshotSaturday
+  captures:
+  - {fileID: 5869663719730215203, guid: 05858a10e16c9844398a86e68477527f, type: 2}
+  commitHash: 
+  isSocial: 1
+  tweeted: 0
+  lastTweetFileTime: 0
+  discordPost: 1
+  lastDiscordPostFileTime: 132385785112917598
 --- !u!114 &7982829083501196979
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -242,8 +572,11 @@ MonoBehaviour:
   - {fileID: 5869663719730215203, guid: 05858a10e16c9844398a86e68477527f, type: 2}
   - {fileID: -3372679148547513590, guid: 05858a10e16c9844398a86e68477527f, type: 2}
   commitHash: 
+  isSocial: 0
   tweeted: 0
   lastTweetFileTime: 0
+  discordPost: 0
+  lastDiscordPostFileTime: 0
 --- !u!114 &8348417530351204799
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -265,8 +598,38 @@ MonoBehaviour:
   - {fileID: 5869663719730215203, guid: 05858a10e16c9844398a86e68477527f, type: 2}
   - {fileID: -3372679148547513590, guid: 05858a10e16c9844398a86e68477527f, type: 2}
   commitHash: 
+  isSocial: 0
   tweeted: 0
   lastTweetFileTime: 0
+  discordPost: 0
+  lastDiscordPostFileTime: 0
+--- !u!114 &8590247591747991507
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa508ee653f80ef478ab4842c6bb02ba, type: 3}
+  m_Name: 7/6/2020 6:49 PM
+  m_EditorClassIdentifier: 
+  shortDescription: 'No sentences
+
+    Two lines'
+  longDescription: 
+  metaData:
+  - '#IndieGame'
+  - '#MadeWithUnity'
+  - https://bit.ly/WizardsCodeCharacters
+  captures: []
+  commitHash: 
+  isSocial: 1
+  tweeted: 0
+  lastTweetFileTime: 0
+  discordPost: 0
+  lastDiscordPostFileTime: 0
 --- !u!114 &8636390139549906890
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -290,5 +653,8 @@ MonoBehaviour:
   - {fileID: 5869663719730215203, guid: 05858a10e16c9844398a86e68477527f, type: 2}
   - {fileID: -3372679148547513590, guid: 05858a10e16c9844398a86e68477527f, type: 2}
   commitHash: 
+  isSocial: 0
   tweeted: 0
   lastTweetFileTime: 0
+  discordPost: 0
+  lastDiscordPostFileTime: 0
