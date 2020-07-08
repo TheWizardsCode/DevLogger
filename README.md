@@ -22,6 +22,8 @@ See [below](#using-devlogger) for usage guide
 
 # Installation Of Latest Release
 
+This is the easiest way of installing the code:
+
   1. `Window -> Package Manager`
   2. Click the '+" in the top left
   3. Select 'Add package from Git URL'
@@ -29,11 +31,17 @@ See [below](#using-devlogger) for usage guide
   
 # Installation Of Development Code
 
+We are a big fan of enabling our users to improve Dev Logger, so we would encourage you to use the source code, it's not much harder than using the latest release.
+
   1. Clone the repo into your preferred location
-  2. `Window -> Package Manager`
-  3. Click the '+" in the top left
-  4. Select 'Add package from disk ...'
-  5. Point to the directory containing your development
+  2. In the project view select `Assets/PacageMananifestConfig`
+  3. In the inspector click `Export Package Source`, this will export the package to a folder next to your checkout director called "DevLogger-Package"
+  4. `Window -> Package Manager`
+  5. Click the '+" in the top left
+  6. Select 'Add package from disk ...'
+  7. Point to the `DevLogger-Package` directory 
+  
+If you find a bug or want to make an improvement do it inside the development project in Unity. To make it available in your work project repeat step 2 and 3 above. This will re-publish your package. When you return to your project Unity will detect the changes on disk and re-import the package.
 
 # Using DevLogger
 
