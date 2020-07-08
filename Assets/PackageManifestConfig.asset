@@ -18,7 +18,7 @@ MonoBehaviour:
   packageIgnorePaths:
   - Assets/PackageManifestConfig.asset
   - Assets/Generated
-  packageDestinationPath: ../DevLogger-Release-Stable
+  packageDestinationPath: ../DevLogger-Package
   legacyPackageDestinationPath: 
   packageName: org.wizardscode.devlogger
   displayName: Wizards Code - DevLogger
