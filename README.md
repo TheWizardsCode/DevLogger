@@ -39,7 +39,7 @@ We are a big fan of enabling our users to improve Dev Logger, so we would encour
   4. `Window -> Package Manager`
   5. Click the '+" in the top left
   6. Select 'Add package from disk ...'
-  7. Point to the `DevLogger-Package` directory 
+  7. Point to the `package.json` file in the `DevLogger-Package` directory 
   
 If you find a bug or want to make an improvement do it inside the development project in Unity. To make it available in your work project repeat step 2 and 3 above. This will re-publish your package. When you return to your project Unity will detect the changes on disk and re-import the package.
 
