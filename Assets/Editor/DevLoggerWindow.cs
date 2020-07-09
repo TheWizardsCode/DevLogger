@@ -71,6 +71,12 @@ namespace WizardsCode.DevLogger
             mediaPanel.OnEnable();
             entryPanel.OnEnable();
             discordPanel.OnEnable();
+            if (m_SchedulingPanel == null)
+            {
+                // For some reason the scheduling panel is occasionally set to null, this resets it
+                // TODO remove this workaround by fixing the actual bug!!!
+                m_SchedulingPanel = new SchedulingPanel(m_DevLogEntries);
+            }
             m_SchedulingPanel.OnEnable();
             GitSettings.Load();
         }
@@ -83,7 +89,6 @@ namespace WizardsCode.DevLogger
             discordPanel.OnDisable();
             m_SchedulingPanel.OnDisable();
             GitSettings.Save();
-            AssetDatabase.SaveAssets();
 
             // todo these keys should be in a constants file
             EditorPrefs.SetString("DevLogCapturesFolderPath_" + Application.productName, m_CapturesFolderPath);
@@ -301,3 +306,4 @@ namespace WizardsCode.DevLogger
 
     }
 }
+ 
