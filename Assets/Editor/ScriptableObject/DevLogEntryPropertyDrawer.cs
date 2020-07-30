@@ -10,7 +10,6 @@ namespace WizardsCode.DevLogger
     [CustomPropertyDrawer(typeof(DevLogEntry))]
     public class DevLogEntryPropertyDrawer : PropertyDrawer
     {
-        float listLabelWidth = 80;
         /*
         public override VisualElement CreatePropertyGUI(SerializedProperty property)
         {

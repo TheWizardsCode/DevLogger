@@ -15,6 +15,11 @@ namespace WizardsCode.DevLogger
     {
         public const string STORAGE_DIRECTORY = "DevLog/";
 
+        /// <summary>
+        /// Append and entry to the current DevLog markdown file. If the file does not
+        /// yet exist then create it before appending this entry as the first entry.
+        /// </summary>
+        /// <param name="entry">The DevLogEntry to append.</param>
         public static void Append(DevLogEntry entry)
         {
             StringBuilder sb = new StringBuilder();

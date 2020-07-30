@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
@@ -34,6 +35,12 @@ namespace WizardsCode.DevLogger
             }
             else
             {
+                if (GUILayout.Button("View Devlog", GUILayout.Height(50)))
+                {
+                    string filepath = DevLogMarkdown.GetAbsoluteProjectDirectory() + DevLogMarkdown.GetRelativeCurrentFilePath();
+                    System.Diagnostics.Process.Start(filepath);
+                }
+
                 if (logList.index >= 0)
                 {
                     string response;
@@ -55,13 +62,8 @@ namespace WizardsCode.DevLogger
                         entries.GetEntry(logList.index).discordPost = true;
                         entries.GetEntry(logList.index).lastDiscordPostFileTime = DateTime.Now.ToFileTimeUtc();
                     }
-
-                    if (GUILayout.Button("View Devlog", GUILayout.Height(50)))
-                    {
-                        string filepath = DevLogMarkdown.GetAbsoluteProjectDirectory() + DevLogMarkdown.GetRelativeCurrentFilePath();
-                        System.Diagnostics.Process.Start(filepath);
-                    }
                 }
+
                 listScrollPosition = EditorGUILayout.BeginScrollView(listScrollPosition);
                 logList.DoLayoutList();
                 EditorGUILayout.EndScrollView();
