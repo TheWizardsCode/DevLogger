@@ -372,10 +372,10 @@ MonoBehaviour:
   m_Name: Dev Log 1.0
   m_EditorClassIdentifier: 
   m_Entries:
-  - {fileID: 9012443712184459491}
-  - {fileID: -1030454258410723379}
-  - {fileID: -4136142861470906683}
   - {fileID: 6788948570472992908}
+  - {fileID: -1030454258410723379}
+  - {fileID: 9012443712184459491}
+  - {fileID: -4136142861470906683}
 --- !u!114 &374282915631882679
 MonoBehaviour:
   m_ObjectHideFlags: 0

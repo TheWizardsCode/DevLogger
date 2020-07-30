@@ -93,7 +93,7 @@ namespace WizardsCode.DevLogger
         private void SaveReorderedList(ReorderableList list)
         {
             EditorUtility.SetDirty(entries);
-
+            DevLogMarkdown.Rewrite(entries);
             AssetDatabase.SaveAssets();
         }
 

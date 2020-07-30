@@ -104,6 +104,25 @@ namespace WizardsCode.DevLogger
         }
 
         /// <summary>
+        /// Rewrite the markdown file because the data structure backing it has changed in a significant way.
+        /// Note if you are simply appending to the DevLog there is no need to call this method, which rewrites
+        /// the whole file. This is necessary when an entry is deleted or changed, or when the order of entries
+        /// is changed in some way.
+        /// </summary>
+        internal static void Rewrite(DevLogEntries entries)
+        {
+            if (File.Exists(GetRelativeCurrentFilePath()))
+            {
+                File.Delete(GetRelativeCurrentFilePath());
+            }
+
+            for (int i = 0; i < entries.GetEntries().Count; i++)
+            {
+                Append(entries.GetEntry(i));
+            }
+        }
+
+        /// <summary>
         /// Get the current file path (including filename) relative to the project directory root.
         /// </summary>
         /// <returns></returns>
