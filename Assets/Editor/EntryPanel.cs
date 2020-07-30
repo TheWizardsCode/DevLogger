@@ -27,11 +27,11 @@ namespace WizardsCode.DevLogger
 
         public EntryPanel(DevLogEntries entries, DevLogScreenCaptures screenCaptures)
         {
-            Entries = entries;
+            this.entries = entries;
             ScreenCaptures = screenCaptures;
         }
 
-        internal DevLogEntries Entries { get; set; }
+        internal DevLogEntries entries { get; set; }
         internal DevLogScreenCaptures ScreenCaptures { get; set; }
 
         internal void OnEnable()
@@ -192,7 +192,7 @@ namespace WizardsCode.DevLogger
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Open Devlog"))
             {
-                string filepath = DevLog.GetAbsoluteProjectDirectory() + DevLog.GetRelativeCurrentFilePath();
+                string filepath = DevLogMarkdown.GetAbsoluteProjectDirectory() + DevLogMarkdown.GetRelativeCurrentFilePath();
                 System.Diagnostics.Process.Start(filepath);
             }
             EditorGUILayout.EndHorizontal();
@@ -244,18 +244,15 @@ namespace WizardsCode.DevLogger
                 }
 
                 entry.longDescription = detailText;
-
-                DevLog.Append(entry);
             }
             else
             {
                 entry.longDescription = detailText;
-                DevLog.Append(entry);
             }
 
-            Entries.entries.Add(entry);
-            AssetDatabase.AddObjectToAsset(entry, Entries);
-            EditorUtility.SetDirty(Entries);
+            entries.AddEntry(entry);
+            AssetDatabase.AddObjectToAsset(entry, entries);
+            EditorUtility.SetDirty(entries);
             AssetDatabase.SaveAssets();
 
             shortText = "";

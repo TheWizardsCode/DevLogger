@@ -8,9 +8,10 @@ using UnityEngine;
 namespace WizardsCode.DevLogger
 {
     /// <summary>
-    /// Manages a DevLog document.
+    /// Manages a DevLog markdown document. This is not the DevLog data strucutre (see 
+    /// DevLogEntries). This is only concerned with writing the DevLog markdown file.
     /// </summary>
-    public class DevLog
+    public class DevLogMarkdown
     {
         public const string STORAGE_DIRECTORY = "DevLog/";
 

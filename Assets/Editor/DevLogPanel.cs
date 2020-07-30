@@ -18,10 +18,10 @@ namespace WizardsCode.DevLogger
 
         public DevLogPanel(DevLogEntries entries)
         {
-            Entries = entries;
+            this.entries = entries;
         }
 
-        internal DevLogEntries Entries { get; set; }
+        internal DevLogEntries entries { get; set; }
         internal DevLogScreenCaptures ScreenCaptures { get; set; }
 
         public void OnGUI()
@@ -39,9 +39,9 @@ namespace WizardsCode.DevLogger
                     string response;
                     if (GUILayout.Button("Tweet Selected Entry", GUILayout.Height(50)))
                     {
-                        if (Twitter.PublishTweet(Entries.entries[logList.index], out response)) {
-                            Entries.entries[logList.index].tweeted = true;
-                            Entries.entries[logList.index].lastTweetFileTime = DateTime.Now.ToFileTimeUtc();
+                        if (Twitter.PublishTweet(entries.GetEntry(logList.index), out response)) {
+                            entries.GetEntry(logList.index).tweeted = true;
+                            entries.GetEntry(logList.index).lastTweetFileTime = DateTime.Now.ToFileTimeUtc();
                         } else
                         {
                             // TODO Handle failed tweet gracefully
@@ -50,9 +50,9 @@ namespace WizardsCode.DevLogger
                     }
                     if (GUILayout.Button("Post to Discord", GUILayout.Height(50)))
                     {
-                        Discord.PostEntry(Entries.entries[logList.index]);
-                        Entries.entries[logList.index].discordPost = true;
-                        Entries.entries[logList.index].lastDiscordPostFileTime = DateTime.Now.ToFileTimeUtc();
+                        Discord.PostEntry(entries.GetEntry(logList.index));
+                        entries.GetEntry(logList.index).discordPost = true;
+                        entries.GetEntry(logList.index).lastDiscordPostFileTime = DateTime.Now.ToFileTimeUtc();
                     }
                 }
                 listScrollPosition = EditorGUILayout.BeginScrollView(listScrollPosition);
@@ -64,18 +64,18 @@ namespace WizardsCode.DevLogger
         private DevLogEntries lastEntriesList;
         private void ConfigureReorderableLogList()
         {
-            if (Entries != lastEntriesList)
+            if (entries != lastEntriesList)
             {
-                logList = new ReorderableList(Entries.entries, typeof(DevLogEntry), true, true, true, true);
+                logList = new ReorderableList(entries.GetEntries(), typeof(DevLogEntry), true, true, true, true);
                 logList.drawElementCallback = DrawLogListElement;
                 logList.drawHeaderCallback = DrawHeader;
                 logList.elementHeightCallback = ElementHeightCallback;
                 logList.onReorderCallback = SaveReorderedList;
                 logList.displayAdd = false;
 
-                lastEntriesList = Entries;
+                lastEntriesList = entries;
             }
-            else if (Entries == null)
+            else if (entries == null)
             {
                 logList = null;
             }
@@ -83,7 +83,8 @@ namespace WizardsCode.DevLogger
 
         private void SaveReorderedList(ReorderableList list)
         {
-            EditorUtility.SetDirty(Entries);
+            EditorUtility.SetDirty(entries);
+
             AssetDatabase.SaveAssets();
         }
 
@@ -92,8 +93,8 @@ namespace WizardsCode.DevLogger
             float height = EditorGUIUtility.singleLineHeight; // title
             height += EditorGUIUtility.singleLineHeight;// Date
             height += EditorGUIUtility.singleLineHeight * listDescriptionLines; // descrption
-            height += EditorGUIUtility.singleLineHeight * Entries.entries[index].metaData.Count; // meta data
-            height += EditorGUIUtility.singleLineHeight * Entries.entries[index].captures.Count; // capture
+            height += EditorGUIUtility.singleLineHeight * entries.GetEntry(index).metaData.Count; // meta data
+            height += EditorGUIUtility.singleLineHeight * entries.GetEntry(index).captures.Count; // capture
             height += EditorGUIUtility.singleLineHeight;// Commit Hash
             height += EditorGUIUtility.singleLineHeight;// Social Flag
             height += EditorGUIUtility.singleLineHeight;// Tweeted
@@ -109,7 +110,7 @@ namespace WizardsCode.DevLogger
 
         private void DrawLogListElement(Rect rect, int index, bool isActive, bool isFocused)
         {
-            DevLogEntry entry = Entries.entries[index];
+            DevLogEntry entry = entries.GetEntry(index);
 
             Rect labelRect = new Rect(rect.x, rect.y, listLabelWidth, EditorGUIUtility.singleLineHeight);
             EditorGUI.PrefixLabel(labelRect, new GUIContent("Title"));
@@ -127,7 +128,7 @@ namespace WizardsCode.DevLogger
             EditorGUI.LabelField(fieldRect, entry.created.ToString("dd MMM yyyy"));
 
             labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight, labelRect.width, labelRect.height);
-            if (Entries.entries[index].metaData.Count != 0)
+            if (entries.GetEntry(index).metaData.Count != 0)
             {
                 EditorGUI.PrefixLabel(labelRect, new GUIContent("Meta Data"));
                 for (int i = 0; i < entry.metaData.Count; i++)
@@ -137,8 +138,8 @@ namespace WizardsCode.DevLogger
                 }
             }
 
-            labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight * Entries.entries[index].metaData.Count, labelRect.width, labelRect.height);
-            if (Entries.entries[index].captures.Count != 0)
+            labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight * entries.GetEntry(index).metaData.Count, labelRect.width, labelRect.height);
+            if (entries.GetEntry(index).captures.Count != 0)
             {
                 EditorGUI.PrefixLabel(labelRect, new GUIContent("Captures"));
                 for (int i = 0; i < entry.captures.Count; i++)
@@ -148,7 +149,7 @@ namespace WizardsCode.DevLogger
                 }
             }
 
-            labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight * Entries.entries[index].captures.Count, labelRect.width, labelRect.height);
+            labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight * entries.GetEntry(index).captures.Count, labelRect.width, labelRect.height);
             EditorGUI.PrefixLabel(labelRect, new GUIContent("Commit"));
             fieldRect = new Rect(fieldRect.x, labelRect.y, fieldRect.width, EditorGUIUtility.singleLineHeight);
             EditorGUI.TextArea(fieldRect, entry.commitHash);
