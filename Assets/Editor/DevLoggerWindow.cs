@@ -151,7 +151,7 @@ namespace WizardsCode.DevLogger
                         if (m_DevLogEntries != null && m_ScreenCaptures != null)
                         {
                             entryPanel.ScreenCaptures = m_ScreenCaptures;
-                            entryPanel.Entries = m_DevLogEntries;
+                            entryPanel.entries = m_DevLogEntries;
                             entryPanel.OnGUI();
 
                             EditorGUILayout.Space();
@@ -179,7 +179,7 @@ namespace WizardsCode.DevLogger
                         if (devLogPanel == null) devLogPanel = new DevLogPanel(m_DevLogEntries);
 
                         devLogPanel.ScreenCaptures = m_ScreenCaptures;
-                        devLogPanel.Entries = m_DevLogEntries;
+                        devLogPanel.entries = m_DevLogEntries;
                         devLogPanel.OnGUI();
                         break;
                     case 2:

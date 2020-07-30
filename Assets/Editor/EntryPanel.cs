@@ -27,11 +27,11 @@ namespace WizardsCode.DevLogger
 
         public EntryPanel(DevLogEntries entries, DevLogScreenCaptures screenCaptures)
         {
-            Entries = entries;
+            this.entries = entries;
             ScreenCaptures = screenCaptures;
         }
 
-        internal DevLogEntries Entries { get; set; }
+        internal DevLogEntries entries { get; set; }
         internal DevLogScreenCaptures ScreenCaptures { get; set; }
 
         internal void OnEnable()
@@ -86,10 +86,6 @@ namespace WizardsCode.DevLogger
 
             Skin.StartSection("Posting", false);
             PostingGUI();
-            Skin.EndSection();
-
-            Skin.StartSection("Data");
-            FoldersGUI();
             Skin.EndSection();
 
             EditorGUILayout.EndScrollView();
@@ -188,16 +184,6 @@ namespace WizardsCode.DevLogger
             }
         }
 
-        private void FoldersGUI() {
-            EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("Open Devlog"))
-            {
-                string filepath = DevLog.GetAbsoluteProjectDirectory() + DevLog.GetRelativeCurrentFilePath();
-                System.Diagnostics.Process.Start(filepath);
-            }
-            EditorGUILayout.EndHorizontal();
-        }
-
         public void AppendDevlog(bool withImage, bool withTweet)
         {
             DevLogEntry entry = ScriptableObject.CreateInstance<DevLogEntry>();
@@ -244,18 +230,15 @@ namespace WizardsCode.DevLogger
                 }
 
                 entry.longDescription = detailText;
-
-                DevLog.Append(entry);
             }
             else
             {
                 entry.longDescription = detailText;
-                DevLog.Append(entry);
             }
 
-            Entries.entries.Add(entry);
-            AssetDatabase.AddObjectToAsset(entry, Entries);
-            EditorUtility.SetDirty(Entries);
+            entries.AddEntry(entry);
+            AssetDatabase.AddObjectToAsset(entry, entries);
+            EditorUtility.SetDirty(entries);
             AssetDatabase.SaveAssets();
 
             shortText = "";

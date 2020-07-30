@@ -8,12 +8,18 @@ using UnityEngine;
 namespace WizardsCode.DevLogger
 {
     /// <summary>
-    /// Manages a DevLog document.
+    /// Manages a DevLog markdown document. This is not the DevLog data strucutre (see 
+    /// DevLogEntries). This is only concerned with writing the DevLog markdown file.
     /// </summary>
-    public class DevLog
+    public class DevLogMarkdown
     {
         public const string STORAGE_DIRECTORY = "DevLog/";
 
+        /// <summary>
+        /// Append and entry to the current DevLog markdown file. If the file does not
+        /// yet exist then create it before appending this entry as the first entry.
+        /// </summary>
+        /// <param name="entry">The DevLogEntry to append.</param>
         public static void Append(DevLogEntry entry)
         {
             StringBuilder sb = new StringBuilder();
@@ -95,6 +101,25 @@ namespace WizardsCode.DevLogger
         public static string GetAbsoluteDirectory()
         {
             return GetAbsoluteProjectDirectory() + STORAGE_DIRECTORY;
+        }
+
+        /// <summary>
+        /// Rewrite the markdown file because the data structure backing it has changed in a significant way.
+        /// Note if you are simply appending to the DevLog there is no need to call this method, which rewrites
+        /// the whole file. This is necessary when an entry is deleted or changed, or when the order of entries
+        /// is changed in some way.
+        /// </summary>
+        internal static void Rewrite(DevLogEntries entries)
+        {
+            if (File.Exists(GetRelativeCurrentFilePath()))
+            {
+                File.Delete(GetRelativeCurrentFilePath());
+            }
+
+            for (int i = 0; i < entries.GetEntries().Count; i++)
+            {
+                Append(entries.GetEntry(i));
+            }
         }
 
         /// <summary>
