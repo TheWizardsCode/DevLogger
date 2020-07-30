@@ -88,10 +88,6 @@ namespace WizardsCode.DevLogger
             PostingGUI();
             Skin.EndSection();
 
-            Skin.StartSection("Data");
-            FoldersGUI();
-            Skin.EndSection();
-
             EditorGUILayout.EndScrollView();
         }
 
@@ -186,16 +182,6 @@ namespace WizardsCode.DevLogger
             {
                 EditorGUILayout.LabelField("No valid actions at this time.");
             }
-        }
-
-        private void FoldersGUI() {
-            EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("Open Devlog"))
-            {
-                string filepath = DevLogMarkdown.GetAbsoluteProjectDirectory() + DevLogMarkdown.GetRelativeCurrentFilePath();
-                System.Diagnostics.Process.Start(filepath);
-            }
-            EditorGUILayout.EndHorizontal();
         }
 
         public void AppendDevlog(bool withImage, bool withTweet)

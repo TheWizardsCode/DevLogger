@@ -48,11 +48,18 @@ namespace WizardsCode.DevLogger
                             Debug.LogWarning("Tweet failed. Not currently handling this gracefully. Response " + response);
                         }
                     }
+
                     if (GUILayout.Button("Post to Discord", GUILayout.Height(50)))
                     {
                         Discord.PostEntry(entries.GetEntry(logList.index));
                         entries.GetEntry(logList.index).discordPost = true;
                         entries.GetEntry(logList.index).lastDiscordPostFileTime = DateTime.Now.ToFileTimeUtc();
+                    }
+
+                    if (GUILayout.Button("View Devlog", GUILayout.Height(50)))
+                    {
+                        string filepath = DevLogMarkdown.GetAbsoluteProjectDirectory() + DevLogMarkdown.GetRelativeCurrentFilePath();
+                        System.Diagnostics.Process.Start(filepath);
                     }
                 }
                 listScrollPosition = EditorGUILayout.BeginScrollView(listScrollPosition);
