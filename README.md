@@ -33,7 +33,7 @@ This is the easiest way of installing the code:
 
 We are a big fan of enabling our users to improve Dev Logger, so we would encourage you to use the source code, it's not much harder than using the latest release.
 
-  1. Clone the repo into your preferred location
+  1. Fork and clone the repo and submodules into your preferred location with `git clone --recurse-submodules [YOUR_FORK_URL]`
   2. In the project view select `Assets/PacageMananifestConfig`
   3. In the inspector click `Export Package Source`, this will export the package to a folder next to your checkout director called "DevLogger-Package"
   4. `Window -> Package Manager`
