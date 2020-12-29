@@ -376,6 +376,7 @@ MonoBehaviour:
   - {fileID: -1030454258410723379}
   - {fileID: 9012443712184459491}
   - {fileID: -4136142861470906683}
+  - {fileID: 7283455037693903399}
 --- !u!114 &374282915631882679
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -634,6 +635,30 @@ MonoBehaviour:
     Append to the markdown file.
   longDescription: 
   metaData: []
+  captures: []
+  commitHash: 
+  isSocial: 0
+  tweeted: 0
+  lastTweetFileTime: 0
+  discordPost: 0
+  lastDiscordPostFileTime: 0
+--- !u!114 &7283455037693903399
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa508ee653f80ef478ab4842c6bb02ba, type: 3}
+  m_Name: 12/29/2020 11:57 AM
+  m_EditorClassIdentifier: 
+  shortDescription: Moved all Settings for the main panel and for the Entry Panel
+    into settings classes
+  longDescription: 
+  metaData:
+  - refactor
   captures: []
   commitHash: 
   isSocial: 0

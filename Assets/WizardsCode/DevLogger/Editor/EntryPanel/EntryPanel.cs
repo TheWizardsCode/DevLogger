@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
-using WizardsCode.DevLogger;
 using WizardsCode.EditorUtils;
-using WizardsCode.Git;
 
 namespace WizardsCode.DevLogger
 {
@@ -36,7 +33,7 @@ namespace WizardsCode.DevLogger
 
         internal void OnEnable()
         {
-            int numOfHashtags = EditorPrefs.GetInt("numberOfSuggestedMetaData", 0);
+            int numOfHashtags = EntryPanelSettings.MetaDataItemCount;
             if (numOfHashtags == 0)
             {
                 suggestedMetaData = new List<string>() { "#IndieGame", "#MadeWithUnity" };
@@ -49,20 +46,19 @@ namespace WizardsCode.DevLogger
 
                 for (int i = 0; i < numOfHashtags; i++)
                 {
-                    suggestedMetaData.Add(EditorPrefs.GetString("suggestedMetaData_" + i));
-                    selectedMetaData.Add(EditorPrefs.GetBool("selectedMetaData_" + i));
+                    suggestedMetaData.Add(EntryPanelSettings.GetSuggestedMetaDataItem(i));
+                    selectedMetaData.Add(EntryPanelSettings.GetMetaDataSelectionStatus(i));
                 }
             }
         }
 
         internal void OnDisable()
         {
-            // TODO Create a constants file for these preference names
-            EditorPrefs.SetInt("numberOfSuggestedMetaData", suggestedMetaData.Count);
+            EntryPanelSettings.MetaDataItemCount = suggestedMetaData.Count;
             for (int i = 0; i < suggestedMetaData.Count; i++)
             {
-                EditorPrefs.SetString("suggestedMetaData_" + i, suggestedMetaData[i]);
-                EditorPrefs.SetBool("selectedMetaData_" + i, selectedMetaData[i]);
+                EntryPanelSettings.SetSuggestedMetaDataItem(i, suggestedMetaData[i]);
+                EntryPanelSettings.SetMetaDataSelectionStatus(i, selectedMetaData[i]);
             }
         }
 

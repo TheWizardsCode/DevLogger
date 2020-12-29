@@ -181,3 +181,7 @@ Create scheduled reminders to post to Twitter and Discord.
 ### Details
 Create a schedule of reminders, mark Dev Log entries as suitable for social media, quickly select a post at an appropriate time (or rely on the auto select process) and click post when the button is enabled. Never forget, or be unprepared, to post again!
 
+## Tuesday 29 December 2020, 11:57
+
+Moved all Settings for the main panel and for the Entry Panel into settings classes
+
