@@ -8,70 +8,49 @@ namespace WizardsCode.DevLogger
         public static string CaptureFileFolderPath
         {
             get { return EditorPrefs.GetString(CapturesFolderPathKey); }
-            set
-            {
-                EditorPrefs.SetString(CapturesFolderPathKey, value);
-            }
+            set { EditorPrefs.SetString(CapturesFolderPathKey, value); }
         }
 
         public static bool OrganizeCapturesByProject
         {
             get { return EditorPrefs.GetBool(OrganizeCapturesByProjectKey); }
+            set { EditorPrefs.SetBool(OrganizeCapturesByProjectKey, value); }
         }
 
         public static bool OrganizeCapturesByScene { 
             get { return EditorPrefs.GetBool(OrganizeCapturesBySceneKey); }
+            set { EditorPrefs.SetBool(OrganizeCapturesBySceneKey, value); }
         }
 
         public static string DevLogScriptableObjectPath { 
-            get
-            {
-                return EditorPrefs.GetString(DevLogScriptableObjectPathKey);
-            }
-            set
-            {
-                EditorPrefs.SetString(DevLogScriptableObjectPathKey, value);
-            }
+            get { return EditorPrefs.GetString(DevLogScriptableObjectPathKey); }
+            set { EditorPrefs.SetString(DevLogScriptableObjectPathKey, value); }
         }
 
         public static string ScreenCaptureScriptableObjectPath
         {
-            get
-            {
-                return EditorPrefs.GetString(ScreenCaptureScriptableObjectPathKey);
-            }
+            get { return EditorPrefs.GetString(ScreenCaptureScriptableObjectPathKey); }
+            set { EditorPrefs.SetString(ScreenCaptureScriptableObjectPathKey, value); }
         }
 
         #region Keys
         static string CapturesFolderPathKey
-        {
-            get { return "DevLogCapturesFolderPath_" + Application.productName; }
-        }
+        { get { return "DevLogCapturesFolderPath_" + Application.productName; } }
 
         static string OrganizeCapturesByProjectKey
-        {
-            get { return "DevLogOrganizeByProject_" + Application.productName; }
-        }
+        { get { return "DevLogOrganizeByProject_" + Application.productName; } }
 
         static string OrganizeCapturesBySceneKey
         {
-            get
-            {
-                return "DevLogOrganizeByScene_" + Application.productName;
-            }
+            get { return "DevLogOrganizeByScene_" + Application.productName; }
         }
 
         public static string DevLogScriptableObjectPathKey
-        {
-            get { return "DevLogScriptableObjectPath_" + Application.productName; }
-        }
+        { get { return "DevLogScriptableObjectPath_" + Application.productName; } }
 
         public static string ScreenCaptureScriptableObjectPathKey
         {
-            get
-            {
-                return "DevLogScreenCapturesObjectPath_" + Application.productName;
-            }
+            get { return "DevLogScreenCapturesObjectPath_" + Application.productName; }
         }
         #endregion
     }
