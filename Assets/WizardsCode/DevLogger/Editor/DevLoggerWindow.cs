@@ -40,7 +40,6 @@ namespace WizardsCode.DevLogger
 
         private void Awake()
         {
-            // todo these keys should be in a constants file
             m_CapturesFolderPath = Settings.CaptureFileFolderPath;
             m_OrganizeByProject = Settings.OrganizeCapturesByProject;
             m_OrganizeByScene = Settings.OrganizeCapturesByScene;

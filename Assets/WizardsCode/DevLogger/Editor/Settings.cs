@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEditor;
+using System.IO;
 
 namespace WizardsCode.DevLogger
 {
@@ -7,7 +8,15 @@ namespace WizardsCode.DevLogger
     {
         public static string CaptureFileFolderPath
         {
-            get { return EditorPrefs.GetString(CapturesFolderPathKey); }
+            get { 
+                string path = EditorPrefs.GetString(CapturesFolderPathKey); 
+                if (string.IsNullOrEmpty(path))
+                {
+                    path = Application.dataPath + Path.DirectorySeparatorChar + "DevLog" + Path.DirectorySeparatorChar + "ScreenCaptures";
+                    CaptureFileFolderPath = path;
+                }
+                return path;
+            }
             set { EditorPrefs.SetString(CapturesFolderPathKey, value); }
         }
 
