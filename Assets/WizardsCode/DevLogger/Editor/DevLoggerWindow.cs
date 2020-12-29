@@ -44,14 +44,14 @@ namespace WizardsCode.DevLogger
         private void Awake()
         {
             // todo these keys should be in a constants file
-            m_CapturesFolderPath = EditorPrefs.GetString("DevLogCapturesFolderPath_" + Application.productName);
-            m_OrganizeByProject = EditorPrefs.GetBool("DevLogOrganizeByProject_" + Application.productName);
-            m_OrganizeByScene = EditorPrefs.GetBool("DevLogOrganizeByScene_" + Application.productName);
+            m_CapturesFolderPath = Settings.CaptureFileFolderPath;
+            m_OrganizeByProject = Settings.OrganizeCapturesByProject;
+            m_OrganizeByScene = Settings.OrganizeCapturesByScene;
 
-            m_DevLogEntries = AssetDatabase.LoadAssetAtPath(EditorPrefs.GetString("DevLogScriptableObjectPath_" + Application.productName), typeof(DevLogEntries)) as DevLogEntries;
+            m_DevLogEntries = AssetDatabase.LoadAssetAtPath(Settings.DevLogScriptableObjectPath, typeof(DevLogEntries)) as DevLogEntries;
             devLogPanel = new DevLogPanel(m_DevLogEntries);
 
-            m_ScreenCaptures = AssetDatabase.LoadAssetAtPath(EditorPrefs.GetString("DevLogScreenCapturesObjectPath_" + Application.productName), typeof(DevLogScreenCaptures)) as DevLogScreenCaptures;
+            m_ScreenCaptures = AssetDatabase.LoadAssetAtPath(Settings.ScreenCaptureScriptableObjectPath, typeof(DevLogScreenCaptures)) as DevLogScreenCaptures;
             if (m_CaptureCamera == null)
             {
                 m_CaptureCamera = Camera.main;
@@ -90,12 +90,11 @@ namespace WizardsCode.DevLogger
             m_SchedulingPanel.OnDisable();
             GitSettings.Save();
 
-            // todo these keys should be in a constants file
-            EditorPrefs.SetString("DevLogCapturesFolderPath_" + Application.productName, m_CapturesFolderPath);
-            EditorPrefs.SetBool("DevLogOrganizeByProject_" + Application.productName, m_OrganizeByProject);
-            EditorPrefs.SetBool("DevLogOrganizeByScene_" + Application.productName, m_OrganizeByScene);
-            EditorPrefs.SetString("DevLogScriptableObjectPath_" + Application.productName, AssetDatabase.GetAssetPath(m_DevLogEntries));
-            EditorPrefs.SetString("DevLogScreenCapturesObjectPath_" + Application.productName, AssetDatabase.GetAssetPath(m_ScreenCaptures));
+            Settings.CaptureFileFolderPath = m_CapturesFolderPath;
+            Settings.OrganizeCapturesByProject = m_OrganizeByProject;
+            Settings.OrganizeCapturesByScene = m_OrganizeByScene;
+            Settings.DevLogScriptableObjectPath = AssetDatabase.GetAssetPath(m_DevLogEntries);
+            Settings.ScreenCaptureScriptableObjectPath = AssetDatabase.GetAssetPath(m_ScreenCaptures);
         }
 
         private void OnImageSelection()
@@ -216,7 +215,7 @@ namespace WizardsCode.DevLogger
             }
             if (m_CapturesFolderPath != originalPath)
             {
-                EditorPrefs.SetString("DevLogCapturesFolderPath_" + Application.productName, m_CapturesFolderPath);
+                Settings.CaptureFileFolderPath = m_CapturesFolderPath;
                 mediaPanel.capturesFolder = m_CapturesFolderPath;
             }
             EditorGUILayout.EndHorizontal();
