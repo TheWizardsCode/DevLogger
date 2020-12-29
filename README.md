@@ -34,14 +34,16 @@ This is the easiest way of installing the code:
 We are a big fan of enabling our users to improve Dev Logger, so we would encourage you to use the source code, it's not much harder than using the latest release.
 
   1. Fork and clone the repo and submodules into your preferred location with `git clone --recurse-submodules [YOUR_FORK_URL]`
-  2. In the project view select `Assets/PacageMananifestConfig`
+  2. In the project view select `Assets/PackageManifestConfig`
   3. In the inspector click `Export Package Source`, this will export the package to a folder next to your checkout director called "DevLogger-Package"
-  4. `Window -> Package Manager`
+  4. To use this package in your development environments go to `Window -> Package Manager`
   5. Click the '+" in the top left
   6. Select 'Add package from disk ...'
   7. Point to the `package.json` file in the `DevLogger-Package` directory 
   
-If you find a bug or want to make an improvement do it inside the development project in Unity. To make it available in your work project repeat step 2 and 3 above. This will re-publish your package. When you return to your project Unity will detect the changes on disk and re-import the package.
+If you find a bug or want to make an improvement do it inside the DevLogger project in Unity. To make it available to your work projects repeat step 2 and 3 above. This will re-publish your package locally and will be automatically picked up when you next give your development environment focus. 
+
+Once you have tested the changes please issue a pull request against our repo so we can make the code better for everyone.
 
 # Using DevLogger
 
