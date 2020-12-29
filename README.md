@@ -1,4 +1,3 @@
-
 A DevLog is an important communication device. It ensures that team members are aware of the work
 you have done, and have a record of how you did it. It can also be used for marketing purposes, 
 keeping everyone informed of what you are working on and the progress made.

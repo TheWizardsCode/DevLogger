@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PackageManifestConfig
   m_EditorClassIdentifier: 
   packageSourcePaths:
-  - Assets
+  - Assets/WizardsCode
   - README.md
   packageIgnorePaths:
   - Assets/PackageManifestConfig.asset
@@ -22,7 +22,7 @@ MonoBehaviour:
   legacyPackageDestinationPath: 
   packageName: org.wizardscode.devlogger
   displayName: Wizards Code - DevLogger
-  packageVersion: 0.2.4
+  packageVersion: 0.2.5
   unityVersion: 2019.4
   description: Open source Editor tool for managing DevLogs in Unity.
   category: Scripts
@@ -31,6 +31,6 @@ MonoBehaviour:
   dependencies:
   - packageName: com.unity.postprocessing
     packageVersion: 2.3.0
-  versionConstantsPath: Assets/Editor
+  versionConstantsPath: Assets/WizardsCode/DevLogger/Editor
   versionConstantsNamespace: org.WizardsCode.DevLogger.Editor
   _id: cc0d2366-128a-4766-83ae-65d11799879e
