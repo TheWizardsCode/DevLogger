@@ -25,6 +25,9 @@ namespace WizardsCode.DevLogger
         DevLogEntries m_DevLogEntries;
         Camera m_CaptureCamera;
 
+        private static bool startCapture;
+        private bool m_OrganizeByProject = true;
+        private bool m_OrganizeByScene = true;
         string m_CapturesFolderPath;
 
         private string[] toolbarLabels = { "Entry", "Dev Log", "Schedule", "Git", "Settings" };
@@ -96,10 +99,6 @@ namespace WizardsCode.DevLogger
         {
             mediaPanel.OnImageSelection();
         }
-
-        private static bool startCapture;
-        private bool m_OrganizeByProject = true;
-        private bool m_OrganizeByScene = true;
 
         void Update()
         {

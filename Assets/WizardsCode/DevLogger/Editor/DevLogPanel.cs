@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
-using WizardsCode.DevLogger;
 using WizardsCode.Social;
 
 namespace WizardsCode.DevLogger
