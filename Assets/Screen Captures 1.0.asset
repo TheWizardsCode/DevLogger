@@ -1,5 +1,28 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-224584994916377059
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 666102f216d105742a44e712852bead6, type: 3}
+  m_Name: DevLogger v1.0 SampleScene
+  m_EditorClassIdentifier: 
+  encoding: 1
+  windowName: UnityEditor.ProjectSettingsWindow
+  productName: DevLogger
+  version: 1.0
+  sceneName: SampleScene
+  _width: 0
+  _height: 0
+  _timestampAsString: 12/30/2020 3:36:28 AM
+  IsImageSaved: 1
+  IsSelected: 0
+  AbsoluteSaveFolder: F:/Unity Projects/WizardsCode/DevLogger/Assets\DevLog\ScreenCaptures\DevLogger\SampleScene\
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13,8 +36,9 @@ MonoBehaviour:
   m_Name: Screen Captures 1.0
   m_EditorClassIdentifier: 
   captures:
-  - {fileID: 1274640392264807013}
---- !u!114 &1274640392264807013
+  - {fileID: 8615231035768006499}
+  - {fileID: -224584994916377059}
+--- !u!114 &8615231035768006499
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -27,13 +51,13 @@ MonoBehaviour:
   m_Name: DevLogger v1.0 SampleScene
   m_EditorClassIdentifier: 
   encoding: 1
-  windowName: UnityEditor.SceneHierarchyWindow
+  windowName: ProjectPlanner.BoardWindow
   productName: DevLogger
   version: 1.0
   sceneName: SampleScene
   _width: 0
   _height: 0
-  _timestampAsString: 12/29/2020 12:14:25 PM
+  _timestampAsString: 12/30/2020 3:01:41 AM
   IsImageSaved: 1
   IsSelected: 0
-  AbsoluteSaveFolder: D:/Unity Projects/WizardsCode/DevLogger/Assets\DevLog\ScreenCaptures\DevLogger\SampleScene\
+  AbsoluteSaveFolder: F:/Unity Projects/WizardsCode/DevLogger/Assets\DevLog\ScreenCaptures\DevLogger\SampleScene\

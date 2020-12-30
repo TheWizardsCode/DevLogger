@@ -1,6 +1,7 @@
 ﻿using Moments;
 using System;
 using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering.PostProcessing;
@@ -210,56 +211,59 @@ namespace WizardsCode.DevLogger
             {
                 EditorGUILayout.BeginVertical();
                 EditorGUILayout.BeginHorizontal();
-                if (GUILayout.Button("Hierarchy"))
+
+                // Buttons to capture primary windows
+                string[] primaryWindowTitles = { "Hierarchy", "Inspector", "Project", "Scene", "Game", "Console" };
+                GUILayoutOption layoutOption = GUILayout.Height(60);
+                if (GUILayout.Button("Hierarchy", layoutOption))
                 {
                     CaptureWindowScreenshot("UnityEditor.SceneHierarchyWindow");
                 }
 
-                if (GUILayout.Button("Inspector"))
+                if (GUILayout.Button("Inspector", layoutOption))
                 {
                     CaptureWindowScreenshot("UnityEditor.InspectorWindow");
                 }
 
-                if (GUILayout.Button("Project"))
+                if (GUILayout.Button("Project", layoutOption))
                 {
                     CaptureWindowScreenshot("UnityEditor.ProjectBrowser");
                 }
 
-                if (GUILayout.Button("Scene View"))
+                if (GUILayout.Button("Scene View", layoutOption))
                 {
                     CaptureWindowScreenshot("UnityEditor.SceneView");
                 }
 
-                if (GUILayout.Button("Game View"))
+                if (GUILayout.Button("Game View", layoutOption))
                 {
                     CaptureWindowScreenshot("UnityEditor.GameView");
                 }
 
-                if (GUILayout.Button("Console"))
+                if (GUILayout.Button("Console", layoutOption))
                 {
                     CaptureWindowScreenshot("UnityEditor.ConsoleWindow");
                 }
                 EditorGUILayout.EndHorizontal();
-
-                EditorGUILayout.Space();
+                
                 EditorGUILayout.Space();
 
                 EditorGUILayout.BeginHorizontal();
-                if (GUILayout.Button("Package Manager"))
+                // Buttons to capture secondary windows
+                string[] excludedWindowTitles = { "Asset Store" };
+                EditorWindow[] allWindows = Resources.FindObjectsOfTypeAll<EditorWindow>();
+                foreach (EditorWindow window in allWindows)
                 {
-                    CaptureWindowScreenshot("UnityEditor.PackageManager.UI.PackageManagerWindow");
-                }
-
-                if (GUILayout.Button("Asset Store"))
-                {
-                    CaptureWindowScreenshot("UnityEditor.AssetStoreWindow");
-                }
-
-                if (GUILayout.Button("Project Settings"))
-                {
-                    CaptureWindowScreenshot("UnityEditor.ProjectSettingsWindow");
+                    if (!primaryWindowTitles.Contains<string>(window.titleContent.text) && !excludedWindowTitles.Contains<string>(window.titleContent.text))
+                    {
+                        if (GUILayout.Button(window.titleContent.text))
+                        {
+                            CaptureWindowScreenshot(window.GetType().FullName);
+                        }
+                    }
                 }
                 EditorGUILayout.EndHorizontal();
+
                 EditorGUILayout.EndVertical();
             }
             EditorGUILayout.EndHorizontal();
@@ -388,8 +392,11 @@ namespace WizardsCode.DevLogger
             }
             else
             {
-                Type t = Type.GetType(windowName);
-                window = EditorWindow.GetWindow(t);
+                Type type = AppDomain.CurrentDomain.GetAssemblies()
+                    .Where(a => !a.IsDynamic)
+                    .SelectMany(a => a.GetTypes())
+                    .FirstOrDefault(t => t.FullName.Equals(windowName));
+                window = EditorWindow.GetWindow(type);
             }
             window.Focus();
 
