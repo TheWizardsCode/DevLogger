@@ -13,58 +13,36 @@ namespace WizardsCode.Social
 {
     [ExecuteInEditMode]
     public class Twitter
-    {
-        public const string EDITOR_PREFS_TWITTER_USER_ID = "TwitterUserID";
-        public const string EDITOR_PREFS_TWITTER_USER_SCREEN_NAME = "TwitterUserScreenName";
-        public const string EDITOR_PREFS_TWITTER_API_KEY = "TwitterAPIKey";
-        public const string EDITOR_PREFS_TWITTER_API_SECRET = "TwitterAPISecret";
-        public const string EDITOR_PREFS_TWITTER_ACCESS_TOKEN = "TwitterAccessToken";
-        public const string EDITOR_PREFS_TWITTER_ACCESS_SECRET = "TwitterAccessSecret";
-
-        private const string PostTweetURL = "https://api.twitter.com/1.1/statuses/update.json";
-        private const string UploadMediaURL = "https://upload.twitter.com/1.1/media/upload.json";
-        private const string VerifyCredentialsURL = "https://api.twitter.com/1.1/account/verify_credentials.json";
-
+    {   
         private static float verifyCredentialsTime = 0;
 
         /// <summary>
-        /// Test to see if the correvt API key and Access tokens have been provided.
-        /// There are stored in EditorPrefs with the following keys:
-        /// Twitter.EDITOR_PREFS_TWITTER_API_KEY
-        /// Twitter.EDITOR_PREFS_TWITTER_API_SECRET
-        /// Twitter.EDITOR_PREFS_TWITTER_ACCESS_TOKEN
-        /// Twitter.EDITOR_PREFS_TWITTER_ACCESS_SECRET  
+        /// Test to see if the correct API key and Access tokens have been provided.
         /// </summary>
         /// /// <returns>True if correct values have been supplied.</returns>
         public static bool IsAuthenticated
         {
             get
             {
-                if (string.IsNullOrEmpty(EditorPrefs.GetString(EDITOR_PREFS_TWITTER_API_KEY)))
+                if (string.IsNullOrEmpty(TwitterSettings.ApiKey))
                 {
                     return false;
                 }
-                if (string.IsNullOrEmpty(EditorPrefs.GetString(EDITOR_PREFS_TWITTER_API_SECRET)))
+                if (string.IsNullOrEmpty(TwitterSettings.ApiSecret))
                 {
                     return false;
                 }
-                if (string.IsNullOrEmpty(EditorPrefs.GetString(EDITOR_PREFS_TWITTER_ACCESS_TOKEN)))
+                if (string.IsNullOrEmpty(TwitterSettings.AccessToken))
                 {
                     return false;
                 }
-                if (string.IsNullOrEmpty(EditorPrefs.GetString(EDITOR_PREFS_TWITTER_ACCESS_SECRET)))
+                if (string.IsNullOrEmpty(TwitterSettings.AccessSecret))
                 {
                     return false;
                 }
 
                 return true;
             }
-        }
-
-        public static void ClearAccessTokens()
-        {
-            EditorPrefs.SetString(EDITOR_PREFS_TWITTER_ACCESS_TOKEN, null);
-            EditorPrefs.SetString(EDITOR_PREFS_TWITTER_ACCESS_SECRET, null);
         }
 
         private static bool VerifyCredentials()
@@ -77,11 +55,10 @@ namespace WizardsCode.Social
             if (time > verifyCredentialsTime)
             {
                 verifyCredentialsTime = time + 2;
-                Hashtable headers = GetHeaders(VerifyCredentialsURL, new Dictionary<string, string>());
-                if (ApiPostRequest(VerifyCredentialsURL, new WWWForm(), headers, out string response))
+                Hashtable headers = GetHeaders(TwitterSettings.VerifyCredentialsURL, new Dictionary<string, string>());
+                if (ApiPostRequest(TwitterSettings.VerifyCredentialsURL, new WWWForm(), headers, out string response))
                 {
-                    EditorPrefs.SetString(EDITOR_PREFS_TWITTER_ACCESS_TOKEN, "");
-                    EditorPrefs.SetString(EDITOR_PREFS_TWITTER_ACCESS_SECRET, "");
+                    TwitterSettings.ClearAccessTokens();
                     Debug.LogError(response);
                     return false;
                 }
@@ -170,9 +147,9 @@ namespace WizardsCode.Social
             WWWForm form = new WWWForm();
             form.AddField("status", status);
 
-            Hashtable headers = GetHeaders(PostTweetURL, parameters);
+            Hashtable headers = GetHeaders(TwitterSettings.PostTweetURL, parameters);
             
-            return ApiPostRequest(PostTweetURL, form, headers, out response);
+            return ApiPostRequest(TwitterSettings.PostTweetURL, form, headers, out response);
         }
 
         static string mediaIDs;
@@ -235,9 +212,9 @@ namespace WizardsCode.Social
             WWWForm form = new WWWForm();
             AddParametersToForm(parameters, form);
 
-            Hashtable headers = GetHeaders(PostTweetURL, parameters);
+            Hashtable headers = GetHeaders(TwitterSettings.PostTweetURL, parameters);
 
-            return ApiPostRequest(PostTweetURL, form, headers, out response);
+            return ApiPostRequest(TwitterSettings.PostTweetURL, form, headers, out response);
         }
 
         /// <summary>
@@ -380,10 +357,10 @@ namespace WizardsCode.Social
             var headers = new Hashtable();
             headers["Authorization"] = OAuthHelper.GetHeaderWithAccessToken(method,
                 url,
-                EditorPrefs.GetString(EDITOR_PREFS_TWITTER_API_KEY),
-                EditorPrefs.GetString(EDITOR_PREFS_TWITTER_API_SECRET),
-                EditorPrefs.GetString(EDITOR_PREFS_TWITTER_ACCESS_TOKEN),
-                EditorPrefs.GetString(EDITOR_PREFS_TWITTER_ACCESS_SECRET),
+                TwitterSettings.ApiKey,
+                TwitterSettings.ApiSecret,
+                TwitterSettings.AccessToken,
+                TwitterSettings.AccessSecret,
                 parameters);
             return headers;
         }
@@ -408,9 +385,9 @@ namespace WizardsCode.Social
             WWWForm mediaForm = new WWWForm();
             AddParametersToForm(mediaParameters, mediaForm);
 
-            Hashtable mediaHeaders = GetHeaders(UploadMediaURL, mediaParameters);
+            Hashtable mediaHeaders = GetHeaders(TwitterSettings.UploadMediaURL, mediaParameters);
 
-            if (!ApiPostRequest(UploadMediaURL, mediaForm, mediaHeaders, out response))
+            if (!ApiPostRequest(TwitterSettings.UploadMediaURL, mediaForm, mediaHeaders, out response))
             {
                 Debug.LogError(response);
                 return null;
@@ -442,9 +419,9 @@ namespace WizardsCode.Social
                 mediaForm = new WWWForm();
                 AddParametersToForm(mediaParameters, mediaForm);
 
-                mediaHeaders = GetHeaders(UploadMediaURL, mediaParameters);
+                mediaHeaders = GetHeaders(TwitterSettings.UploadMediaURL, mediaParameters);
 
-                if (!ApiPostRequest(UploadMediaURL, mediaForm, mediaHeaders, out response))
+                if (!ApiPostRequest(TwitterSettings.UploadMediaURL, mediaForm, mediaHeaders, out response))
                 {
                     Debug.LogError(response);
                     return null;
@@ -459,9 +436,9 @@ namespace WizardsCode.Social
             mediaForm = new WWWForm();
             AddParametersToForm(mediaParameters, mediaForm);
 
-            mediaHeaders = GetHeaders(UploadMediaURL, mediaParameters);
+            mediaHeaders = GetHeaders(TwitterSettings.UploadMediaURL, mediaParameters);
 
-            if (!ApiPostRequest(UploadMediaURL, mediaForm, mediaHeaders, out response))
+            if (!ApiPostRequest(TwitterSettings.UploadMediaURL, mediaForm, mediaHeaders, out response))
             {
                 Debug.LogError(response);
                 return null;
@@ -488,7 +465,7 @@ namespace WizardsCode.Social
             response = "";
             while (!isFinished)
             {
-                if (!ApiGetRequest(UploadMediaURL, mediaParameters, out response))
+                if (!ApiGetRequest(TwitterSettings.UploadMediaURL, mediaParameters, out response))
                 {
                     status = new MediaStatusResponse();
                     status.processing_info.error.code = 256;
@@ -536,10 +513,10 @@ namespace WizardsCode.Social
             WWWForm mediaForm = new WWWForm();
             mediaForm.AddField("media_data", mediaString);
 
-            Hashtable mediaHeaders = GetHeaders(UploadMediaURL, mediaParameters);
+            Hashtable mediaHeaders = GetHeaders(TwitterSettings.UploadMediaURL, mediaParameters);
             mediaHeaders.Add("Content-Transfer-Encoding", "base64");
 
-            if (!ApiPostRequest(UploadMediaURL, mediaForm, mediaHeaders, out response))
+            if (!ApiPostRequest(TwitterSettings.UploadMediaURL, mediaForm, mediaHeaders, out response))
             {
                 Debug.LogError(response);
                 return null;

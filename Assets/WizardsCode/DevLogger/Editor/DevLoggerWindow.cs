@@ -25,9 +25,6 @@ namespace WizardsCode.DevLogger
         Camera m_CaptureCamera;
 
         private static bool startCapture;
-        private bool m_OrganizeByProject = true;
-        private bool m_OrganizeByScene = true;
-        string m_CapturesFolderPath;
 
         private string[] toolbarLabels = { "Entry", "Dev Log", "Schedule", "Git", "Settings" };
         private int selectedTab = 0;
@@ -40,10 +37,6 @@ namespace WizardsCode.DevLogger
 
         private void Awake()
         {
-            m_CapturesFolderPath = Settings.CaptureFileFolderPath;
-            m_OrganizeByProject = Settings.OrganizeCapturesByProject;
-            m_OrganizeByScene = Settings.OrganizeCapturesByScene;
-
             m_DevLogEntries = AssetDatabase.LoadAssetAtPath(Settings.DevLogScriptableObjectPath, typeof(DevLogEntries)) as DevLogEntries;
             devLogPanel = new DevLogPanel(m_DevLogEntries);
 
@@ -52,7 +45,9 @@ namespace WizardsCode.DevLogger
             {
                 m_CaptureCamera = Camera.main;
             }
-            mediaPanel = new MediaPanel(m_ScreenCaptures, m_CaptureCamera, m_CapturesFolderPath, m_OrganizeByProject, m_OrganizeByScene);
+            
+            mediaPanel = new MediaPanel(m_ScreenCaptures, 
+                m_CaptureCamera);
 
             entryPanel = new EntryPanel(m_DevLogEntries, m_ScreenCaptures);
             twitterPanel = new TwitterPanel(entryPanel);
@@ -65,8 +60,6 @@ namespace WizardsCode.DevLogger
         {
             EditorApplication.update += Update;
             mediaPanel.OnEnable();
-            entryPanel.OnEnable();
-            discordPanel.OnEnable();
             if (m_SchedulingPanel == null)
             {
                 // For some reason the scheduling panel is occasionally set to null, this resets it
@@ -74,23 +67,13 @@ namespace WizardsCode.DevLogger
                 m_SchedulingPanel = new SchedulingPanel(m_DevLogEntries);
             }
             m_SchedulingPanel.OnEnable();
-            GitSettings.Load();
         }
 
         private void OnDisable()
         {
             EditorApplication.update -= Update;
             mediaPanel.OnEnable();
-            entryPanel.OnDisable();
-            discordPanel.OnDisable();
             m_SchedulingPanel.OnDisable();
-            GitSettings.Save();
-
-            Settings.CaptureFileFolderPath = m_CapturesFolderPath;
-            Settings.OrganizeCapturesByProject = m_OrganizeByProject;
-            Settings.OrganizeCapturesByScene = m_OrganizeByScene;
-            Settings.DevLogScriptableObjectPath = AssetDatabase.GetAssetPath(m_DevLogEntries);
-            Settings.ScreenCaptureScriptableObjectPath = AssetDatabase.GetAssetPath(m_ScreenCaptures);
         }
 
         private void OnImageSelection()
@@ -199,24 +182,19 @@ namespace WizardsCode.DevLogger
 
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.PrefixLabel("Captures Save Folder");
-            string originalPath = m_CapturesFolderPath;
-            m_CapturesFolderPath = EditorGUILayout.TextField(m_CapturesFolderPath);
+            string originalPath = Settings.CaptureFileFolderPath;
+            Settings.CaptureFileFolderPath = EditorGUILayout.TextField(Settings.CaptureFileFolderPath);
             if (GUILayout.Button("Browse"))
             {
-                m_CapturesFolderPath = EditorUtility.OpenFolderPanel("Select a folder in which to save captures", m_CapturesFolderPath, "");
-            }
-            if (m_CapturesFolderPath != originalPath)
-            {
-                Settings.CaptureFileFolderPath = m_CapturesFolderPath;
-                mediaPanel.capturesFolder = m_CapturesFolderPath;
+                Settings.CaptureFileFolderPath = EditorUtility.OpenFolderPanel("Select a folder in which to save captures", Settings.CaptureFileFolderPath, "");
             }
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.PrefixLabel("File Organizaton");
             EditorGUILayout.BeginVertical();
-            m_OrganizeByProject = EditorGUILayout.ToggleLeft("Organize in Project sub folders (e.g. 'root/Project')", m_OrganizeByProject);
-            m_OrganizeByScene = EditorGUILayout.ToggleLeft("Organize in Scene sub folders (e.g. 'root/Project/Scene')", m_OrganizeByScene);
+            Settings.OrganizeCapturesByProject = EditorGUILayout.ToggleLeft("Organize in Project sub folders (e.g. 'root/Project')", Settings.OrganizeCapturesByProject);
+            Settings.OrganizeCapturesByScene = EditorGUILayout.ToggleLeft("Organize in Scene sub folders (e.g. 'root/Project/Scene')", Settings.OrganizeCapturesByScene);
             EditorGUILayout.EndVertical();
             EditorGUILayout.EndHorizontal();
 
@@ -274,13 +252,13 @@ namespace WizardsCode.DevLogger
                 if (EditorUtility.DisplayDialog("Reset Twitter OAuth Tokens?",
                     "Do you also want to clear the Twitter access tokens?",
                     "Yes", "Do Not Clear Them")) {
-                    Twitter.ClearAccessTokens();
+                    TwitterSettings.ClearAccessTokens();
                 }
             }
 
-            if (GUILayout.Button("Capture DevLogger"))
+            if (GUILayout.Button("Reset Meta Data"))
             {
-                mediaPanel.CaptureWindowScreenshot("WizardsCode.DevLogger.DevLoggerWindow");
+                EntryPanelSettings.ResetMetaData();
             }
 
             if (GUILayout.Button("Dump Window Names"))

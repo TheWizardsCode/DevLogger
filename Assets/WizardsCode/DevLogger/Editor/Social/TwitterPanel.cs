@@ -102,10 +102,10 @@ namespace WizardsCode.DevLogger
         private void OnAuthorizeTwitterGUI()
         {
             GUILayout.Label("Authorize on Twitter", EditorStyles.boldLabel);
-            EditorPrefs.SetString(Twitter.EDITOR_PREFS_TWITTER_API_KEY, EditorGUILayout.TextField("Consumer API Key", EditorPrefs.GetString(Twitter.EDITOR_PREFS_TWITTER_API_KEY)));
-            EditorPrefs.SetString(Twitter.EDITOR_PREFS_TWITTER_API_SECRET, EditorGUILayout.TextField("Consumer API Secret", EditorPrefs.GetString(Twitter.EDITOR_PREFS_TWITTER_API_SECRET)));
-            EditorPrefs.SetString(Twitter.EDITOR_PREFS_TWITTER_ACCESS_TOKEN, EditorGUILayout.TextField("Acess Token", EditorPrefs.GetString(Twitter.EDITOR_PREFS_TWITTER_ACCESS_TOKEN)));
-            EditorPrefs.SetString(Twitter.EDITOR_PREFS_TWITTER_ACCESS_SECRET, EditorGUILayout.TextField("Access Secret", EditorPrefs.GetString(Twitter.EDITOR_PREFS_TWITTER_ACCESS_SECRET)));
+            TwitterSettings.ApiKey = EditorGUILayout.TextField("Consumer API Key", TwitterSettings.ApiKey);
+            TwitterSettings.ApiSecret = EditorGUILayout.TextField("Consumer API Secret", TwitterSettings.ApiSecret);
+            TwitterSettings.AccessToken = EditorGUILayout.TextField("Acess Token", TwitterSettings.AccessToken);
+            TwitterSettings.AccessSecret = EditorGUILayout.TextField("Access Secret", TwitterSettings.ApiSecret);
         }
     }
 }

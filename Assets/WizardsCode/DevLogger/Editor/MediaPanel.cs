@@ -31,42 +31,28 @@ namespace WizardsCode.DevLogger
         [SerializeField] int repeat = 0; // -1: no repeat, 0: infinite, >0: repeat count
         [SerializeField] int quality = 15; // Quality of color quantization, lower = better but slower (min 1, max 100)
 
-        public MediaPanel(DevLogScreenCaptures captures, Camera camera, string rootCapturesFolderPath, bool organizeByProject, bool organizeByScene)
+        public MediaPanel(DevLogScreenCaptures captures, Camera camera)
         {
             ScreenCaptures = captures;
             CaptureCamera = camera;
-            capturesFolder = rootCapturesFolderPath;
-            m_OrganizeByProject = organizeByProject;
-            m_OrganizeByScene = organizeByScene;
         }
 
         internal Camera CaptureCamera { get; set; }
 
-        private bool m_OrganizeByProject;
-        private bool m_OrganizeByScene;
-
-        internal string capturesFolder
-        {
-            get;
-            set;
-        }
-
         internal DevLogScreenCaptures ScreenCaptures { get; set; }
         internal string CapturesFolderPath(DevLogScreenCapture capture) {
-            string path = capturesFolder;
+            string path = Settings.CaptureFileFolderPath;
+
+            if (Settings.OrganizeCapturesByProject)
+            {
+                path += Path.DirectorySeparatorChar + Application.productName;
+            }
+
+            if (Settings.OrganizeCapturesByScene)
+            {
+                path += Path.DirectorySeparatorChar + SceneManager.GetActiveScene().name;
+            }
             path += Path.DirectorySeparatorChar;
-
-            if (m_OrganizeByProject)
-            {
-                path += capture.productName;
-                path += Path.DirectorySeparatorChar;
-            }
-
-            if (m_OrganizeByScene)
-            {
-                path += capture.sceneName;
-                path += Path.DirectorySeparatorChar;
-            }
 
             Directory.CreateDirectory(path);
 
@@ -321,22 +307,32 @@ namespace WizardsCode.DevLogger
 
             if (GUILayout.Button("Open Media Folder"))
             {
-                System.Diagnostics.Process.Start("Explorer.exe", string.Format("/open, \"{0}\"", capturesFolder.Replace(@"/", @"\")));
+                string path = Settings.CaptureFileFolderPath;
+                if (Settings.OrganizeCapturesByProject)
+                {
+                    path += Path.DirectorySeparatorChar + Application.productName;
+                }
+
+                if (Settings.OrganizeCapturesByScene)
+                {
+                    path += Path.DirectorySeparatorChar + SceneManager.GetActiveScene().name;
+                }
+                System.Diagnostics.Process.Start("Explorer.exe", string.Format("/open, \"{0}\"", path.Replace(@"/", @"\")));
             }
             EditorGUILayout.EndVertical();
         }
 
         private void AddToLatestCaptures(DevLogScreenCapture screenCapture)
         {
-            if (screenCapture != null)
-            {
-                AssetDatabase.AddObjectToAsset(screenCapture, ScreenCaptures);
-                
-                ScreenCaptures.captures.Add(screenCapture);
-                EditorUtility.SetDirty(ScreenCaptures);
+            if (screenCapture == null) return;
 
-                AssetDatabase.SaveAssets();
-            }
+            AssetDatabase.AddObjectToAsset(screenCapture, ScreenCaptures);
+            screenCapture.IsSelected = true;
+
+            ScreenCaptures.captures.Add(screenCapture);
+            EditorUtility.SetDirty(ScreenCaptures);
+
+            AssetDatabase.SaveAssets();
         }
 
         internal void Update()

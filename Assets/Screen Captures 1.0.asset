@@ -1,5 +1,97 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-9148111652701880912
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 666102f216d105742a44e712852bead6, type: 3}
+  m_Name: DevLogger v1.0 SampleScene
+  m_EditorClassIdentifier: 
+  encoding: 1
+  windowName: ScriptInspector.FGConsole
+  productName: DevLogger
+  version: 1.0
+  sceneName: SampleScene
+  _width: 0
+  _height: 0
+  _timestampAsString: 1/1/2021 5:27:33 PM
+  IsImageSaved: 1
+  IsSelected: 0
+  AbsoluteSaveFolder: F:/Unity Projects/WizardsCode/DevLogger/DevLog\DevLogger\SampleScene\
+--- !u!114 &-8062782303386765010
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 666102f216d105742a44e712852bead6, type: 3}
+  m_Name: DevLogger v1.0 SampleScene
+  m_EditorClassIdentifier: 
+  encoding: 1
+  windowName: UnityEditor.GameView
+  productName: DevLogger
+  version: 1.0
+  sceneName: SampleScene
+  _width: 0
+  _height: 0
+  _timestampAsString: 12/31/2020 5:10:10 PM
+  IsImageSaved: 1
+  IsSelected: 0
+  AbsoluteSaveFolder: F:/Unity Projects/WizardsCode/DevLogger/Assets\DevLog\ScreenCaptures\DevLogger\SampleScene\
+--- !u!114 &-6225892168940779787
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 666102f216d105742a44e712852bead6, type: 3}
+  m_Name: DevLogger v1.0 SampleScene
+  m_EditorClassIdentifier: 
+  encoding: 1
+  windowName: UnityEditor.SceneHierarchyWindow
+  productName: DevLogger
+  version: 1.0
+  sceneName: SampleScene
+  _width: 0
+  _height: 0
+  _timestampAsString: 12/31/2020 5:06:56 PM
+  IsImageSaved: 1
+  IsSelected: 0
+  AbsoluteSaveFolder: F:/Unity Projects/WizardsCode/DevLogger/Assets\DevLog\ScreenCaptures\DevLogger\SampleScene\
+--- !u!114 &-5822782096663097962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 666102f216d105742a44e712852bead6, type: 3}
+  m_Name: DevLogger v1.0 SampleScene
+  m_EditorClassIdentifier: 
+  encoding: 1
+  windowName: UnityEditor.InspectorWindow
+  productName: DevLogger
+  version: 1.0
+  sceneName: SampleScene
+  _width: 0
+  _height: 0
+  _timestampAsString: 1/1/2021 6:40:02 PM
+  IsImageSaved: 1
+  IsSelected: 1
+  AbsoluteSaveFolder: F:/Unity Projects/WizardsCode/DevLogger/DevLog\DevLogger\SampleScene\
 --- !u!114 &-224584994916377059
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -38,6 +130,82 @@ MonoBehaviour:
   captures:
   - {fileID: 8615231035768006499}
   - {fileID: -224584994916377059}
+  - {fileID: -6225892168940779787}
+  - {fileID: 7245525750385625640}
+  - {fileID: -8062782303386765010}
+  - {fileID: 629892625833454658}
+  - {fileID: -9148111652701880912}
+  - {fileID: 6472221801338552798}
+  - {fileID: -5822782096663097962}
+--- !u!114 &629892625833454658
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 666102f216d105742a44e712852bead6, type: 3}
+  m_Name: DevLogger v1.0 SampleScene
+  m_EditorClassIdentifier: 
+  encoding: 1
+  windowName: UnityEditor.ProjectBrowser
+  productName: DevLogger
+  version: 1.0
+  sceneName: SampleScene
+  _width: 0
+  _height: 0
+  _timestampAsString: 1/1/2021 5:27:20 PM
+  IsImageSaved: 1
+  IsSelected: 0
+  AbsoluteSaveFolder: F:/Unity Projects/WizardsCode/DevLogger/DevLog\DevLogger\SampleScene\
+--- !u!114 &6472221801338552798
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 666102f216d105742a44e712852bead6, type: 3}
+  m_Name: DevLogger v1.0 SampleScene
+  m_EditorClassIdentifier: 
+  encoding: 1
+  windowName: UnityEditor.SceneHierarchyWindow
+  productName: DevLogger
+  version: 1.0
+  sceneName: SampleScene
+  _width: 0
+  _height: 0
+  _timestampAsString: 1/1/2021 6:39:50 PM
+  IsImageSaved: 1
+  IsSelected: 1
+  AbsoluteSaveFolder: F:/Unity Projects/WizardsCode/DevLogger/DevLog\DevLogger\SampleScene\
+--- !u!114 &7245525750385625640
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 666102f216d105742a44e712852bead6, type: 3}
+  m_Name: DevLogger v1.0 SampleScene
+  m_EditorClassIdentifier: 
+  encoding: 1
+  windowName: UnityEditor.InspectorWindow
+  productName: DevLogger
+  version: 1.0
+  sceneName: SampleScene
+  _width: 0
+  _height: 0
+  _timestampAsString: 12/31/2020 5:10:01 PM
+  IsImageSaved: 1
+  IsSelected: 0
+  AbsoluteSaveFolder: F:/Unity Projects/WizardsCode/DevLogger/Assets\DevLog\ScreenCaptures\DevLogger\SampleScene\
 --- !u!114 &8615231035768006499
 MonoBehaviour:
   m_ObjectHideFlags: 0

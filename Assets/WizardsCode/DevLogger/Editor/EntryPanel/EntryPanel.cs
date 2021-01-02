@@ -18,8 +18,6 @@ namespace WizardsCode.DevLogger
         [SerializeField] internal string detailText = "";
         [SerializeField] bool isSocial = false;
         [SerializeField] string gitCommit = "";
-        [SerializeField] List<string> suggestedMetaData;
-        [SerializeField] List<bool> selectedMetaData;
         [SerializeField] string newMetaDataItem;
 
         public EntryPanel(DevLogEntries entries, DevLogScreenCaptures screenCaptures)
@@ -30,37 +28,6 @@ namespace WizardsCode.DevLogger
 
         internal DevLogEntries entries { get; set; }
         internal DevLogScreenCaptures ScreenCaptures { get; set; }
-
-        internal void OnEnable()
-        {
-            int numOfHashtags = EntryPanelSettings.MetaDataItemCount;
-            if (numOfHashtags == 0)
-            {
-                suggestedMetaData = new List<string>() { "#IndieGame", "#MadeWithUnity" };
-                selectedMetaData = new List<bool> { true, true };
-            }
-            else
-            {
-                suggestedMetaData = new List<string>();
-                selectedMetaData = new List<bool>();
-
-                for (int i = 0; i < numOfHashtags; i++)
-                {
-                    suggestedMetaData.Add(EntryPanelSettings.GetSuggestedMetaDataItem(i));
-                    selectedMetaData.Add(EntryPanelSettings.GetMetaDataSelectionStatus(i));
-                }
-            }
-        }
-
-        internal void OnDisable()
-        {
-            EntryPanelSettings.MetaDataItemCount = suggestedMetaData.Count;
-            for (int i = 0; i < suggestedMetaData.Count; i++)
-            {
-                EntryPanelSettings.SetSuggestedMetaDataItem(i, suggestedMetaData[i]);
-                EntryPanelSettings.SetMetaDataSelectionStatus(i, selectedMetaData[i]);
-            }
-        }
 
         internal void Populate(string hash, string description)
         {
@@ -94,12 +61,13 @@ namespace WizardsCode.DevLogger
         public string GetSelectedMetaData(bool includeHashtags = true)
         {
             StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < suggestedMetaData.Count; i++)
+            MetaDataItems items = EntryPanelSettings.GetSuggestedMetaDataItems();
+            for (int i = 0; i < items.Count; i++)
             {
-                if (selectedMetaData[i] && (includeHashtags || !suggestedMetaData[i].StartsWith("#")))
+                if (includeHashtags || !items.GetItem(i).name.StartsWith("#"))
                 {
                     sb.Append(" ");
-                    sb.Append(suggestedMetaData[i]);
+                    sb.Append(items.GetItem(i));
                 }
             }
             return sb.ToString();
@@ -119,17 +87,18 @@ namespace WizardsCode.DevLogger
             EditorGUILayout.BeginHorizontal();
 
             EditorGUILayout.BeginVertical();
-            for (int i = 0; i < suggestedMetaData.Count; i++)
+            MetaDataItems items = EntryPanelSettings.GetSuggestedMetaDataItems();
+            for (int i = 0; i < items.Count; i++)
             {
-                selectedMetaData[i] = EditorGUILayout.ToggleLeft(suggestedMetaData[i], selectedMetaData[i]);
+                MetaDataItem item = items.GetItem(i);
+                item.isSelected = EditorGUILayout.ToggleLeft(item.name, item.isSelected);
             }
 
             EditorGUILayout.BeginHorizontal();
             newMetaDataItem = EditorGUILayout.TextField(newMetaDataItem);
             if (GUILayout.Button("Add"))
             {
-                suggestedMetaData.Add(newMetaDataItem);
-                selectedMetaData.Add(true);
+                EntryPanelSettings.AddSuggestedMetaDataItem(new MetaDataItem(newMetaDataItem, true));
                 newMetaDataItem = "";
             }
             EditorGUILayout.EndHorizontal();
@@ -198,12 +167,10 @@ namespace WizardsCode.DevLogger
                 gitCommit = "";
             }
 
-            for (int i = 0; i < suggestedMetaData.Count; i++)
+            MetaDataItems items = EntryPanelSettings.GetSuggestedMetaDataItems();
+            for (int i = 0; i < items.Count; i++)
             {
-                if (selectedMetaData[i])
-                {
-                    entry.metaData.Add(suggestedMetaData[i]);
-                }
+                entry.metaData.Add(items.GetItem(i).name);
             }
             
             if (withTweet)

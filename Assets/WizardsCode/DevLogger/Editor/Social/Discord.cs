@@ -10,22 +10,19 @@ namespace WizardsCode.DevLogger
 {
     public static class Discord
     {
-        public const string EDITOR_PREFS_DISCORD_IS_CONFIGURED = "DiscordIsConfigured_";
-        public const string EDITOR_PREFS_DISCORD_USERNAME = "DiscordUsername_";
-        public const string EDITOR_PREFS_DISCORD_WEBHOOK_URL = "DiscordWebhookURL_";
 
         static UnityWebRequest www;
 
         public static void PostEntry(DevLogEntry entry)
         {
-            string username = EditorPrefs.GetString(Discord.EDITOR_PREFS_DISCORD_USERNAME + Application.productName, "Dev Logger");
+            string username = DiscordSettings.Username;
             
             PostMessage(new Message(username, entry));
         }
 
         internal static void PostMessage(Message message)
         {
-            string url = EditorPrefs.GetString(Discord.EDITOR_PREFS_DISCORD_WEBHOOK_URL + Application.productName);
+            string url = DiscordSettings.WebHookURL;
 
             List<IMultipartFormSection> formData = new List<IMultipartFormSection>();
             formData.Add(new MultipartFormDataSection("username", message.username));

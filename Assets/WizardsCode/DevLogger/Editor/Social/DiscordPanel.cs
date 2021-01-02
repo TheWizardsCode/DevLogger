@@ -14,11 +14,8 @@ namespace WizardsCode.DevLogger
     [Serializable]
     public class DiscordPanel
     {
-        [SerializeField] bool isConfigured = false;
         [SerializeField] bool showDiscord = false;
         [SerializeField] EntryPanel entryPanel;
-        [SerializeField] static string username = "Dev Logger (test)";
-        [SerializeField] static string url;
 
         internal DevLogScreenCaptures screenCaptures { get; set; }
 
@@ -29,39 +26,25 @@ namespace WizardsCode.DevLogger
             this.entryPanel = entryPanel;
         }
 
-        internal void OnDisable()
-        {
-            EditorPrefs.SetBool(Discord.EDITOR_PREFS_DISCORD_IS_CONFIGURED + Application.productName, isConfigured);
-            EditorPrefs.SetString(Discord.EDITOR_PREFS_DISCORD_USERNAME + Application.productName, username);
-            EditorPrefs.SetString(Discord.EDITOR_PREFS_DISCORD_WEBHOOK_URL + Application.productName, url);
-        }
-
-        internal void OnEnable()
-        {
-            isConfigured = EditorPrefs.GetBool(Discord.EDITOR_PREFS_DISCORD_IS_CONFIGURED + Application.productName, false);
-            username = EditorPrefs.GetString(Discord.EDITOR_PREFS_DISCORD_USERNAME + Application.productName, "Dev Logger");
-            url = EditorPrefs.GetString(Discord.EDITOR_PREFS_DISCORD_WEBHOOK_URL + Application.productName);
-        }
-
         public void OnGUI()
         {
             EditorGUILayout.BeginVertical("Box");
             showDiscord = EditorGUILayout.Foldout(showDiscord, "Discord", EditorStyles.foldout);
             if (showDiscord)
             {
-                if (string.IsNullOrEmpty(url) || string.IsNullOrEmpty(username) || !isConfigured)
+                if (string.IsNullOrEmpty(DiscordSettings.Username) || string.IsNullOrEmpty(DiscordSettings.Username) || !DiscordSettings.IsConfigured)
                 {
-                    isConfigured = false; 
+                    DiscordSettings.IsConfigured = false; 
 
                     EditorGUILayout.PrefixLabel("Bot Username");
-                    username = EditorGUILayout.TextField(username);
+                    DiscordSettings.Username = EditorGUILayout.TextField(DiscordSettings.Username);
 
                     EditorGUILayout.PrefixLabel("Webhook URL");
-                    url = EditorGUILayout.TextField(url);
+                    DiscordSettings.WebHookURL = EditorGUILayout.TextField(DiscordSettings.WebHookURL);
 
                     if (GUILayout.Button("Save"))
                     {
-                        isConfigured = true;
+                        DiscordSettings.IsConfigured = true;
                     }
                 }
                 else if (!string.IsNullOrEmpty(entryPanel.shortText))
@@ -77,11 +60,11 @@ namespace WizardsCode.DevLogger
                         Message message;
                         if (string.IsNullOrEmpty(entryPanel.detailText))
                         {
-                            message = new Message(username, entryPanel.shortText + entryPanel.GetSelectedMetaData(false), screenCaptures);
+                            message = new Message(DiscordSettings.Username, entryPanel.shortText + entryPanel.GetSelectedMetaData(false), screenCaptures);
                         } 
                         else
                         {
-                            message = new Message(username, entryPanel.shortText + entryPanel.GetSelectedMetaData(false), entryPanel.detailText, screenCaptures);
+                            message = new Message(DiscordSettings.Username, entryPanel.shortText + entryPanel.GetSelectedMetaData(false), entryPanel.detailText, screenCaptures);
                         }
                         
                         Discord.PostMessage(message);

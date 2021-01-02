@@ -14,12 +14,18 @@ namespace WizardsCode.Git
         private static string m_GitPath;
         public static string GitPath
         {
-            get { 
+            get
+            {
+                if (string.IsNullOrEmpty(m_GitPath))
+                {
+                    GitPath = EditorPrefs.GetString(GitConstants.GIT_PATH, DefaultGitPath);
+                }
                 return string.IsNullOrEmpty(m_GitPath) ? DefaultGitPath : m_GitPath; 
             }
             set
             {
                 m_GitPath = value;
+                EditorPrefs.SetString(GitConstants.GIT_PATH, m_GitPath);
             }
         }
 
@@ -28,27 +34,17 @@ namespace WizardsCode.Git
         {
             get
             {
-                if (string.IsNullOrEmpty(m_RepositoryPath)) {
-                    m_RepositoryPath = Application.dataPath.Substring(0, Application.dataPath.Length - "Assets".Length);
+                if (string.IsNullOrEmpty(m_RepositoryPath))
+                {
+                    RepositoryPath = EditorPrefs.GetString(GitConstants.REPOSITORY_PATH);
                 }
-                return m_RepositoryPath;
+                return string.IsNullOrEmpty(m_RepositoryPath) ? Application.dataPath.Substring(0, Application.dataPath.Length - "Assets".Length) : m_RepositoryPath;
             }
             set
             {
                 m_RepositoryPath = value;
+                EditorPrefs.SetString(GitConstants.REPOSITORY_PATH, m_RepositoryPath);
             }
-        }
-
-        public static void Save()
-        {
-            EditorPrefs.SetString(GitConstants.GIT_PATH, GitPath);
-            EditorPrefs.SetString(GitConstants.REPOSITORY_PATH, RepositoryPath);
-        }
-
-        public static void Load()
-        {
-            GitPath = EditorPrefs.GetString(GitConstants.GIT_PATH, DefaultGitPath);
-            RepositoryPath = EditorPrefs.GetString(GitConstants.REPOSITORY_PATH, Application.dataPath.Substring(0, Application.dataPath.Length - "Assets".Length));
         }
 
         public static void Reset()
