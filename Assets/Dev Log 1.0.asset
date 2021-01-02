@@ -12,4 +12,62 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29cf0f8db76caf6458571bbe2db3c861, type: 3}
   m_Name: Dev Log 1.0
   m_EditorClassIdentifier: 
-  m_Entries: []
+  m_Entries:
+  - {fileID: 5331641015972758493}
+--- !u!114 &5331641015972758493
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa508ee653f80ef478ab4842c6bb02ba, type: 3}
+  m_Name: 1/1/2021 7:48 PM
+  m_EditorClassIdentifier: 
+  shortDescription: testing project window capture
+  longDescription: 'Looks like I have a problem with my image paths - seems to be
+    a resursive call somewhere
+
+
+    ```
+
+    PathTooLongException: Path is too long.
+    Path: F:\Unity Projects\WizardsCode\DevLogger\Assets\DevLog\ScreenCaptures\DevLogger\SampleScene\DevLogger\SampleScene\DevLogger\SampleScene\DevLogger\SampleScene\DevLogger\SampleScene\DevLogger\SampleScene\DevLogger\SampleScene\DevLogger\SampleScene\DevLogger
+
+    System.IO.Directory.CreateDirectoriesInternal
+    (System.String path) (at <9577ac7a62ef43179789031239ba8798>:0)
+
+    System.IO.Directory.CreateDirectory
+    (System.String path) (at <9577ac7a62ef43179789031239ba8798>:0)
+
+    System.IO.DirectoryInfo.Create
+    () (at <9577ac7a62ef43179789031239ba8798>:0)
+
+    (wrapper remoting-invoke-with-check)
+    System.IO.DirectoryInfo.Create()
+
+    System.IO.Directory.CreateDirectoriesInternal
+    (System.String path) (at <9577ac7a62ef43179789031239ba8798>:0)
+
+    System.IO.Directory.CreateDirectory
+    (System.String path) (at <9577ac7a62ef43179789031239ba8798>:0)
+
+    System.IO.DirectoryInfo.Create
+    () (at <9577ac7a62ef43179789031239ba8798>:0)
+
+    ```
+
+'
+  metaData:
+  - '#MadeWithUnity'
+  captures:
+  - {fileID: -9148111652701880912, guid: 05858a10e16c9844398a86e68477527f, type: 2}
+  - {fileID: 6472221801338552798, guid: 05858a10e16c9844398a86e68477527f, type: 2}
+  commitHash: 
+  isSocial: 0
+  tweeted: 0
+  lastTweetFileTime: 0
+  discordPost: 0
+  lastDiscordPostFileTime: 0

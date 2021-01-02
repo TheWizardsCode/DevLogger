@@ -185,3 +185,26 @@ Create a schedule of reminders, mark Dev Log entries as suitable for social medi
 
 Moved all Settings for the main panel and for the Entry Panel into settings classes
 
+## Friday 1 January 2021, 19:48
+
+testing project window capture
+
+### Details
+Looks like I have a problem with my image paths - seems to be a resursive call somewhere
+
+```
+PathTooLongException: Path is too long. Path: F:\Unity Projects\WizardsCode\DevLogger\Assets\DevLog\ScreenCaptures\DevLogger\SampleScene\DevLogger\SampleScene\DevLogger\SampleScene\DevLogger\SampleScene\DevLogger\SampleScene\DevLogger\SampleScene\DevLogger\SampleScene\DevLogger\SampleScene\DevLogger
+System.IO.Directory.CreateDirectoriesInternal (System.String path) (at <9577ac7a62ef43179789031239ba8798>:0)
+System.IO.Directory.CreateDirectory (System.String path) (at <9577ac7a62ef43179789031239ba8798>:0)
+System.IO.DirectoryInfo.Create () (at <9577ac7a62ef43179789031239ba8798>:0)
+(wrapper remoting-invoke-with-check) System.IO.DirectoryInfo.Create()
+System.IO.Directory.CreateDirectoriesInternal (System.String path) (at <9577ac7a62ef43179789031239ba8798>:0)
+System.IO.Directory.CreateDirectory (System.String path) (at <9577ac7a62ef43179789031239ba8798>:0)
+System.IO.DirectoryInfo.Create () (at <9577ac7a62ef43179789031239ba8798>:0)
+```
+
+
+![Screenshot](F:\Unity Projects\WizardsCode\DevLogger\DevLog\DevLogger\SampleScene\ScriptInspector.FGConsole_DevLogger_SampleScene_v1.0_132540244530000000.png)
+
+![Screenshot](F:\Unity Projects\WizardsCode\DevLogger\DevLog\DevLogger\SampleScene\UnityEditor.SceneHierarchyWindow_DevLogger_SampleScene_v1.0_132540287900000000.png)
+

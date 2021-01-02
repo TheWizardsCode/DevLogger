@@ -189,6 +189,7 @@ namespace WizardsCode.DevLogger
                     {
                         DevLogScreenCapture capture = ScreenCaptures.captures[i];
                         entry.captures.Add(capture);
+                        ScreenCaptures.captures[i].IsSelected = false;
                     }
                 }
 
