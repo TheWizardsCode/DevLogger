@@ -183,7 +183,7 @@ namespace WizardsCode.DevLogger
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.PrefixLabel("Captures Save Folder");
             string originalPath = Settings.CaptureFileFolderPath;
-            Settings.CaptureFileFolderPath = EditorGUILayout.TextField(Settings.CaptureFileFolderPath);
+            Settings.CaptureFileFolderPath = EditorGUILayout.TextField(Settings.CaptureFileFolderPath, GUILayout.Height(40));
             if (GUILayout.Button("Browse"))
             {
                 Settings.CaptureFileFolderPath = EditorUtility.OpenFolderPanel("Select a folder in which to save captures", Settings.CaptureFileFolderPath, "");
