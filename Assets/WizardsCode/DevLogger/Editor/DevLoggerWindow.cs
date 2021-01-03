@@ -217,29 +217,44 @@ namespace WizardsCode.DevLogger
             Skin.StartSection("Dev Log Objects", false);
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.PrefixLabel("Dev Log Storage");
+            string existingPath = AssetDatabase.GetAssetPath(m_DevLogEntries);
             m_DevLogEntries = EditorGUILayout.ObjectField(m_DevLogEntries, typeof(DevLogEntries), true) as DevLogEntries;
             if (m_DevLogEntries == null)
             {
                 if (GUILayout.Button("Create"))
                 {
+                    string filename = "Assets/Dev Log " + Application.version + ".asset";
                     m_DevLogEntries = ScriptableObject.CreateInstance<DevLogEntries>();
-                    AssetDatabase.CreateAsset(m_DevLogEntries, "Assets/Dev Log " + Application.version + ".asset");
+                    AssetDatabase.CreateAsset(m_DevLogEntries, filename);
                     AssetDatabase.SaveAssets();
                 }
+            }
+            string newPath = AssetDatabase.GetAssetPath(m_DevLogEntries);
+            if (existingPath != newPath)
+            {
+                Settings.DevLogScriptableObjectPath = newPath;
             }
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.PrefixLabel("Screen Capture Storage");
+            existingPath = AssetDatabase.GetAssetPath(m_ScreenCaptures);
             m_ScreenCaptures = EditorGUILayout.ObjectField(m_ScreenCaptures, typeof(DevLogScreenCaptures), true) as DevLogScreenCaptures;
             if (m_ScreenCaptures == null)
             {
                 if (GUILayout.Button("Create"))
                 {
+                    string filename = "Assets/Screen Captures " + Application.version + ".asset";
                     m_ScreenCaptures = ScriptableObject.CreateInstance<DevLogScreenCaptures>();
-                    AssetDatabase.CreateAsset(m_ScreenCaptures, "Assets/Screen Captures " + Application.version + ".asset");
+                    AssetDatabase.CreateAsset(m_ScreenCaptures, filename);
                     AssetDatabase.SaveAssets();
+                    Settings.CaptureFileFolderPath = filename;
                 }
+            }
+            newPath = AssetDatabase.GetAssetPath(m_ScreenCaptures);
+            if (existingPath != newPath)
+            {
+                Settings.ScreenCaptureScriptableObjectPath = newPath;
             }
             EditorGUILayout.EndHorizontal();
             Skin.EndSection();
