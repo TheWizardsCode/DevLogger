@@ -13,13 +13,13 @@ namespace WizardsCode.DevLogger
     /// </summary>
     public class DevLoggerWindow : EditorWindow
     {
-        EntryPanel entryPanel;
-        TwitterPanel twitterPanel;
-        DiscordPanel discordPanel;
+        EntryPanel m_EntryPanel;
+        TwitterPanel m_TwitterPanel;
+        DiscordPanel m_DiscordPanel;
         SchedulingPanel m_SchedulingPanel;
-        GitPanel gitPanel;
-        MediaPanel mediaPanel;
-        DevLogPanel devLogPanel;
+        GitPanel m_GitPanel;
+        MediaPanel m_MediaPanel;
+        DevLogPanel m_DevLogPanel;
         DevLogScreenCaptures m_ScreenCaptures;
         DevLogEntries m_DevLogEntries;
         Camera m_CaptureCamera;
@@ -38,7 +38,7 @@ namespace WizardsCode.DevLogger
         private void Awake()
         {
             m_DevLogEntries = AssetDatabase.LoadAssetAtPath(Settings.DevLogScriptableObjectPath, typeof(DevLogEntries)) as DevLogEntries;
-            devLogPanel = new DevLogPanel(m_DevLogEntries);
+            m_DevLogPanel = new DevLogPanel(m_DevLogEntries);
 
             m_ScreenCaptures = AssetDatabase.LoadAssetAtPath(Settings.ScreenCaptureScriptableObjectPath, typeof(DevLogScreenCaptures)) as DevLogScreenCaptures;
             if (m_CaptureCamera == null)
@@ -46,20 +46,20 @@ namespace WizardsCode.DevLogger
                 m_CaptureCamera = Camera.main;
             }
             
-            mediaPanel = new MediaPanel(m_ScreenCaptures, 
+            m_MediaPanel = new MediaPanel(m_ScreenCaptures, 
                 m_CaptureCamera);
 
-            entryPanel = new EntryPanel(m_DevLogEntries, m_ScreenCaptures);
-            twitterPanel = new TwitterPanel(entryPanel);
-            discordPanel = new DiscordPanel(entryPanel);
+            m_EntryPanel = new EntryPanel(m_DevLogEntries, m_ScreenCaptures);
+            m_TwitterPanel = new TwitterPanel(m_EntryPanel);
+            m_DiscordPanel = new DiscordPanel(m_EntryPanel);
             m_SchedulingPanel = new SchedulingPanel(m_DevLogEntries);
-            gitPanel = new GitPanel(entryPanel);
+            m_GitPanel = new GitPanel(m_EntryPanel);
         }
 
         private void OnEnable()
         {
             EditorApplication.update += Update;
-            mediaPanel.OnEnable();
+            m_MediaPanel.OnEnable();
             if (m_SchedulingPanel == null)
             {
                 // For some reason the scheduling panel is occasionally set to null, this resets it
@@ -72,18 +72,18 @@ namespace WizardsCode.DevLogger
         private void OnDisable()
         {
             EditorApplication.update -= Update;
-            mediaPanel.OnEnable();
+            m_MediaPanel.OnEnable();
             m_SchedulingPanel.OnDisable();
         }
 
         private void OnImageSelection()
         {
-            mediaPanel.OnImageSelection();
+            m_MediaPanel.OnImageSelection();
         }
 
         void Update()
         {
-            mediaPanel.Update();
+            m_MediaPanel.Update();
             if (m_SchedulingPanel == null)
             {
                 m_SchedulingPanel = new SchedulingPanel(m_DevLogEntries);
@@ -109,7 +109,7 @@ namespace WizardsCode.DevLogger
         {
             if (startCapture)
             {
-                mediaPanel.CaptureGif();
+                m_MediaPanel.CaptureGif();
                 startCapture = false;
             }
         }
@@ -124,25 +124,25 @@ namespace WizardsCode.DevLogger
                     case 0:
                         if (m_DevLogEntries != null && m_ScreenCaptures != null)
                         {
-                            entryPanel.ScreenCaptures = m_ScreenCaptures;
-                            entryPanel.entries = m_DevLogEntries;
-                            entryPanel.OnGUI();
+                            m_EntryPanel.ScreenCaptures = m_ScreenCaptures;
+                            m_EntryPanel.entries = m_DevLogEntries;
+                            m_EntryPanel.OnGUI();
 
                             EditorGUILayout.Space();
 
-                            mediaPanel.CaptureCamera = m_CaptureCamera;
-                            mediaPanel.ScreenCaptures = m_ScreenCaptures;
-                            mediaPanel.OnGUI();
+                            m_MediaPanel.CaptureCamera = m_CaptureCamera;
+                            m_MediaPanel.ScreenCaptures = m_ScreenCaptures;
+                            m_MediaPanel.OnGUI();
 
                             EditorGUILayout.Space();
 
-                            twitterPanel.screenCaptures = m_ScreenCaptures;
-                            twitterPanel.OnGUI();
+                            m_TwitterPanel.screenCaptures = m_ScreenCaptures;
+                            m_TwitterPanel.OnGUI();
 
                             EditorGUILayout.Space();
 
-                            discordPanel.screenCaptures = m_ScreenCaptures;
-                            discordPanel.OnGUI();
+                            m_DiscordPanel.screenCaptures = m_ScreenCaptures;
+                            m_DiscordPanel.OnGUI();
                         }
                         else
                         {
@@ -150,17 +150,17 @@ namespace WizardsCode.DevLogger
                         }
                         break;
                     case 1:
-                        if (devLogPanel == null) devLogPanel = new DevLogPanel(m_DevLogEntries);
+                        if (m_DevLogPanel == null) m_DevLogPanel = new DevLogPanel(m_DevLogEntries);
 
-                        devLogPanel.ScreenCaptures = m_ScreenCaptures;
-                        devLogPanel.entries = m_DevLogEntries;
-                        devLogPanel.OnGUI();
+                        m_DevLogPanel.ScreenCaptures = m_ScreenCaptures;
+                        m_DevLogPanel.entries = m_DevLogEntries;
+                        m_DevLogPanel.OnGUI();
                         break;
                     case 2:
                         m_SchedulingPanel.OnGUI();
                         break;
                     case 3:
-                        gitPanel.OnGUI();
+                        m_GitPanel.OnGUI();
                         break;
                     case 4:
                         SettingsTabUI();
