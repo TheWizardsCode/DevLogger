@@ -91,7 +91,7 @@ namespace WizardsCode.DevLogger
             for (int i = 0; i < items.Count; i++)
             {
                 MetaDataItem item = items.GetItem(i);
-                item.isSelected = EditorGUILayout.ToggleLeft(item.name, item.isSelected);
+                item.IsSelected = EditorGUILayout.ToggleLeft(item.name, item.IsSelected);
             }
 
             EditorGUILayout.BeginHorizontal();

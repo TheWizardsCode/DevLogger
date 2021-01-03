@@ -9,6 +9,8 @@ namespace WizardsCode.DevLogger
 {
     public class EntryPanelSettings
     {
+        private static MetaDataItems m_CachedMetaData;
+
         public static int MetaDataItemCount
         {
             get { return GetSuggestedMetaDataItems().Count; }
@@ -16,22 +18,30 @@ namespace WizardsCode.DevLogger
 
         public static MetaDataItems GetSuggestedMetaDataItems()
         {
-            //TODO cache meta data item list
-            string json = EditorPrefs.GetString("suggestedMetaData_" + Application.productName, "{}");
-
-            MetaDataItems results = JsonUtility.FromJson<MetaDataItems>(json);
-            if (results == null || results.Count == 0)
+            if (m_CachedMetaData == null)
             {
-                results = new MetaDataItems();
-                results.Add(new MetaDataItem("#MadeWithUnity", false));
-                SetSuggestedMetaDataItems(results);
+                string json = EditorPrefs.GetString("suggestedMetaData_" + Application.productName, "{}");
+
+                m_CachedMetaData = JsonUtility.FromJson<MetaDataItems>(json);
+                if (m_CachedMetaData == null || m_CachedMetaData.Count == 0)
+                {
+                    m_CachedMetaData = new MetaDataItems();
+                    m_CachedMetaData.Add(new MetaDataItem("#MadeWithUnity", false));
+                    SetSuggestedMetaDataItems(m_CachedMetaData);
+                }
             }
-            return results;
+            return m_CachedMetaData;
         }
 
         public static void SetSuggestedMetaDataItems(MetaDataItems data)
         {
+            m_CachedMetaData = data;
             EditorPrefs.SetString("suggestedMetaData_" + Application.productName, JsonUtility.ToJson(data)) ;
+        }
+
+        internal static void SaveSuggestedMetaDataItems()
+        {
+            SetSuggestedMetaDataItems(m_CachedMetaData);
         }
 
         public static void AddSuggestedMetaDataItem(MetaDataItem item)
@@ -50,12 +60,23 @@ namespace WizardsCode.DevLogger
     [Serializable]
     public class MetaDataItem {
         public string name;
-        public bool isSelected;
+        bool m_IsSelected;
+
+        public bool IsSelected
+        {
+            get { return m_IsSelected; }
+            set { if (m_IsSelected != value)
+                {
+                    m_IsSelected = value;
+                    EntryPanelSettings.SaveSuggestedMetaDataItems();
+                } 
+            }
+        }
 
         public MetaDataItem(string name, bool isSelected)
         {
             this.name = name;
-            this.isSelected = isSelected;
+            this.m_IsSelected = isSelected;
         }
     }
 
@@ -75,40 +96,5 @@ namespace WizardsCode.DevLogger
         {
             return items[index];
         }
-
-        /**
-        public static MetaDataItems FromJson(string json)
-        {
-            //TODO this manual parsing of JSON is crazy, surely there is a better way in Unity by now? See JsonUtility
-            MetaDataItems result = new MetaDataItems();
-            string parseableJson = json.Substring(json.IndexOf('[') + 1, json.LastIndexOf(']') - json.IndexOf('[') - 1);
-            string[] items = parseableJson.Split(',');
-            for (int i = 0; i < items.Length; i++)
-            {
-                result.Add()
-            }
-
-            return result;
-        }
-
-        public string ToJson()
-        {
-            //TODO this manual creation of JSON is crazy, surely there is a better way in Unity by now? See JsonUtility
-            StringBuilder json = new StringBuilder();
-            json.AppendLine("{");
-            json.AppendLine("\t\"items\" : [");
-            for (int i = 0; i < items.Length; i++)
-            {
-                json.Append(JsonUtility.ToJson(items[i]));
-                if (i < items.Length - 1)
-                {
-                    json.AppendLine(",");
-                }
-            }
-            json.AppendLine("]");
-            json.AppendLine("}");
-            return json.ToString();
-        }
-        */
     }
 }
