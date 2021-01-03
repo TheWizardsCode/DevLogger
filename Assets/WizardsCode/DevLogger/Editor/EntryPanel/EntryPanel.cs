@@ -37,7 +37,7 @@ namespace WizardsCode.DevLogger
 
         public void OnGUI()
         {
-            windowScrollPos = EditorGUILayout.BeginScrollView(windowScrollPos);
+            //windowScrollPos = EditorGUILayout.BeginScrollView(windowScrollPos);
 
             Skin.StartSection("Log Entry", false);
             LogEntryGUI();
@@ -51,7 +51,7 @@ namespace WizardsCode.DevLogger
             PostingGUI();
             Skin.EndSection();
 
-            EditorGUILayout.EndScrollView();
+            //EditorGUILayout.EndScrollView();
         }
 
         /// <summary>

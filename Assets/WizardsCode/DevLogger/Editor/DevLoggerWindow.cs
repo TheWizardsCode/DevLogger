@@ -130,12 +130,6 @@ namespace WizardsCode.DevLogger
 
                             EditorGUILayout.Space();
 
-                            m_MediaPanel.CaptureCamera = m_CaptureCamera;
-                            m_MediaPanel.ScreenCaptures = m_ScreenCaptures;
-                            m_MediaPanel.OnGUI();
-
-                            EditorGUILayout.Space();
-
                             m_TwitterPanel.screenCaptures = m_ScreenCaptures;
                             m_TwitterPanel.OnGUI();
 
@@ -143,6 +137,12 @@ namespace WizardsCode.DevLogger
 
                             m_DiscordPanel.screenCaptures = m_ScreenCaptures;
                             m_DiscordPanel.OnGUI();
+
+                            EditorGUILayout.Space();
+
+                            m_MediaPanel.CaptureCamera = m_CaptureCamera;
+                            m_MediaPanel.ScreenCaptures = m_ScreenCaptures;
+                            m_MediaPanel.OnGUI();
                         }
                         else
                         {
