@@ -60,10 +60,10 @@ namespace WizardsCode.DevLogger
             get { return "DevLogOrganizeByScene_" + Application.productName; }
         }
 
-        public static string DevLogScriptableObjectPathKey
+        static string DevLogScriptableObjectPathKey
         { get { return "DevLogScriptableObjectPath_" + Application.productName; } }
 
-        public static string ScreenCaptureScriptableObjectPathKey
+        static string ScreenCaptureScriptableObjectPathKey
         {
             get { return "DevLogScreenCapturesObjectPath_" + Application.productName; }
         }
