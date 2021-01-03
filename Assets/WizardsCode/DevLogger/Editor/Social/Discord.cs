@@ -20,7 +20,7 @@ namespace WizardsCode.DevLogger
             PostMessage(new Message(username, entry));
         }
 
-        internal static void PostMessage(Message message)
+        private static void PostMessage(Message message)
         {
             string url = DiscordSettings.WebHookURL;
 

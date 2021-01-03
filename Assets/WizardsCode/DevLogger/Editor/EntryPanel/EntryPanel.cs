@@ -47,10 +47,6 @@ namespace WizardsCode.DevLogger
             MetaDataGUI();
             Skin.EndSection();
 
-            Skin.StartSection("Posting", false);
-            PostingGUI();
-            Skin.EndSection();
-
             //EditorGUILayout.EndScrollView();
         }
 
@@ -112,7 +108,7 @@ namespace WizardsCode.DevLogger
             EditorGUILayout.EndHorizontal();
         }
 
-        private void PostingGUI() {
+        internal void DevLogPostingGUI() {
             if (!string.IsNullOrEmpty(shortText))
             {
                 EditorGUILayout.BeginHorizontal();
@@ -126,20 +122,10 @@ namespace WizardsCode.DevLogger
                         break;
                     }
                 }
-
-                if (hasSelection)
+                
+                if (GUILayout.Button("Post Devlog Only"))
                 {
-                    if (GUILayout.Button("Devlog (no Tweet) with selected image and text"))
-                    {
-                        AppendDevlog(true, false);
-                    }
-                }
-                else
-                {
-                    if (GUILayout.Button("DevLog (no Tweet) with text only"))
-                    {
-                        AppendDevlog(false, false);
-                    }
+                    AppendDevlog();
                 }
                 EditorGUILayout.EndHorizontal();
             }
@@ -149,7 +135,13 @@ namespace WizardsCode.DevLogger
             }
         }
 
-        public void AppendDevlog(bool withImage, bool withTweet)
+        /// <summary>
+        /// Append a devlog entry.
+        /// </summary>
+        /// <param name="withTweet">If true record that the entry was tweeted at the current time.</param>
+        /// <param name="withDiscord">If true record that the entry was posted to discord at the current time.</param>
+        /// <returns></returns>
+        public DevLogEntry AppendDevlog(bool withTweet = false, bool withDiscord = false)
         {
             DevLogEntry entry = ScriptableObject.CreateInstance<DevLogEntry>();
             entry.name = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString();
@@ -177,28 +169,28 @@ namespace WizardsCode.DevLogger
             {
                 entry.tweeted = true;
                 entry.lastTweetFileTime = DateTime.Now.ToFileTimeUtc();
-                text.Append("\n\n[This DevLog entry was Tweeted at " + entry.lastTweetPrettyTime + ".]");
+                text.Append("\n\n[This DevLog entry was last Tweeted at " + entry.lastTweetPrettyTime + ".]");
             }
 
-            if (withImage)
+            if (withDiscord)
             {
-                List<string> mediaFilePaths = new List<string>();
-                for (int i = 0; i < ScreenCaptures.Count; i++)
+                entry.discordPost = true;
+                entry.lastDiscordPostFileTime = DateTime.Now.ToFileTimeUtc();
+                text.Append("\n\n[This DevLog entry was last posted to Discord at " + entry.lastTweetPrettyTime + ".]");
+            }
+
+            List<string> mediaFilePaths = new List<string>();
+            for (int i = 0; i < ScreenCaptures.Count; i++)
+            {
+                if (ScreenCaptures.captures[i].IsSelected)
                 {
-                    if (ScreenCaptures.captures[i].IsSelected)
-                    {
-                        DevLogScreenCapture capture = ScreenCaptures.captures[i];
-                        entry.captures.Add(capture);
-                        ScreenCaptures.captures[i].IsSelected = false;
-                    }
+                    DevLogScreenCapture capture = ScreenCaptures.captures[i];
+                    entry.captures.Add(capture);
+                    ScreenCaptures.captures[i].IsSelected = false;
                 }
+            }
 
-                entry.longDescription = detailText;
-            }
-            else
-            {
-                entry.longDescription = detailText;
-            }
+            entry.longDescription = detailText;
 
             entries.AddEntry(entry);
             AssetDatabase.AddObjectToAsset(entry, entries);
@@ -207,6 +199,8 @@ namespace WizardsCode.DevLogger
 
             shortText = "";
             detailText = "";
+
+            return entry;
         }
     }
 }

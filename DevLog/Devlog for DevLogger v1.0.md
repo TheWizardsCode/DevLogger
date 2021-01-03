@@ -208,3 +208,74 @@ System.IO.DirectoryInfo.Create () (at <9577ac7a62ef43179789031239ba8798>:0)
 
 ![Screenshot](F:\Unity Projects\WizardsCode\DevLogger\DevLog\DevLogger\SampleScene\UnityEditor.SceneHierarchyWindow_DevLogger_SampleScene_v1.0_132540287900000000.png)
 
+## Sunday 3 January 2021, 02:30
+
+Testing posting to Discord
+
+![Screenshot](E:\Unity Projects\WizardsCode\DevLogger\DevLog\DevLogger\In_Game_Footage_DevLogger_SampleScene_v1.0_132541314270000000.gif)
+
+## Sunday 3 January 2021, 02:53
+
+Testing post to devlog only (no image)
+
+## Sunday 3 January 2021, 02:53
+
+Testing post to devlog only with image
+
+![Screenshot](E:\Unity Projects\WizardsCode\DevLogger\DevLog\DevLogger\In_Game_Footage_DevLogger_SampleScene_v1.0_132541314270000000.gif)
+
+## Sunday 3 January 2021, 03:35
+
+Devlog no image
+
+## Sunday 3 January 2021, 03:35
+
+Devlog with image
+
+![Screenshot](E:\Unity Projects\WizardsCode\DevLogger\DevLog\DevLogger\In_Game_Footage_DevLogger_SampleScene_v1.0_132541314270000000.gif)
+
+## Sunday 3 January 2021, 03:43
+
+test discord from devlog
+
+## Sunday 3 January 2021, 03:43
+
+discord and devlog with image
+
+## Sunday 3 January 2021, 03:44
+
+with image to discord
+
+## Sunday 3 January 2021, 03:45
+
+devlog only
+
+## Sunday 3 January 2021, 03:48
+
+test with image
+
+![Screenshot](E:\Unity Projects\WizardsCode\DevLogger\DevLog\DevLogger\In_Game_Footage_DevLogger_SampleScene_v1.0_132541314270000000.gif)
+
+## Sunday 3 January 2021, 03:48
+
+test with image and discord
+
+## Sunday 3 January 2021, 03:48
+
+test with image and discord 
+
+![Screenshot](E:\Unity Projects\WizardsCode\DevLogger\DevLog\DevLogger\In_Game_Footage_DevLogger_SampleScene_v1.0_132541314270000000.gif)
+
+## Sunday 3 January 2021, 03:55
+
+test to all three with image
+
+![Screenshot](E:\Unity Projects\WizardsCode\DevLogger\DevLog\DevLogger\In_Game_Footage_DevLogger_SampleScene_v1.0_132541314270000000.gif)
+
+## Sunday 3 January 2021, 03:56
+
+this time post to all
+
+
+![Screenshot](E:\Unity Projects\WizardsCode\DevLogger\DevLog\DevLogger\In_Game_Footage_DevLogger_SampleScene_v1.0_132541314270000000.gif)
+

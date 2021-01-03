@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using WizardsCode.EditorUtils;
@@ -50,8 +51,8 @@ namespace WizardsCode.DevLogger
                 m_CaptureCamera);
 
             m_EntryPanel = new EntryPanel(m_DevLogEntries, m_ScreenCaptures);
-            m_TwitterPanel = new TwitterPanel(m_EntryPanel);
-            m_DiscordPanel = new DiscordPanel(m_EntryPanel);
+            m_TwitterPanel = new TwitterPanel();
+            m_DiscordPanel = new DiscordPanel();
             m_SchedulingPanel = new SchedulingPanel(m_DevLogEntries);
             m_GitPanel = new GitPanel(m_EntryPanel);
         }
@@ -122,21 +123,39 @@ namespace WizardsCode.DevLogger
                 switch (selectedTab)
                 {
                     case 0:
-                        if (m_DevLogEntries != null && m_ScreenCaptures != null)
+                        if (m_DevLogEntries != null && m_ScreenCaptures != null) // We are correctly configured
                         {
                             m_EntryPanel.ScreenCaptures = m_ScreenCaptures;
                             m_EntryPanel.entries = m_DevLogEntries;
                             m_EntryPanel.OnGUI();
 
-                            EditorGUILayout.Space();
+                            Skin.StartSection("Posting", false);
 
-                            m_TwitterPanel.screenCaptures = m_ScreenCaptures;
-                            m_TwitterPanel.OnGUI();
+                            m_EntryPanel.DevLogPostingGUI();
 
-                            EditorGUILayout.Space();
+                            bool canPostToAll;
+                            if (!string.IsNullOrEmpty(m_EntryPanel.shortText))
+                            {
+                                canPostToAll = DiscordPostingGUI();
 
-                            m_DiscordPanel.screenCaptures = m_ScreenCaptures;
-                            m_DiscordPanel.OnGUI();
+                                if (Twitter.IsAuthenticated)
+                                {
+                                    canPostToAll &= TwitterPostingGUI();
+                                } else
+                                {
+                                    canPostToAll = false;
+                                }
+
+                                if (canPostToAll)
+                                {
+                                    if (GUILayout.Button("Post to All"))
+                                    {
+                                        DevLogEntry entry = PostToDevLogAndTwitter();
+                                        Discord.PostEntry(entry);
+                                    }
+                                }
+                            }
+                            Skin.EndSection();
 
                             EditorGUILayout.Space();
 
@@ -170,6 +189,118 @@ namespace WizardsCode.DevLogger
             {
                 // this is a workaround. An exception is thrown when a new scene is loaded.
                 Repaint();
+            }
+        }
+
+        /// <summary>
+        /// Display GUI for posting to DevLog and Discord.
+        /// </summary>
+        /// <returns>True if it is possible to post to Discord.</returns>
+        private bool DiscordPostingGUI()
+        {
+            if (!string.IsNullOrEmpty(m_EntryPanel.shortText))
+            {
+                if (GUILayout.Button("Post to Devlog and Discord"))
+                {
+                    Message message;
+                    if (string.IsNullOrEmpty(m_EntryPanel.detailText))
+                    {
+                        message = new Message(DiscordSettings.Username, m_EntryPanel.shortText + m_EntryPanel.GetSelectedMetaData(false), m_ScreenCaptures);
+                    }
+                    else
+                    {
+                        message = new Message(DiscordSettings.Username, m_EntryPanel.shortText + m_EntryPanel.GetSelectedMetaData(false), m_EntryPanel.detailText, m_EntryPanel.ScreenCaptures);
+                    }
+
+                    DevLogEntry entry = m_EntryPanel.AppendDevlog(false, true);
+                    Discord.PostEntry(entry);
+                }
+                return true;
+            } else
+            {
+                return false;
+            }
+        }
+
+        private string TweetText
+        {
+            get { return m_EntryPanel.shortText + m_EntryPanel.GetSelectedMetaData(); }
+        }
+
+        /// <summary>
+        /// Display the GUI for posting to DevLog pluse Twitter.
+        /// </summary>
+        /// <returns>True if it is possible to post to Twitter.</returns>
+        private bool TwitterPostingGUI()
+        {
+            if (!string.IsNullOrEmpty(TweetText) && TweetText.Length <= 280)
+            {
+                if (GUILayout.Button("Post DevLog and Tweet"))
+                {
+                    PostToDevLogAndTwitter();
+                    EditorGUILayout.EndHorizontal();
+                }
+                return true;
+            } else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Post to the DevLog and Twitter.
+        /// </summary>
+        /// <returns>The new DevLog entry.</returns>
+        private DevLogEntry PostToDevLogAndTwitter()
+        {
+            string m_StatusText = "";
+            bool isTweeted = false;
+
+            if (m_EntryPanel.ScreenCaptures != null && m_EntryPanel.ScreenCaptures.Count > 0) // Imges to post
+            {
+                List<string> mediaFilePaths = new List<string>();
+                //TODO only allowed 4 still or 1 animated GIF
+                for (int i = 0; i < m_EntryPanel.ScreenCaptures.Count; i++)
+                {
+                    if (m_EntryPanel.ScreenCaptures.captures[i].IsSelected)
+                    {
+                        DevLogScreenCapture capture = m_EntryPanel.ScreenCaptures.captures[i];
+                        mediaFilePaths.Add(capture.ImagePath);
+                    }
+                }
+
+                if (Twitter.PublishTweetWithMedia(TweetText, mediaFilePaths, out string response))
+                {
+                    m_StatusText = "Tweet with image(s) sent succesfully";
+                    isTweeted = true;
+                }
+                else
+                {
+                    Debug.LogError(response);
+                    m_StatusText = response;
+                }
+            }
+            else
+            { // No Images to post
+                if (Twitter.PublishTweet(TweetText, out string response))
+                {
+                    m_StatusText = "Tweet sent succesfully";
+                    isTweeted = true;
+                }
+                else
+                {
+                    Debug.LogError(response);
+                }
+            }
+
+            EditorGUILayout.LabelField(m_StatusText);
+
+            if (isTweeted)
+            {
+                return m_EntryPanel.AppendDevlog(true);
+            } else
+            {
+                return m_EntryPanel.AppendDevlog();
             }
         }
 
@@ -259,6 +390,19 @@ namespace WizardsCode.DevLogger
             EditorGUILayout.EndHorizontal();
             Skin.EndSection();
 
+            m_DiscordPanel.OnSettingsGUI();
+            
+            m_TwitterPanel.OnSettingsGUI();
+
+            DevHelpersGUI();
+
+            EditorGUILayout.LabelField("Welcome to " + Application.productName + " v" + Application.version);
+
+            Skin.EndSection();
+        }
+
+        private static void DevHelpersGUI()
+        {
             Skin.StartSection("Helpers (Dev Only)", false);
 
             EditorGUILayout.BeginHorizontal();
@@ -266,7 +410,8 @@ namespace WizardsCode.DevLogger
             {
                 if (EditorUtility.DisplayDialog("Reset Twitter OAuth Tokens?",
                     "Do you also want to clear the Twitter access tokens?",
-                    "Yes", "Do Not Clear Them")) {
+                    "Yes", "Do Not Clear Them"))
+                {
                     TwitterSettings.ClearAccessTokens();
                 }
             }
@@ -285,10 +430,6 @@ namespace WizardsCode.DevLogger
                 }
             }
             EditorGUILayout.EndHorizontal();
-
-            EditorGUILayout.LabelField("Welcome to " + Application.productName + " v" + Application.version);
-
-            Skin.EndSection();
         }
         #endregion
 
