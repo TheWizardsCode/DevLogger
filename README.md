@@ -9,7 +9,7 @@ DevLogger is a Unity Plugin that helps you keep a DevLog while working on your p
 See [below](#using-devlogger) for usage guide
 
   * Capture in-game screenshots
-  * Capture in-game animated GIFs
+  * Capture in-game animated GIFs (HDRP and URP not supported)
   * Capture in-editor windows image (scene view, hierarchy window etc.)
   * Post timed notes, with or without images, to a markdown DevLog
   * Manage hashtags
