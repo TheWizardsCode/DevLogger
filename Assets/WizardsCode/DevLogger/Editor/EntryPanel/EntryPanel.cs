@@ -34,22 +34,6 @@ namespace WizardsCode.DevLogger
         bool m_IsAssetManagerPresent = false;
         float m_TimeOfNextCheckForAssetManager = 0;
 
-        public bool AssetManagerCreditGeneratorIsPresent { 
-            get
-            {
-                if (m_TimeOfNextCheckForAssetManager < System.DateTime.Now.Ticks)
-                {
-                    var type = (from assembly in AppDomain.CurrentDomain.GetAssemblies()
-                                from t in assembly.GetTypes()
-                                where t.Name == "DoubTech.AssetManager.Api.Credits.CreditGenerator"
-                                select t);
-                    m_IsAssetManagerPresent = type != null;
-                    m_TimeOfNextCheckForAssetManager = System.DateTime.Now.Ticks + (2 * TimeSpan.TicksPerSecond);
-                }
-                return m_IsAssetManagerPresent;
-            }
-        }
-
         internal void Populate(string hash, string description)
         {
             shortText = description;
@@ -131,15 +115,14 @@ namespace WizardsCode.DevLogger
             EditorGUILayout.EndVertical();
             EditorGUILayout.EndHorizontal();
 
-            if (AssetManagerCreditGeneratorIsPresent)
+#if DOUBTECH_ASSET_MANAGER
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("Add Credits from Asset Manager"))
             {
-                EditorGUILayout.BeginHorizontal();
-                if (GUILayout.Button("Add Credits from Asset Manager"))
-                {
-                    detailText += new DoubTech.AssetManager.Api.Credits.CreditGenerator().GenerateCredits();
-                }
-                EditorGUILayout.EndHorizontal();
+                detailText += new DoubTech.AssetManager.Api.Credits.CreditGenerator().GenerateCredits();
             }
+            EditorGUILayout.EndHorizontal();
+#endif
         }
 
         internal void DevLogPostingGUI() {
