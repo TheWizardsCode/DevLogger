@@ -100,6 +100,7 @@ namespace WizardsCode.DevLogger
 
         #region GUI
 
+        /* Removed as it doesn't have the error checking available in the main windoe.
         [MenuItem("Tools/Wizards Code/Capture GIF %#`")]
         static void CaptureGif()
         {
@@ -111,6 +112,8 @@ namespace WizardsCode.DevLogger
         {
             return Application.isPlaying;
         }
+        */
+
         private void OnInspectorUpdate()
         {
             if (startCapture)

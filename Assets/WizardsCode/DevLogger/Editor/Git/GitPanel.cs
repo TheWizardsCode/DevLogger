@@ -56,16 +56,17 @@ namespace WizardsCode.Git
                 for (int i = 0; i < logEntries.Count; i++)
                 {
                     Skin.StartHelpBox();
-                    EditorGUILayout.BeginHorizontal();
-                    string text = logEntries[i].hash + "\n" + logEntries[i].description;
-                    EditorGUILayout.SelectableLabel(text, Skin.infoLabelStyle, GUILayout.ExpandWidth(true));
-                    if (GUILayout.Button("DevLog", GUILayout.Width(60)))
+                    EditorGUILayout.BeginVertical();
+                    //string text = logEntries[i].hash + "\n" + logEntries[i].description;
+                    string text = logEntries[i].description;
+                    EditorGUILayout.SelectableLabel(text, Skin.infoLabelStyle, GUILayout.ExpandWidth(false));
+                    if (GUILayout.Button("Create DevLog Entry"))
                     {
                         entryPanel.Populate(logEntries[i].hash, logEntries[i].description);
                         DevLoggerWindow window = EditorWindow.GetWindow(typeof(DevLoggerWindow)) as DevLoggerWindow;
                         window.SwitchToEntryTab();
                     }
-                    EditorGUILayout.EndHorizontal();
+                    EditorGUILayout.EndVertical();
                     Skin.EndHelpBox();
                 }
 
