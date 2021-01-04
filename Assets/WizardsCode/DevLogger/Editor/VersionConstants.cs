@@ -18,16 +18,16 @@ namespace org.WizardsCode.DevLogger.Editor
 		/// <summary>
 		/// The current GIT commit hash this package was published on.
 		/// </summary>
-		public const string GIT_COMMIT = "0293537a037cbcedb1129917ef56eacd94391b74";
+		public const string GIT_COMMIT = "5752a9046f0a3023a6a88d0b4dc2134b37cb76c7";
 
 		/// <summary>
 		/// The UTC human-readable date this package was published at.
 		/// </summary>
-		public const string PUBLISH_DATE = "Tuesday, December 29, 2020";
+		public const string PUBLISH_DATE = "Monday, January 4, 2021";
 
 		/// <summary>
 		/// The UTC time this package was published at.
 		/// </summary>
-		public const string PUBLISH_TIME = "12/29/2020 08:14:57";
+		public const string PUBLISH_TIME = "01/04/2021 05:45:03";
 	}
 }

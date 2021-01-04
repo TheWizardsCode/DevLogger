@@ -155,9 +155,10 @@ If you want to post to Discord using DevLogger you will need to [setup a Discord
 
 We use [PackageTools](https://github.com/3dtbd/unity-package-tools) to create our releases. To build a release:
 
-  0. Alongside your working repository checkout the `release/stable` branch of this repo
-  1. Update (at least) the version number in the `Release Candidate PackageManifestConfig` in the root of the `Assets` folder
-  2. Click `Generate VersionConstants.cs` in the inspector
-  3. Commit the new constants file to Git
-  4. Click `Export Package Source`
-  5. Commit and push the changes in your release project to GitHub
+  0. Alongside your working repository checkout the `release/stable` branch of this repo into a directory called `DevLogger-Release` using `git clone git@github.com:TheWizardsCode/DevLogger.git DevLogger-Release`
+  1. Update the version number in the `Release Candidate PackageManifestConfig` to match that in `DevTest PackageManifestConfig` (both are in the root of the `Assets` folder)
+  2. Increase the version number in the `DevTest PackageManifestConfig` to represent the next release number (not this release)
+  3. Click `Generate VersionConstants.cs` in the inspector
+  4. Commit the new constants file to Git
+  5. Click `Export Package Source` in the inspector for the `Release Candidate PackageManifestConfig`
+  6. Commit and push the changes in `DevLogger-Release` to GitHub
