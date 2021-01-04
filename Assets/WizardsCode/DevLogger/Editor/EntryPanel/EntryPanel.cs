@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using UnityEditor;
 using UnityEngine;
@@ -15,6 +16,7 @@ namespace WizardsCode.DevLogger
     {
         [SerializeField] Vector2 windowScrollPos = Vector2.zero;
         [SerializeField] internal string shortText = "";
+        private Vector2 detailScrollPosition;
         [SerializeField] internal string detailText = "";
         [SerializeField] bool isSocial = false;
         [SerializeField] string gitCommit = "";
@@ -28,6 +30,25 @@ namespace WizardsCode.DevLogger
 
         internal DevLogEntries entries { get; set; }
         internal DevLogScreenCaptureCollection ScreenCaptures { get; set; }
+
+        bool m_IsAssetManagerPresent = false;
+        float m_TimeOfNextCheckForAssetManager = 0;
+
+        public bool AssetManagerCreditGeneratorIsPresent { 
+            get
+            {
+                if (m_TimeOfNextCheckForAssetManager < System.DateTime.Now.Ticks)
+                {
+                    var type = (from assembly in AppDomain.CurrentDomain.GetAssemblies()
+                                from t in assembly.GetTypes()
+                                where t.Name == "DoubTech.AssetManager.Api.Credits.CreditGenerator"
+                                select t);
+                    m_IsAssetManagerPresent = type != null;
+                    m_TimeOfNextCheckForAssetManager = System.DateTime.Now.Ticks + (2 * TimeSpan.TicksPerSecond);
+                }
+                return m_IsAssetManagerPresent;
+            }
+        }
 
         internal void Populate(string hash, string description)
         {
@@ -76,7 +97,10 @@ namespace WizardsCode.DevLogger
             shortText = EditorGUILayout.TextArea(shortText, GUILayout.Height(35));
 
             EditorGUILayout.LabelField("Long Entry (optional)");
-            detailText = EditorGUILayout.TextArea(detailText, GUILayout.Height(100));
+            detailScrollPosition = GUILayout.BeginScrollView(detailScrollPosition, GUILayout.MaxHeight(300), GUILayout.ExpandHeight(false));
+            detailText = EditorGUILayout.TextArea(detailText, GUILayout.ExpandHeight(true));
+            GUILayout.EndScrollView();
+
         }
 
         private void MetaDataGUI() {
@@ -100,12 +124,21 @@ namespace WizardsCode.DevLogger
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.EndVertical();
 
-
             EditorGUILayout.BeginVertical();
             isSocial = EditorGUILayout.Toggle("Social?", isSocial);
             gitCommit = EditorGUILayout.TextField("Git Commit", gitCommit);
             EditorGUILayout.EndVertical();
             EditorGUILayout.EndHorizontal();
+
+            if (AssetManagerCreditGeneratorIsPresent)
+            {
+                EditorGUILayout.BeginHorizontal();
+                if (GUILayout.Button("Add Credits from Asset Manager"))
+                {
+                    detailText += new DoubTech.AssetManager.Api.Credits.CreditGenerator().GenerateCredits();
+                }
+                EditorGUILayout.EndHorizontal();
+            }
         }
 
         internal void DevLogPostingGUI() {
