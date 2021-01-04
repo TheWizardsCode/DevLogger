@@ -366,13 +366,6 @@ namespace WizardsCode.DevLogger
         ///```
         /// </summary>
         /// <param name="windowName">The name of the window to be captured, for example:
-        /// WizardsCode.DevLogger.DevLoggerWindow
-        /// UnityEditor.AssetStoreWindow
-        /// UnityEditor.TimelineWindow
-        /// UnityEditor.AnimationWindow
-        /// UnityEditor.Graphs.AnimatorControllerTool
-        /// UnityEditor.NavMeshEditorWindow
-        /// UnityEditor.LightingWindow
         /// </param>
         public void CaptureWindowScreenshot(string windowName)
         {
@@ -407,6 +400,12 @@ namespace WizardsCode.DevLogger
                 int height = (int)window.position.height;
                 Vector2 position = window.position.position;
                 position.y += 18;
+
+                if (windowName.EndsWith("SceneView") || windowName.EndsWith("GameView"))
+                {
+                    position.y += 18;
+                    height -= 18;
+                }
 
                 Color[] pixels = UnityEditorInternal.InternalEditorUtility.ReadScreenPixel(position, width, height);
 
