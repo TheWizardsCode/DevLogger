@@ -25,8 +25,7 @@ namespace WizardsCode.DevLogger
 
         public static bool IsConfigured
         {
-            get { return EditorPrefs.GetBool(EDITOR_PREFS_DISCORD_IS_CONFIGURED + Application.productName); }
-            set { EditorPrefs.SetBool(EDITOR_PREFS_DISCORD_IS_CONFIGURED + Application.productName, value); }
+            get { return !string.IsNullOrEmpty(WebHookURL) && !string.IsNullOrEmpty(Username); }
         }
 
         public static void Reset()

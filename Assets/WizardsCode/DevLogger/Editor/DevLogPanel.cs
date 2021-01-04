@@ -31,7 +31,7 @@ namespace WizardsCode.DevLogger
             }
             else
             {
-                if (GUILayout.Button("View Devlog", GUILayout.Height(50)))
+                if (GUILayout.Button("View Devlog", GUILayout.Height(30)))
                 {
                     string filepath = DevLogMarkdown.GetAbsoluteProjectDirectory() + DevLogMarkdown.GetRelativeCurrentFilePath();
                     System.Diagnostics.Process.Start(filepath);
@@ -40,7 +40,7 @@ namespace WizardsCode.DevLogger
                 if (logList.index >= 0)
                 {
                     string response;
-                    if (GUILayout.Button("Tweet Selected Entry", GUILayout.Height(50)))
+                    if (GUILayout.Button("Tweet Selected Entry", GUILayout.Height(30)))
                     {
                         if (Twitter.PublishTweet(entries.GetEntry(logList.index), out response)) {
                             entries.GetEntry(logList.index).tweeted = true;
@@ -52,11 +52,14 @@ namespace WizardsCode.DevLogger
                         }
                     }
 
-                    if (GUILayout.Button("Post to Discord", GUILayout.Height(50)))
+                    if (DiscordSettings.IsConfigured)
                     {
-                        Discord.PostEntry(entries.GetEntry(logList.index));
-                        entries.GetEntry(logList.index).discordPost = true;
-                        entries.GetEntry(logList.index).lastDiscordPostFileTime = DateTime.Now.ToFileTimeUtc();
+                        if (GUILayout.Button("Post selected to Discord", GUILayout.Height(30)))
+                        {
+                            Discord.PostEntry(entries.GetEntry(logList.index));
+                            entries.GetEntry(logList.index).discordPost = true;
+                            entries.GetEntry(logList.index).lastDiscordPostFileTime = DateTime.Now.ToFileTimeUtc();
+                        }
                     }
                 }
 

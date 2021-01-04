@@ -24,18 +24,11 @@ namespace WizardsCode.DevLogger
             showDiscordSettings = EditorGUILayout.Foldout(showDiscordSettings, "Discord Settings", EditorStyles.foldout);
             if (showDiscordSettings)
             {
-                DiscordSettings.IsConfigured = false; 
-
                 EditorGUILayout.PrefixLabel("Bot Username");
                 DiscordSettings.Username = EditorGUILayout.TextField(DiscordSettings.Username);
 
                 EditorGUILayout.PrefixLabel("Webhook URL");
                 DiscordSettings.WebHookURL = EditorGUILayout.TextField(DiscordSettings.WebHookURL);
-
-                if (GUILayout.Button("Save"))
-                {
-                    DiscordSettings.IsConfigured = true;
-                }
             }
             EditorGUILayout.EndVertical();
         }

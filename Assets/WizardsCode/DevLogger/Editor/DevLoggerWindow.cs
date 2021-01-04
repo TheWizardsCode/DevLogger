@@ -211,6 +211,8 @@ namespace WizardsCode.DevLogger
         /// <returns>True if it is possible to post to Discord.</returns>
         private bool DiscordPostingGUI()
         {
+            if (!DiscordSettings.IsConfigured) return false;
+
             if (!string.IsNullOrEmpty(m_EntryPanel.shortText))
             {
                 if (GUILayout.Button("Post to Devlog and Discord"))
