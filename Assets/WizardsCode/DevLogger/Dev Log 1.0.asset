@@ -72,6 +72,30 @@ MonoBehaviour:
   lastTweetFileTime: 0
   discordPost: 0
   lastDiscordPostFileTime: 0
+--- !u!114 &-8539878676104687370
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa508ee653f80ef478ab4842c6bb02ba, type: 3}
+  m_Name: 1/3/2021 5:21 PM
+  m_EditorClassIdentifier: 
+  shortDescription: Test entry with no meta data selected
+  longDescription: 
+  metaData:
+  - '#MadeWithUnity'
+  - sada
+  captures: []
+  commitHash: 
+  isSocial: 0
+  tweeted: 0
+  lastTweetFileTime: 0
+  discordPost: 0
+  lastDiscordPostFileTime: 0
 --- !u!114 &-7752001344936606102
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -133,6 +157,30 @@ MonoBehaviour:
   m_Name: 1/3/2021 5:05 PM
   m_EditorClassIdentifier: 
   shortDescription: sdfsdfdsfsdfsdfsdfsdfsdfdsfsd
+  longDescription: 
+  metaData:
+  - '#MadeWithUnity'
+  - sada
+  captures: []
+  commitHash: 
+  isSocial: 0
+  tweeted: 0
+  lastTweetFileTime: 0
+  discordPost: 0
+  lastDiscordPostFileTime: 0
+--- !u!114 &-7179261818574514192
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa508ee653f80ef478ab4842c6bb02ba, type: 3}
+  m_Name: 1/3/2021 5:24 PM
+  m_EditorClassIdentifier: 
+  shortDescription: 'test no meta data '
   longDescription: 
   metaData:
   - '#MadeWithUnity'
@@ -243,6 +291,28 @@ MonoBehaviour:
   lastTweetFileTime: 0
   discordPost: 0
   lastDiscordPostFileTime: 0
+--- !u!114 &-5934235676688864518
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa508ee653f80ef478ab4842c6bb02ba, type: 3}
+  m_Name: 1/3/2021 5:27 PM
+  m_EditorClassIdentifier: 
+  shortDescription: no meta
+  longDescription: 
+  metaData: []
+  captures: []
+  commitHash: 
+  isSocial: 0
+  tweeted: 0
+  lastTweetFileTime: 0
+  discordPost: 0
+  lastDiscordPostFileTime: 0
 --- !u!114 &-5544639093327582114
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -266,6 +336,30 @@ MonoBehaviour:
   isSocial: 0
   tweeted: 1
   lastTweetFileTime: 132541965934206116
+  discordPost: 0
+  lastDiscordPostFileTime: 0
+--- !u!114 &-5406154585800634072
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa508ee653f80ef478ab4842c6bb02ba, type: 3}
+  m_Name: 1/3/2021 5:24 PM
+  m_EditorClassIdentifier: 
+  shortDescription: with meta
+  longDescription: 
+  metaData:
+  - '#MadeWithUnity'
+  - sada
+  captures: []
+  commitHash: 
+  isSocial: 0
+  tweeted: 0
+  lastTweetFileTime: 0
   discordPost: 0
   lastDiscordPostFileTime: 0
 --- !u!114 &-5215324920370625615
@@ -679,6 +773,30 @@ MonoBehaviour:
   lastTweetFileTime: 0
   discordPost: 0
   lastDiscordPostFileTime: 0
+--- !u!114 &-1852448633375459011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa508ee653f80ef478ab4842c6bb02ba, type: 3}
+  m_Name: 1/3/2021 5:21 PM
+  m_EditorClassIdentifier: 
+  shortDescription: Test entry with meta data selected
+  longDescription: 
+  metaData:
+  - '#MadeWithUnity'
+  - sada
+  captures: []
+  commitHash: 
+  isSocial: 0
+  tweeted: 0
+  lastTweetFileTime: 0
+  discordPost: 0
+  lastDiscordPostFileTime: 0
 --- !u!114 &-1646540566262498420
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -816,6 +934,13 @@ MonoBehaviour:
   - {fileID: -8714288593154610123}
   - {fileID: 2747685629216456448}
   - {fileID: -5544639093327582114}
+  - {fileID: -8539878676104687370}
+  - {fileID: -1852448633375459011}
+  - {fileID: -7179261818574514192}
+  - {fileID: -5406154585800634072}
+  - {fileID: -5934235676688864518}
+  - {fileID: 1038763712794697244}
+  - {fileID: 4774595125816025162}
 --- !u!114 &524376145620031258
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -840,6 +965,30 @@ MonoBehaviour:
   lastTweetFileTime: 0
   discordPost: 1
   lastDiscordPostFileTime: 132541478294564980
+--- !u!114 &1038763712794697244
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa508ee653f80ef478ab4842c6bb02ba, type: 3}
+  m_Name: 1/3/2021 5:27 PM
+  m_EditorClassIdentifier: 
+  shortDescription: with meta
+  longDescription: 
+  metaData:
+  - '#MadeWithUnity'
+  - sada
+  captures: []
+  commitHash: 
+  isSocial: 0
+  tweeted: 0
+  lastTweetFileTime: 0
+  discordPost: 0
+  lastDiscordPostFileTime: 0
 --- !u!114 &1936260637724336708
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -977,6 +1126,29 @@ MonoBehaviour:
   metaData:
   - '#MadeWithUnity'
   - sada
+  captures: []
+  commitHash: 
+  isSocial: 0
+  tweeted: 0
+  lastTweetFileTime: 0
+  discordPost: 0
+  lastDiscordPostFileTime: 0
+--- !u!114 &4774595125816025162
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa508ee653f80ef478ab4842c6bb02ba, type: 3}
+  m_Name: 1/3/2021 5:27 PM
+  m_EditorClassIdentifier: 
+  shortDescription: one mets
+  longDescription: 
+  metaData:
+  - '#MadeWithUnity'
   captures: []
   commitHash: 
   isSocial: 0

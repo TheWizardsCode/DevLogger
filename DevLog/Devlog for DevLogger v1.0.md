@@ -434,3 +434,31 @@ rerse rser easr
 
 ![Screenshot](E:\Unity Projects\WizardsCode\DevLogger\DevLog\DevLogger\In_Game_Footage_DevLogger_SampleScene_v1.0_132541314270000000.gif)
 
+## Sunday 3 January 2021, 17:21
+
+Test entry with no meta data selected
+
+## Sunday 3 January 2021, 17:21
+
+Test entry with meta data selected
+
+## Sunday 3 January 2021, 17:24
+
+test no meta data 
+
+## Sunday 3 January 2021, 17:24
+
+with meta
+
+## Sunday 3 January 2021, 17:27
+
+no meta
+
+## Sunday 3 January 2021, 17:27
+
+with meta
+
+## Sunday 3 January 2021, 17:27
+
+one mets
+

@@ -60,7 +60,7 @@ namespace WizardsCode.DevLogger
             MetaDataItems items = EntryPanelSettings.GetSuggestedMetaDataItems();
             for (int i = 0; i < items.Count; i++)
             {
-                if (includeHashtags || !items.GetItem(i).name.StartsWith("#"))
+                if (items.GetItem(i).IsSelected && (includeHashtags || !items.GetItem(i).name.StartsWith("#")))
                 {
                     sb.Append(" ");
                     sb.Append(items.GetItem(i).name);
@@ -162,7 +162,7 @@ namespace WizardsCode.DevLogger
             MetaDataItems items = EntryPanelSettings.GetSuggestedMetaDataItems();
             for (int i = 0; i < items.Count; i++)
             {
-                entry.metaData.Add(items.GetItem(i).name);
+                if (items.GetItem(i).IsSelected) entry.metaData.Add(items.GetItem(i).name);
             }
             
             if (withTweet)
