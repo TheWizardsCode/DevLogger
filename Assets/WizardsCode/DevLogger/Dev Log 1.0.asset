@@ -941,6 +941,30 @@ MonoBehaviour:
   - {fileID: -5934235676688864518}
   - {fileID: 1038763712794697244}
   - {fileID: 4774595125816025162}
+  - {fileID: 371972426454591075}
+--- !u!114 &371972426454591075
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa508ee653f80ef478ab4842c6bb02ba, type: 3}
+  m_Name: 1/3/2021 5:28 PM
+  m_EditorClassIdentifier: 
+  shortDescription: test discord with meta (1)
+  longDescription: 
+  metaData:
+  - '#MadeWithUnity'
+  captures: []
+  commitHash: 
+  isSocial: 0
+  tweeted: 0
+  lastTweetFileTime: 0
+  discordPost: 1
+  lastDiscordPostFileTime: 132541973217269613
 --- !u!114 &524376145620031258
 MonoBehaviour:
   m_ObjectHideFlags: 0

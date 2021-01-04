@@ -36,6 +36,10 @@ namespace WizardsCode.Git
                 StatusBoxGUI();
             } else
             {
+                // need to initialize GitSettings so they can be used in the Async tasks
+                string exe = GitSettings.ExecutablePath;
+                string repo = GitSettings.RepositoryPath;
+
                 StatusBoxGUI();
                 LogGUI();
             }
@@ -58,6 +62,8 @@ namespace WizardsCode.Git
                     if (GUILayout.Button("DevLog", GUILayout.Width(60)))
                     {
                         entryPanel.Populate(logEntries[i].hash, logEntries[i].description);
+                        DevLoggerWindow window = EditorWindow.GetWindow(typeof(DevLoggerWindow)) as DevLoggerWindow;
+                        window.SwitchToEntryTab();
                     }
                     EditorGUILayout.EndHorizontal();
                     Skin.EndHelpBox();
@@ -83,6 +89,11 @@ namespace WizardsCode.Git
         {
             Skin.StartSection("Status", false);
             EditorGUILayout.LabelField($"Last Status Update: {Git.LastStatusUpdate}");
+
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.PrefixLabel("Executable Path");
+            GitSettings.ExecutablePath = EditorGUILayout.TextField(GitSettings.ExecutablePath);
+            EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.PrefixLabel("Repository Path");
@@ -136,14 +147,14 @@ namespace WizardsCode.Git
 
         public  int i { get; private set; }
 
-        private  async Task UpdateLog()
+        private async Task UpdateLog()
         {
             logScrollPos = Vector2.zero;
             try
             {
                 logEntries = new List<GitLogEntry>();
 
-                string log = await Git.Log();
+                string log = await Git.GetLog();
 
                 string[] lines = log.Split(new[] { '\r', '\n' });
                 for (int i = 0; i < lines.Length; i++)
@@ -166,7 +177,7 @@ namespace WizardsCode.Git
 
         internal  async Task<GitLogEntry> LatestLog()
         {
-            string log = await Git.Log(1);
+            string log = await Git.GetLog(1);
             return GetEntryFromLogLine(log);
         }
     }

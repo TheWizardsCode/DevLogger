@@ -17,7 +17,7 @@ namespace WizardsCode.Git
         public static async Task<string> Status()
         {
             LastStatusUpdate = DateTime.Now;
-            Process process = await ProcessAsync(GitSettings.GitPath, "status");
+            Process process = await ProcessAsync(GitSettings.ExecutablePath, "status");
             if (process?.StandardError.ReadLine() is string line && line.StartsWith("fatal: not a git repository"))
             {
                 throw new Exception("Unable to find Git repository.");
@@ -26,9 +26,9 @@ namespace WizardsCode.Git
             return process?.StandardOutput.ReadToEnd();
         }
 
-        public static async Task<string> Log(int maxCount = 10)
-        {
-            Process process = await ProcessAsync(GitSettings.GitPath, "log --pretty=oneline --max-count=" + maxCount);
+        public static async Task<string> GetLog(int maxCount = 10)
+        { 
+            Process process = await ProcessAsync(GitSettings.ExecutablePath, "log --pretty=oneline --max-count=" + maxCount);
 
             LastLogUpdate = DateTime.Now;
 

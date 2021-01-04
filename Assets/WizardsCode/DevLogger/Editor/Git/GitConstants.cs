@@ -10,7 +10,7 @@ namespace WizardsCode.Git
     {
         private const string EDITOR_PREFS_SCOPE = "WizardsCode.Git";
 
-        public static string GIT_PATH => $"{EDITOR_PREFS_SCOPE}_GitPath";
+        public static string GIT_PATH => $"{EDITOR_PREFS_SCOPE}_GitExecutablePath";
         public static string REPOSITORY_PATH => $"{EDITOR_PREFS_SCOPE}_RepositoryPath_" + Application.productName;
     }
 }

@@ -10,17 +10,18 @@ namespace WizardsCode.Git
     [InitializeOnLoad]
     public static class GitSettings
     {
-        public static string DefaultGitPath => "C:\\Program Files\\Git\\bin\\git.exe";
+        private static string DefaultGitExecutablePath => "C:\\Program Files\\Git\\bin\\git.exe";
         private static string m_GitPath;
-        public static string GitPath
+        private static string m_RepositoryPath;
+        public static string ExecutablePath
         {
             get
             {
                 if (string.IsNullOrEmpty(m_GitPath))
                 {
-                    GitPath = EditorPrefs.GetString(GitConstants.GIT_PATH, DefaultGitPath);
+                    ExecutablePath = EditorPrefs.GetString(GitConstants.GIT_PATH, DefaultGitExecutablePath);
                 }
-                return string.IsNullOrEmpty(m_GitPath) ? DefaultGitPath : m_GitPath; 
+                return m_GitPath; 
             }
             set
             {
@@ -29,16 +30,15 @@ namespace WizardsCode.Git
             }
         }
 
-        private static string m_RepositoryPath;
         public static string RepositoryPath
         {
             get
             {
                 if (string.IsNullOrEmpty(m_RepositoryPath))
                 {
-                    RepositoryPath = EditorPrefs.GetString(GitConstants.REPOSITORY_PATH);
+                    RepositoryPath = EditorPrefs.GetString(GitConstants.REPOSITORY_PATH, Application.dataPath.Substring(0, Application.dataPath.Length - "Assets".Length));
                 }
-                return string.IsNullOrEmpty(m_RepositoryPath) ? Application.dataPath.Substring(0, Application.dataPath.Length - "Assets".Length) : m_RepositoryPath;
+                return m_RepositoryPath;
             }
             set
             {

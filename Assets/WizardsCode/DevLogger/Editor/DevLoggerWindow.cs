@@ -70,6 +70,11 @@ namespace WizardsCode.DevLogger
             m_SchedulingPanel.OnEnable();
         }
 
+        internal void SwitchToEntryTab()
+        {
+            selectedTab = 0;
+        }
+
         private void OnDisable()
         {
             EditorApplication.update -= Update;
