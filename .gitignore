@@ -74,6 +74,7 @@ Install/
 ProjectSettings
 Screenshots/
 
-# Package Manager Generated
+# Package Manager
 Assets/Generated.meta
 Assets/Generated
+!Assets/*PackageManifestConfig.asset
