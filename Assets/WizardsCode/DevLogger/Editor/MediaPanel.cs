@@ -187,7 +187,7 @@ namespace WizardsCode.DevLogger
                         break;
                 }
 
-                if (GraphicsSettings.currentRenderPipeline == null)
+                if (GraphicsSettings.currentRenderPipeline == null && Recorder.State == RecorderState.Recording)
                 {
                     EditorGUILayout.BeginHorizontal();
                     GUILayout.Label("Buffer (in seconds)");
@@ -203,6 +203,11 @@ namespace WizardsCode.DevLogger
                     GUILayout.Label("Width");
                     width = int.Parse(GUILayout.TextField(width.ToString()));
                     EditorGUILayout.EndHorizontal();
+
+                    if (GUILayout.Button("Apply"))
+                    {
+                        Recorder.Init();
+                    }
 
                     EditorGUILayout.EndVertical();
                 }
