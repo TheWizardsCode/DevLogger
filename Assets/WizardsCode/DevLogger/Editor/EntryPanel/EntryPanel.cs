@@ -93,7 +93,7 @@ namespace WizardsCode.DevLogger
         private void LogEntryGUI()
         {
             EditorStyles.textField.wordWrap = true;
-            EditorGUILayout.LabelField("Short Entry (required)");
+            EditorGUILayout.LabelField(EntryPanelSettings.guiShortTextLabel);
             shortText = EditorGUILayout.TextArea(shortText, GUILayout.Height(35));
 
             EditorGUILayout.LabelField("Long Entry (optional)");
@@ -115,6 +115,7 @@ namespace WizardsCode.DevLogger
             }
 
             EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField(EntryPanelSettings.guiNewMetaDataLabel);
             newMetaDataItem = EditorGUILayout.TextField(newMetaDataItem);
             if (GUILayout.Button("Add"))
             {
@@ -125,8 +126,8 @@ namespace WizardsCode.DevLogger
             EditorGUILayout.EndVertical();
 
             EditorGUILayout.BeginVertical();
-            isSocial = EditorGUILayout.Toggle("Social?", isSocial);
-            gitCommit = EditorGUILayout.TextField("Git Commit", gitCommit);
+            isSocial = EditorGUILayout.Toggle(EntryPanelSettings.guiSocialLabel, isSocial);
+            gitCommit = EditorGUILayout.TextField(EntryPanelSettings.guiGitCommitLabel, gitCommit);
             EditorGUILayout.EndVertical();
             EditorGUILayout.EndHorizontal();
 
