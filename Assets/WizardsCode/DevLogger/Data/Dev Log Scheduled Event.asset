@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: Dev Log Scheduled Event
   m_EditorClassIdentifier: 
   m_ScheduleType: 0
-  m_DayOfWeek: 2
+  m_DayOfWeek: 6
   m_TimeOfDay: 75600
-  m_PostToTwitter: 1
+  m_PostToTwitter: 0
   m_TwitterHashtag: '#ScreenshotSaturday'
   m_PostToDiscord: 1
-  m_DevLogGUID: 354bdf0674064454fa5ecf012f714df5
+  m_DevLogGUID: c93753a296444f242819c49eb1c9cc0d
   m_LastDoneDateTime: 132385825766713515
-  m_DevLogEntry: {fileID: -394096443042062930, guid: 354bdf0674064454fa5ecf012f714df5,
+  m_DevLogEntry: {fileID: -2206365541272676410, guid: c93753a296444f242819c49eb1c9cc0d,
     type: 2}
