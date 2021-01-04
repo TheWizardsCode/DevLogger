@@ -30,7 +30,7 @@ namespace WizardsCode.DevLogger
             TwitterSettings.ApiKey = EditorGUILayout.TextField("Consumer API Key", TwitterSettings.ApiKey);
             TwitterSettings.ApiSecret = EditorGUILayout.TextField("Consumer API Secret", TwitterSettings.ApiSecret);
             TwitterSettings.AccessToken = EditorGUILayout.TextField("Acess Token", TwitterSettings.AccessToken);
-            TwitterSettings.AccessSecret = EditorGUILayout.TextField("Access Secret", TwitterSettings.ApiSecret);
+            TwitterSettings.AccessSecret = EditorGUILayout.TextField("Access Secret", TwitterSettings.AccessSecret);
         }
     }
 }

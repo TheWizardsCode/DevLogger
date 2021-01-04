@@ -125,7 +125,7 @@ namespace WizardsCode.DevLogger
                     case 0:
                         if (m_DevLogEntries != null && m_ScreenCaptures != null) // We are correctly configured
                         {
-                            m_EntryPanel.ScreenCaptures = m_ScreenCaptures;
+                            m_MediaPanel.ScreenCaptures = m_ScreenCaptures;
                             m_EntryPanel.entries = m_DevLogEntries;
                             m_EntryPanel.OnGUI();
 
@@ -209,7 +209,7 @@ namespace WizardsCode.DevLogger
                     }
                     else
                     {
-                        message = new Message(DiscordSettings.Username, m_EntryPanel.shortText + m_EntryPanel.GetSelectedMetaData(false), m_EntryPanel.detailText, m_EntryPanel.ScreenCaptures);
+                        message = new Message(DiscordSettings.Username, m_EntryPanel.shortText + m_EntryPanel.GetSelectedMetaData(false), m_EntryPanel.detailText, m_MediaPanel.ScreenCaptures);
                     }
 
                     DevLogEntry entry = m_EntryPanel.AppendDevlog(false, true);
@@ -256,15 +256,15 @@ namespace WizardsCode.DevLogger
             string m_StatusText = "";
             bool isTweeted = false;
 
-            if (m_EntryPanel.ScreenCaptures != null && m_EntryPanel.ScreenCaptures.Count > 0) // Imges to post
+            if (m_MediaPanel.ScreenCaptures != null && m_MediaPanel.ScreenCaptures.SelectedCount > 0) // Images to post
             {
                 List<string> mediaFilePaths = new List<string>();
                 //TODO only allowed 4 still or 1 animated GIF
-                for (int i = 0; i < m_EntryPanel.ScreenCaptures.Count; i++)
+                for (int i = 0; i < m_MediaPanel.ScreenCaptures.Count; i++)
                 {
-                    if (m_EntryPanel.ScreenCaptures.captures[i].IsSelected)
+                    if (m_MediaPanel.ScreenCaptures.captures[i].IsSelected)
                     {
-                        DevLogScreenCapture capture = m_EntryPanel.ScreenCaptures.captures[i];
+                        DevLogScreenCapture capture = m_MediaPanel.ScreenCaptures.captures[i];
                         mediaFilePaths.Add(capture.ImagePath);
                     }
                 }

@@ -45,6 +45,11 @@ namespace WizardsCode.Social
             }
         }
 
+        /// <summary>
+        /// Check that twitter credentials in Settings are still valid. 
+        /// If the credentials provided are invalid then clear them to force re-entry.
+        /// </summary>
+        /// <returns>trus if valid</returns>
         private static bool VerifyCredentials()
         {
 #if UNITY_EDITOR
@@ -54,17 +59,18 @@ namespace WizardsCode.Social
 #endif
             if (time > verifyCredentialsTime)
             {
-                verifyCredentialsTime = time + 2;
-                Hashtable headers = GetHeaders(TwitterSettings.VerifyCredentialsURL, new Dictionary<string, string>());
-                if (ApiPostRequest(TwitterSettings.VerifyCredentialsURL, new WWWForm(), headers, out string response))
+                Dictionary<string, string> dict = new Dictionary<string, string>();
+                OAuthHelper.AddDefaultOAuthParams(dict, TwitterSettings.EDITOR_PREFS_TWITTER_API_KEY, TwitterSettings.EDITOR_PREFS_TWITTER_API_SECRET);
+                if (ApiGetRequest(TwitterSettings.VerifyCredentialsURL, dict, out string response))
+                {
+                    verifyCredentialsTime = time + 600; // validate every 10 minutes
+                    return true;
+                }
+                else
                 {
                     TwitterSettings.ClearAccessTokens();
                     Debug.LogError(response);
                     return false;
-                }
-                else
-                {
-                    return true;
                 }
             }
             else

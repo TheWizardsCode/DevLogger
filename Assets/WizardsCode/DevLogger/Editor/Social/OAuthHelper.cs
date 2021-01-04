@@ -46,14 +46,14 @@ namespace WizardsCode.Social {
 
         private static readonly string[] OAuthParametersToIncludeInHeader = new[]
                                                           {
-                                                              "oauth_version",
                                                               "oauth_nonce",
                                                               "oauth_timestamp",
                                                               "oauth_signature_method",
                                                               "oauth_signature",
                                                               "oauth_consumer_key",
                                                               "oauth_token",
-                                                              "oauth_verifier"
+                                                              "oauth_verifier",
+                                                              "oauth_version"
                                                           };
 
         private static readonly string[] SecretParameters = new[]
@@ -73,7 +73,13 @@ namespace WizardsCode.Social {
             return GetFinalOAuthHeader(httpRequestType, apiURL, parameters);
         }
 
-        private static void AddDefaultOAuthParams(Dictionary<string, string> parameters, string consumerKey, string consumerSecret)
+        /// <summary>
+        /// Add the default parameters to the dictionary of parameters.
+        /// </summary>
+        /// <param name="parameters">Existing dictionary of parameters, this will have the default keys added</param>
+        /// <param name="consumerKey"></param>
+        /// <param name="consumerSecret"></param>
+        internal static void AddDefaultOAuthParams(Dictionary<string, string> parameters, string consumerKey, string consumerSecret)
         {
             parameters["oauth_version"] = "1.0";
             parameters["oauth_nonce"] = GenerateNonce();
@@ -90,6 +96,27 @@ namespace WizardsCode.Social {
             parameters["oauth_signature"] = signature;
 
             StringBuilder authHeaderBuilder = new StringBuilder();
+            /* NEW
+            //authHeaderBuilder.AppendFormat("OAuth realm=\"{0}\"", "Twitter API");
+            var sortedParameters = from p in parameters
+                                   where OAuthParametersToIncludeInHeader.Contains(p.Key)
+                                   orderby p.Key, UrlEncode(p.Value)
+                                   select p;
+
+            bool isFirst = true;
+            foreach (var item in sortedParameters)
+            {
+                if (!isFirst)
+                {
+                    authHeaderBuilder.Append(", ");
+                }
+                isFirst = false;
+                authHeaderBuilder.AppendFormat("{0}=\"{1}\"", UrlEncode(item.Key), UrlEncode(item.Value));
+            }
+
+            return "OAuth " + authHeaderBuilder.ToString();
+            */
+
             authHeaderBuilder.AppendFormat("OAuth realm=\"{0}\"", "Twitter API");
 
             var sortedParameters = from p in parameters
@@ -114,7 +141,7 @@ namespace WizardsCode.Social {
             // Create the base string. This is the string that will be hashed for the signature.
             string signatureBaseString = string.Format(CultureInfo.InvariantCulture,
                                                        "{0}&{1}&{2}",
-                                                       httpMethod,
+                                                       httpMethod.ToUpper(),
                                                        UrlEncode(NormalizeUrl(new Uri(url))),
                                                        UrlEncode(nonSecretParameters));
 

@@ -63,7 +63,7 @@ namespace WizardsCode.DevLogger
                 if (includeHashtags || !items.GetItem(i).name.StartsWith("#"))
                 {
                     sb.Append(" ");
-                    sb.Append(items.GetItem(i));
+                    sb.Append(items.GetItem(i).name);
                 }
             }
             return sb.ToString();
@@ -189,7 +189,6 @@ namespace WizardsCode.DevLogger
                     ScreenCaptures.captures[i].IsSelected = false;
                 }
             }
-
             entry.longDescription = detailText;
 
             entries.AddEntry(entry);
