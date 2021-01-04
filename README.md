@@ -48,9 +48,9 @@ Once you have tested the changes please issue a pull request against our repo so
 
 Open the Dev Logger window using `Tools -> Wizards Code -> Dev Logger`.
 
-When you first install you need to setup the storage databases:
+When you first open the window it will open on the settings tab so that you can setup the storage databases:
 
-  1. Select a location to store your captured images in "Captures Save Folder". You can, optionally, have your captures saved by project and scene subfolders.
+  1. Location to store your captured images will default to a directory in your project root. You can change this to anywhere on your machine in "Captures Save Folder". Using the checkboxes in this section you can optionally have your captures saved by project and scene subfolders. This is useful if you want to keep all your images in the same location as it will keep them separated by project and/or scene within the project.
   2. Create a DevLog Scriptable Object to organize your DevLog files. The easiest way to do this is simply click the "Create" button on the setup screen. The Scriptable Object will be created in the root of your Assets folder. You can move it if you want to.
   3. Create a Screen Capture Scriptable Object to organize your Screen Captures. The easiest way to do this is simply click the "Create" button on the setup screen. The Scriptable Object will be created in the root of your Assets folder. You can move it if you want to.
   
@@ -62,19 +62,19 @@ The entry tab is where you will spend most of your time. It consists of the foll
 
 ### Log Entry
 
-This has the short and long text for your log entry. Bear in mind that the short entry will be used when posting to social media. The detail entry will be used in the Dev Log only.
+This has the short and long text for your log entry. Bear in mind that the short entry will be used when posting to Twitter. The long entry will be used in the Dev Log and on Discord posts.
 
 ### Meta Data
 
-The meta data section defines Hashtags, URLs and Git commit hashes that should be used alongside your descriptive text. Hashtags and URLs will be used in social media postings as well, so be aware that they will consume your character limit.
+The meta data section allows you to define Hashtags, URLs, Git commit hashes and more that can be used alongside your descriptive text. Hashtags and URLs will be used in social media postings as well, so be aware that they will consume your character limit. To include a particular item in the list of meta-data items check the checkbox next to it.
+
+To add a new item simply type a freeform value into the textbox and click "Add".
+
+There is also a checkbox to indicate if this entry should be used in social amplification. This relates to scheduled social posts, see below for more.
 
 ### Posting
 
-This section are where actions for posting to your dev log will appear when a valid entry is available.
-
-### Data
-
-Here you can access the DevLog in MarkDown format.
+This section is where you will find buttons for posting to your dev log and social accoutns. If an option is currently valid the button for it will appear here. At the time of writing the actions potentially available are Post to the DevLog, Twitter and Discord. 
 
 ### Media
 
@@ -82,13 +82,19 @@ This section shows thumbnails of the media files you have collected. Each thumbn
 
 ### Capture
 
-When in Edit mode this section has a number of buttons enabling you to capture various editor windows. The captures will appear in the Media section (above) when complete.
+When in Edit mode this section has a number of buttons enabling you to capture any of the currently open editor windows. The captures will appear in the Media section (above) when complete.
 
 When in Run mode this section allows you to capture stills and animated gifs. These captures will also appear in the Media section. 
 
 Animated Gifs will capture a defined number of seconds before the capture button was pressed. That is, pressing the button does not mark the start of the capture, rather it marks the end of the capture. The quality and duration of the capture is configurable in the editor window.
 
-Note it takes a short while for animated gifs to be processed, the will not appear in the media section until processing is complete.
+Note it takes a short while for animated gifs to be processed, they will not appear in the media section until processing is complete. When capturing a Gif the first frame will be saved as a PNG in addition to the GIF itself.
+
+## DevLog Tab
+
+Click the "View Devlog" button to open a Markdown version of your devlog.  
+
+You can also view all the entries in your current DevLog. You can reorder and edit and delete entries here. If you select an entry you will be presented with the option to tweet and/or post to discord from this tab. Note that these buttons will only appear if these services are correctly configured, see below for more details.
 
 ### Twitter
 
@@ -96,49 +102,31 @@ To use Twitter you need to setup keys to allow the application to access your tw
 
 Once configured this section will allow you to post the short description with hashtags (see above) and up to 4 images or 1 animated gif to Twitter. Note animated gifs have a limit of 15Mb so keep them small. We'd love someone to integrate a service such as Giphy.com :-)
 
-### Discord
-
-To use Discord you must [setup a webhook](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks) and configure Dev Logger to use this WebHook. This section will present the configuration screen if it is not already configured.
-
-Once correctly configured you can post text and images using this section of the UI.
-
-## Dev Log Tab
-
-When a DevLog entry is made it will appear in this tab along with the meta data and images posted with it. You can edit the information here. You can also change the order the devlogs will appear in the final output.
-
 ## Schedule Tab
 
 You can setup a schedule for publishing your tweets and discord posts here. This is not fully integrated into the editor yet. At the time of writing you need
 to create a Schedule Entry using `Create -> Wizards Code -> Dev Log Scheduled Event`. These will automatically appear in the Schedule tab. From there you can 
 set the time, day, channels to post to and Dev Log entry to post.
 
-Note that for a Dev Log Entry to be available in the list for a schedules event it must have the "Social" flag set and 
+Note that for a Dev Log Entry to be available in the list for a schedules event it must have the "Social" flag set.
 
 For Twitter the short text, meta data and images will be used. You can also set special hashtags for the scheduled event (e.g. #ScreenshotSaturday). For Discord the Short and Long text plus, URLs (but not hashtags) from meta data will be used.
 
-Posts are not automatically sent, but when it is past time to send a "Post" button will display. Clicking this button will post to Twitter and Discord as configured.
-You can have as many scheduled events
+Posts are not automatically sent at this time, but when it is past time to send a new tweet/discord post a "Post" button will display. Clicking this button will post to Twitter and Discord as configured.
+
+You can have as many scheduled events as you desire.
 
 ## Git Tab
 
 The Git tab enables you to view the git logs for this project. This is only tested on Windows, we welcome reports and patches for other platforms.
 
-You can click a button on the log entries to copy the data over to the DevLog entry fields. 
+You can click a button on the log entries to copy the data over to the DevLog entry fields where you can complete a DevLog entry.
 
-# Twitter Setup
+## Settings Tab
 
-If you want to tweet from within DevLogger you will need to setup authentication
-for Twitter but following these steps:
+Here you can setup the DevLogger tool. We covered the database items above in the installation section. The camera field defines which camera is used to capture GIFs. This will default to the main camera, but you can override it if you so desire.
 
-  1. Create a developer account on Twitter http://dev.twitter.com
-  2. Register DevLogger at http://dev.twitter.com/apps/new
-  3. Get the Consumer Token and Secret for the app
-  4. Generate an Access Token and Access Token Secret
-  5. In the DevLogger window expand the Twitter section
-  6. Enter the consumer key and secret as well as the Access token and secret
-  7. The twitter section will change to the twitter controls
-  
-# Discord Setup
+### Discord Settings
 
 If you want to post to Discord using DevLogger you will need to [setup a Discord Webhook](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks) as follows;
 
@@ -150,6 +138,19 @@ If you want to post to Discord using DevLogger you will need to [setup a Discord
   6. Name the webhook
   7. Copy the Webhook URL
   8. Paste the URL into the configuration box in the DevLogger window
+
+### Twitter Settings
+
+If you want to tweet from within DevLogger you will need to setup authentication
+for Twitter but following these steps:
+
+  1. Create a developer account on Twitter http://dev.twitter.com
+  2. Register DevLogger at http://dev.twitter.com/apps/new
+  3. Get the Consumer Token and Secret for the app
+  4. Generate an Access Token and Access Token Secret
+  5. In the DevLogger window expand the Twitter section
+  6. Enter the consumer key and secret as well as the Access token and secret
+  7. The twitter section will change to the twitter controls
 
 # Release Process
 
