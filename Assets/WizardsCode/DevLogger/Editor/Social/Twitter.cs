@@ -17,35 +17,6 @@ namespace WizardsCode.Social
         private static float verifyCredentialsTime = 0;
 
         /// <summary>
-        /// Test to see if the correct API key and Access tokens have been provided.
-        /// </summary>
-        /// /// <returns>True if correct values have been supplied.</returns>
-        public static bool IsAuthenticated
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(TwitterSettings.ApiKey))
-                {
-                    return false;
-                }
-                if (string.IsNullOrEmpty(TwitterSettings.ApiSecret))
-                {
-                    return false;
-                }
-                if (string.IsNullOrEmpty(TwitterSettings.AccessToken))
-                {
-                    return false;
-                }
-                if (string.IsNullOrEmpty(TwitterSettings.AccessSecret))
-                {
-                    return false;
-                }
-
-                return true;
-            }
-        }
-
-        /// <summary>
         /// Check that twitter credentials in Settings are still valid. 
         /// If the credentials provided are invalid then clear them to force re-entry.
         /// </summary>

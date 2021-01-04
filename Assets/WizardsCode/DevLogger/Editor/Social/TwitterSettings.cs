@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
+using WizardsCode.Social;
 
 namespace WizardsCode.DevLogger
 {
@@ -39,6 +40,30 @@ namespace WizardsCode.DevLogger
         {
             get { return EditorPrefs.GetString(EDITOR_PREFS_TWITTER_ACCESS_SECRET); }
             set { EditorPrefs.SetString(EDITOR_PREFS_TWITTER_ACCESS_SECRET, value); }
+        }
+
+        public static bool IsConfigured {
+            get
+            {
+                if (string.IsNullOrEmpty(ApiKey))
+                {
+                    return false;
+                }
+                if (string.IsNullOrEmpty(ApiSecret))
+                {
+                    return false;
+                }
+                if (string.IsNullOrEmpty(AccessToken))
+                {
+                    return false;
+                }
+                if (string.IsNullOrEmpty(AccessSecret))
+                {
+                    return false;
+                }
+
+                return true;
+            }
         }
 
         public static void ClearAccessTokens()

@@ -40,15 +40,20 @@ namespace WizardsCode.DevLogger
                 if (logList.index >= 0)
                 {
                     string response;
-                    if (GUILayout.Button("Tweet Selected Entry", GUILayout.Height(30)))
+                    if (TwitterSettings.IsConfigured)
                     {
-                        if (Twitter.PublishTweet(entries.GetEntry(logList.index), out response)) {
-                            entries.GetEntry(logList.index).tweeted = true;
-                            entries.GetEntry(logList.index).lastTweetFileTime = DateTime.Now.ToFileTimeUtc();
-                        } else
+                        if (GUILayout.Button("Tweet Selected Entry", GUILayout.Height(30)))
                         {
-                            // TODO Handle failed tweet gracefully
-                            Debug.LogWarning("Tweet failed. Not currently handling this gracefully. Response " + response);
+                            if (Twitter.PublishTweet(entries.GetEntry(logList.index), out response))
+                            {
+                                entries.GetEntry(logList.index).tweeted = true;
+                                entries.GetEntry(logList.index).lastTweetFileTime = DateTime.Now.ToFileTimeUtc();
+                            }
+                            else
+                            {
+                                // TODO Handle failed tweet gracefully
+                                Debug.LogWarning("Tweet failed. Not currently handling this gracefully. Response " + response);
+                            }
                         }
                     }
 

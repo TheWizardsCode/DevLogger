@@ -149,15 +149,8 @@ namespace WizardsCode.DevLogger
                             if (!string.IsNullOrEmpty(m_EntryPanel.shortText))
                             {
                                 canPostToAll = DiscordPostingGUI();
-
-                                if (Twitter.IsAuthenticated)
-                                {
-                                    canPostToAll &= TwitterPostingGUI();
-                                } else
-                                {
-                                    canPostToAll = false;
-                                }
-
+                                canPostToAll &= TwitterPostingGUI();
+                                
                                 if (canPostToAll)
                                 {
                                     if (GUILayout.Button("Post to All"))
@@ -248,6 +241,8 @@ namespace WizardsCode.DevLogger
         /// <returns>True if it is possible to post to Twitter.</returns>
         private bool TwitterPostingGUI()
         {
+            if (!TwitterSettings.IsConfigured) return false;
+
             if (!string.IsNullOrEmpty(TweetText) && TweetText.Length <= 280)
             {
                 if (GUILayout.Button("Post DevLog and Tweet"))
