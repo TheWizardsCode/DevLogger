@@ -48,6 +48,15 @@ namespace WizardsCode.DevLogger
             set { EditorPrefs.SetString(ScreenCaptureScriptableObjectPathKey, value); }
         }
 
+        public static void Reset()
+        {
+            EditorPrefs.DeleteKey(CapturesFolderPathKey);
+            EditorPrefs.DeleteKey(OrganizeCapturesByProjectKey);
+            EditorPrefs.DeleteKey(OrganizeCapturesBySceneKey);
+            EditorPrefs.DeleteKey(DevLogScriptableObjectPathKey);
+            EditorPrefs.DeleteKey(ScreenCaptureScriptableObjectPathKey);
+        }
+
         #region Keys
         static string CapturesFolderPathKey
         { get { return "DevLogCapturesFolderPath_" + Application.productName; } }

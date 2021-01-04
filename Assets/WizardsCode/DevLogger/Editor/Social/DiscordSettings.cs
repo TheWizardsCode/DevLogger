@@ -28,5 +28,12 @@ namespace WizardsCode.DevLogger
             get { return EditorPrefs.GetBool(EDITOR_PREFS_DISCORD_IS_CONFIGURED + Application.productName); }
             set { EditorPrefs.SetBool(EDITOR_PREFS_DISCORD_IS_CONFIGURED + Application.productName, value); }
         }
+
+        public static void Reset()
+        {
+            EditorPrefs.DeleteKey(EDITOR_PREFS_DISCORD_USERNAME + Application.productName);
+            EditorPrefs.DeleteKey(EDITOR_PREFS_DISCORD_WEBHOOK_URL + Application.productName);
+            EditorPrefs.DeleteKey(EDITOR_PREFS_DISCORD_IS_CONFIGURED + Application.productName);
+        }
     }
 }

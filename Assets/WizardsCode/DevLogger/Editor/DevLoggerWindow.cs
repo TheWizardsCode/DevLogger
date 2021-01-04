@@ -30,11 +30,12 @@ namespace WizardsCode.DevLogger
         private string[] toolbarLabels = { "Entry", "Dev Log", "Schedule", "Git", "Settings" };
         private int selectedTab = 0;
         private Vector2 entryScrollPosition;
+        static EditorWindow window;
 
         [UnityEditor.MenuItem("Tools/Wizards Code/Dev Logger")]
         public static void ShowWindow()
         {
-            EditorWindow.GetWindow(typeof(DevLoggerWindow), false, "DevLog: " + Application.productName, true);
+            window = EditorWindow.GetWindow(typeof(DevLoggerWindow), false, "DevLog: " + Application.productName, true);
         }
 
         private void Awake()
@@ -424,7 +425,7 @@ namespace WizardsCode.DevLogger
             Skin.StartSection("Helpers (Dev Only)", false);
 
             EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("Reset"))
+            if (GUILayout.Button("Reset Twitter Access"))
             {
                 if (EditorUtility.DisplayDialog("Reset Twitter OAuth Tokens?",
                     "Do you also want to clear the Twitter access tokens?",
@@ -437,6 +438,25 @@ namespace WizardsCode.DevLogger
             if (GUILayout.Button("Reset Meta Data"))
             {
                 EntryPanelSettings.ResetMetaData();
+            }
+
+            if (GUILayout.Button("Reset All EditorPrefs"))
+            {
+                if (EditorUtility.DisplayDialog("Reset Everything",
+                    "Are you sure you want to reset everything? " +
+                    "No data will be deleted, but all settings will be reset. " +
+                    "This should only be used if you know what you are doing.\n\n " +
+                    "Note, the DevLogger window will be closed, you should reopen it from the `Tools/Wizards Code` menu.",
+                    "Yes, Reset",
+                    "No, do not reset"))
+                {
+                    Settings.Reset();
+                    EntryPanelSettings.Reset();
+                    GitSettings.Reset();
+                    TwitterSettings.Reset();
+                    DiscordSettings.Reset();
+                    window.Close();
+                }
             }
 
             if (GUILayout.Button("Dump Window Names"))

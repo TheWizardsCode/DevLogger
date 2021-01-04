@@ -46,5 +46,15 @@ namespace WizardsCode.DevLogger
             AccessToken = null;
             AccessSecret = null;
         }
+
+        public static void Reset()
+        {
+            EditorPrefs.DeleteKey(EDITOR_PREFS_TWITTER_USER_ID);
+            EditorPrefs.DeleteKey(EDITOR_PREFS_TWITTER_USER_SCREEN_NAME);
+            EditorPrefs.DeleteKey(EDITOR_PREFS_TWITTER_API_KEY);
+            EditorPrefs.DeleteKey(EDITOR_PREFS_TWITTER_API_SECRET);
+            EditorPrefs.DeleteKey(EDITOR_PREFS_TWITTER_ACCESS_TOKEN);
+            EditorPrefs.DeleteKey(EDITOR_PREFS_TWITTER_ACCESS_SECRET);
+        }
     }
 }

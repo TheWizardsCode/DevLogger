@@ -55,6 +55,11 @@ namespace WizardsCode.DevLogger
         {
             EditorPrefs.SetString("suggestedMetaData_" + Application.productName, "");
         }
+
+        public static void Reset()
+        {
+            ResetMetaData();
+        }
     }
 
     [Serializable]
