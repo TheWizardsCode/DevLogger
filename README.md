@@ -161,4 +161,17 @@ We use [PackageTools](https://github.com/jeffcampbellmakesgames/unity-package-to
   3. Click `Generate VersionConstants.cs` in the inspector
   4. Commit the new constants file to Git
   5. Click `Export Package Source` in the inspector for the `Release Candidate PackageManifestConfig`
-  6. Commit and push the changes in `DevLogger-Release` to GitHub
+  6. Commit and push the changes in `DevLogger-Release` to GitHub [But SEE BELOW]
+
+NOTE there is currently a [bug](https://github.com/jeffcampbellmakesgames/unity-package-tools/issues/11) in the package manager tool that prevents the above from working, at least on my machine. You can work around the bug with the following steps:
+
+1. Delete the existing package directory
+2. Export the package source
+3. cd into the package directory
+4. `git init`
+5. `git remote add origin git@...`
+6. `git fetch`
+7. `git add .`
+8. `git commit -m "Release v0.2.5`
+9. `git branch -m master release/stable`
+10. `git push -f -u origin release/stable`
