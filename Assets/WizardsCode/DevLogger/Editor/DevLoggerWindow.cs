@@ -21,7 +21,7 @@ namespace WizardsCode.DevLogger
         GitPanel m_GitPanel;
         MediaPanel m_MediaPanel;
         DevLogPanel m_DevLogPanel;
-        DevLogScreenCaptures m_ScreenCaptures;
+        DevLogScreenCaptureCollection m_ScreenCaptures;
         DevLogEntries m_DevLogEntries;
         Camera m_CaptureCamera;
 
@@ -29,6 +29,7 @@ namespace WizardsCode.DevLogger
 
         private string[] toolbarLabels = { "Entry", "Dev Log", "Schedule", "Git", "Settings" };
         private int selectedTab = 0;
+        private Vector2 entryScrollPosition;
 
         [UnityEditor.MenuItem("Tools/Wizards Code/Dev Logger")]
         public static void ShowWindow()
@@ -41,7 +42,8 @@ namespace WizardsCode.DevLogger
             m_DevLogEntries = AssetDatabase.LoadAssetAtPath(Settings.DevLogScriptableObjectPath, typeof(DevLogEntries)) as DevLogEntries;
             m_DevLogPanel = new DevLogPanel(m_DevLogEntries);
 
-            m_ScreenCaptures = AssetDatabase.LoadAssetAtPath(Settings.ScreenCaptureScriptableObjectPath, typeof(DevLogScreenCaptures)) as DevLogScreenCaptures;
+            //TODO this needs to be done in OnEnable to avoid edge case bugs on an upgrade
+            m_ScreenCaptures = AssetDatabase.LoadAssetAtPath(Settings.ScreenCaptureScriptableObjectPath, typeof(DevLogScreenCaptureCollection)) as DevLogScreenCaptureCollection;
             if (m_CaptureCamera == null)
             {
                 m_CaptureCamera = Camera.main;
@@ -133,6 +135,7 @@ namespace WizardsCode.DevLogger
                     case 0:
                         if (m_DevLogEntries != null && m_ScreenCaptures != null) // We are correctly configured
                         {
+                            entryScrollPosition = EditorGUILayout.BeginScrollView(entryScrollPosition);
                             m_MediaPanel.ScreenCaptures = m_ScreenCaptures;
                             m_EntryPanel.entries = m_DevLogEntries;
                             m_EntryPanel.OnGUI();
@@ -170,6 +173,7 @@ namespace WizardsCode.DevLogger
                             m_MediaPanel.CaptureCamera = m_CaptureCamera;
                             m_MediaPanel.ScreenCaptures = m_ScreenCaptures;
                             m_MediaPanel.OnGUI();
+                            EditorGUILayout.EndScrollView();
                         }
                         else
                         {
@@ -384,16 +388,16 @@ namespace WizardsCode.DevLogger
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.PrefixLabel("Screen Capture Storage");
             existingPath = AssetDatabase.GetAssetPath(m_ScreenCaptures);
-            m_ScreenCaptures = EditorGUILayout.ObjectField(m_ScreenCaptures, typeof(DevLogScreenCaptures), true) as DevLogScreenCaptures;
+            m_ScreenCaptures = EditorGUILayout.ObjectField(m_ScreenCaptures, typeof(DevLogScreenCaptureCollection), true) as DevLogScreenCaptureCollection;
             if (m_ScreenCaptures == null)
             {
                 if (GUILayout.Button("Create"))
                 {
                     string filename = "Assets/Screen Captures " + Application.version + ".asset";
-                    m_ScreenCaptures = ScriptableObject.CreateInstance<DevLogScreenCaptures>();
+                    m_ScreenCaptures = ScriptableObject.CreateInstance<DevLogScreenCaptureCollection>();
                     AssetDatabase.CreateAsset(m_ScreenCaptures, filename);
                     AssetDatabase.SaveAssets();
-                    Settings.CaptureFileFolderPath = filename;
+                    Settings.ScreenCaptureScriptableObjectPath = filename;
                 }
             }
             newPath = AssetDatabase.GetAssetPath(m_ScreenCaptures);

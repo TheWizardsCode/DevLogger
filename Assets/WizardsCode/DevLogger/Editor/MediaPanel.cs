@@ -31,7 +31,7 @@ namespace WizardsCode.DevLogger
         [SerializeField] int repeat = 0; // -1: no repeat, 0: infinite, >0: repeat count
         [SerializeField] int quality = 15; // Quality of color quantization, lower = better but slower (min 1, max 100)
 
-        public MediaPanel(DevLogScreenCaptures captures, Camera camera)
+        public MediaPanel(DevLogScreenCaptureCollection captures, Camera camera)
         {
             ScreenCaptures = captures;
             CaptureCamera = camera;
@@ -39,7 +39,7 @@ namespace WizardsCode.DevLogger
 
         internal Camera CaptureCamera { get; set; }
 
-        internal DevLogScreenCaptures ScreenCaptures { get; set; }
+        internal DevLogScreenCaptureCollection ScreenCaptures { get; set; }
         internal string CapturesFolderPath(DevLogScreenCapture capture) {
             string path = Settings.CaptureFileFolderPath;
 

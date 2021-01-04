@@ -7,7 +7,7 @@ namespace WizardsCode.DevLogger
     /// <summary>
     /// A collection of screen captures used in a DevLog.
     /// </summary>
-    public class DevLogScreenCaptures : ScriptableObject
+    public class DevLogScreenCaptureCollection : ScriptableObject
     {
         [SerializeField]
         public List<DevLogScreenCapture> captures = new List<DevLogScreenCapture>();

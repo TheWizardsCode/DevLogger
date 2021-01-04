@@ -20,14 +20,14 @@ namespace WizardsCode.DevLogger
         [SerializeField] string gitCommit = "";
         [SerializeField] string newMetaDataItem;
 
-        public EntryPanel(DevLogEntries entries, DevLogScreenCaptures screenCaptures)
+        public EntryPanel(DevLogEntries entries, DevLogScreenCaptureCollection screenCaptures)
         {
             this.entries = entries;
             ScreenCaptures = screenCaptures;
         }
 
         internal DevLogEntries entries { get; set; }
-        internal DevLogScreenCaptures ScreenCaptures { get; set; }
+        internal DevLogScreenCaptureCollection ScreenCaptures { get; set; }
 
         internal void Populate(string hash, string description)
         {
@@ -111,18 +111,7 @@ namespace WizardsCode.DevLogger
         internal void DevLogPostingGUI() {
             if (!string.IsNullOrEmpty(shortText))
             {
-                EditorGUILayout.BeginHorizontal();
-
-                bool hasSelection = false;
-                for (int i = 0; i < ScreenCaptures.Count; i++)
-                {
-                    if (ScreenCaptures.captures[i])
-                    {
-                        hasSelection = true;
-                        break;
-                    }
-                }
-                
+                EditorGUILayout.BeginHorizontal();                
                 if (GUILayout.Button("Post Devlog Only"))
                 {
                     AppendDevlog();

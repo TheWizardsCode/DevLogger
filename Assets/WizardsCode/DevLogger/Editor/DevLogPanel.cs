@@ -19,7 +19,7 @@ namespace WizardsCode.DevLogger
         }
 
         internal DevLogEntries entries { get; set; }
-        internal DevLogScreenCaptures ScreenCaptures { get; set; }
+        internal DevLogScreenCaptureCollection ScreenCaptures { get; set; }
 
         public void OnGUI()
         {

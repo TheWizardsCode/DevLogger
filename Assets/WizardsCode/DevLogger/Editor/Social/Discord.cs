@@ -97,7 +97,7 @@ namespace WizardsCode.DevLogger
         /// <param name="introText">The intro text that will appear before the first image, if there is one.</param>
         /// <param name="bodyText">The main body text.</param>
         /// <param name="screenCaptures">The set of available and selected screen captures that may be shared as part of the message.</param>
-        internal Message(string username, string introText, string bodyText, DevLogScreenCaptures screenCaptures) : this(username, introText, screenCaptures)
+        internal Message(string username, string introText, string bodyText, DevLogScreenCaptureCollection screenCaptures) : this(username, introText, screenCaptures)
         {
             this.bodyText = bodyText;
         }
@@ -108,7 +108,7 @@ namespace WizardsCode.DevLogger
         /// <param name="username">The unsername to use when posting.</param>
         /// <param name="introText">The intro text that will appear before the first image, if there is one.</param>
         /// <param name="screenCaptures">The set of available and selected screen captures that may be shared as part of the message.</param>
-        internal Message(string username, string introText, DevLogScreenCaptures screenCaptures)
+        internal Message(string username, string introText, DevLogScreenCaptureCollection screenCaptures)
         {
             this.username = username;
             this.introText = introText;
