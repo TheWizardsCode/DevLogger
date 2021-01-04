@@ -33,7 +33,7 @@ This is the easiest way of installing the code:
 We are a big fan of enabling our users to improve Dev Logger, so we would encourage you to use the source code, it's not much harder than using the latest release.
 
   1. Fork and clone the repo and submodules into your preferred location with `git clone --recurse-submodules [YOUR_FORK_URL]`
-  2. In the project view select `Assets/PackageManifestConfig`
+  2. In the project view select `Assets/DevTest PackageManifestConfig`
   3. In the inspector click `Export Package Source`, this will export the package to a folder next to your checkout director called "DevLogger-Package"
   4. To use this package in your development environments go to `Window -> Package Manager`
   5. Click the '+" in the top left
@@ -156,7 +156,7 @@ If you want to post to Discord using DevLogger you will need to [setup a Discord
 We use [PackageTools](https://github.com/3dtbd/unity-package-tools) to create our releases. To build a release:
 
   0. Alongside your working repository checkout the `release/stable` branch of this repo
-  1. Update (at least) the version number in the `PackageManifestConfig` in the root of the `Assets` folder
+  1. Update (at least) the version number in the `Release Candidate PackageManifestConfig` in the root of the `Assets` folder
   2. Click `Generate VersionConstants.cs` in the inspector
   3. Commit the new constants file to Git
   4. Click `Export Package Source`
