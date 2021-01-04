@@ -317,6 +317,8 @@ namespace WizardsCode.DevLogger
         /// </summary>
         public void SettingsTabUI()
         {
+            string newPath;
+
             Skin.StartSection("Capture Storage", false);
 
             EditorGUILayout.BeginHorizontal();
@@ -325,7 +327,11 @@ namespace WizardsCode.DevLogger
             Settings.CaptureFileFolderPath = EditorGUILayout.TextField(Settings.CaptureFileFolderPath, GUILayout.Height(40));
             if (GUILayout.Button("Browse"))
             {
-                Settings.CaptureFileFolderPath = EditorUtility.OpenFolderPanel("Select a folder in which to save captures", Settings.CaptureFileFolderPath, "");
+                newPath = EditorUtility.OpenFolderPanel("Select a folder in which to save captures", Settings.CaptureFileFolderPath, "");
+                if (!string.IsNullOrEmpty(newPath))
+                {
+                    Settings.CaptureFileFolderPath = newPath;
+                }
             }
             EditorGUILayout.EndHorizontal();
 
@@ -368,7 +374,7 @@ namespace WizardsCode.DevLogger
                     AssetDatabase.SaveAssets();
                 }
             }
-            string newPath = AssetDatabase.GetAssetPath(m_DevLogEntries);
+            newPath = AssetDatabase.GetAssetPath(m_DevLogEntries);
             if (existingPath != newPath)
             {
                 Settings.DevLogScriptableObjectPath = newPath;
