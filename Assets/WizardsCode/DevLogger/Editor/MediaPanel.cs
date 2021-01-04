@@ -121,11 +121,14 @@ namespace WizardsCode.DevLogger
         {
             m_IsSaving = false;
             _recorder.Record();
+            Debug.Log("GIF saved to " + filePath);
+            Debug.Log("ScreenCapture object:\n" + currentScreenCapture.ToString());
         }
 
-        private void OnProcessingDone()
+        private void OnPreProcessingDone()
         {
             m_IsSaving = true;
+            Debug.Log("GIF Pre Processing is complete");
         }
 
         public void OnGUI()
@@ -168,6 +171,7 @@ namespace WizardsCode.DevLogger
                     case RecorderState.Recording:
                         if (GUILayout.Button("Save Animated GIF"))
                         {
+                            Debug.Log("Save Animated Gif button pressed");
                             CaptureGif();
                         }
                         break;
@@ -267,10 +271,11 @@ namespace WizardsCode.DevLogger
             currentScreenCapture.encoding = DevLogScreenCapture.ImageEncoding.gif;
             currentScreenCapture.windowName = "In_Game_Footage";
             currentScreenCapture.name = Application.productName + " v" + Application.version + currentScreenCapture.timestamp.ToLongDateString();
-
             currentScreenCapture.AbsoluteSaveFolder = CapturesFolderPath(currentScreenCapture);
 
-            Recorder.OnPreProcessingDone = OnProcessingDone;
+            Debug.Log("Created ScreenCapture object:\n" + currentScreenCapture.ToString());
+
+            Recorder.OnPreProcessingDone = OnPreProcessingDone;
             Recorder.OnFileSaved = OnFileSaved;
 
             Recorder.SavePath = currentScreenCapture.ImagePath;

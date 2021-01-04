@@ -85,6 +85,7 @@ namespace Moments.Encoder
 		/// <param name="frame">GifFrame containing frame to write.</param>
 		public void AddFrame(GifFrame frame)
 		{
+			Debug.Log("Adding a frame to the Gif.");
 			if ((frame == null))
 				throw new ArgumentNullException("Can't add a null frame to the gif.");
 
@@ -101,6 +102,7 @@ namespace Moments.Encoder
 
 			if (m_IsFirstFrame)
 			{
+				Debug.Log("This is the first frame.");
 				WriteLSD();
 				WritePalette();
 
@@ -169,6 +171,8 @@ namespace Moments.Encoder
 			if (!m_HasStarted)
 				throw new InvalidOperationException("Can't finish a non-started gif.");
 
+			Debug.Log("Finalizing GIF Encoding");
+
 			m_HasStarted = false;
 
 			try
@@ -181,6 +185,7 @@ namespace Moments.Encoder
 			}
 			catch (IOException e)
 			{
+				Debug.LogError("IO problem writing encoding GIF: " + e.Message);
 				throw e;
 			}
 
@@ -197,6 +202,7 @@ namespace Moments.Encoder
 		// Sets the GIF frame size.
 		protected void SetSize(int w, int h)
 		{
+			Debug.Log("GIF size set to " + w + " x " + h);
 			m_Width = w;
 			m_Height = h;
 			m_IsSizeSet = true;
@@ -205,6 +211,7 @@ namespace Moments.Encoder
 		// Extracts image pixels into byte array "pixels".
 		protected void GetImagePixels()
 		{
+			Debug.Log("Extracting image pixels into an array for encoding");
 			m_Pixels = new Byte[3 * m_CurrentFrame.Width * m_CurrentFrame.Height];
 			Color32[] p = m_CurrentFrame.Data;
 			int count = 0;
@@ -225,6 +232,7 @@ namespace Moments.Encoder
 		// Analyzes image colors and creates color map.
 		protected void AnalyzePixels()
 		{
+			Debug.Log("Analyzing pixels and creating color palette");
 			int len = m_Pixels.Length;
 			int nPix = len / 3;
 			m_IndexedPixels = new byte[nPix];
@@ -248,6 +256,7 @@ namespace Moments.Encoder
 		// Writes Graphic Control Extension.
 		protected void WriteGraphicCtrlExt()
 		{
+			Debug.Log("Write graphics control extension");
 			m_FileStream.WriteByte(0x21); // Extension introducer
 			m_FileStream.WriteByte(0xf9); // GCE label
 			m_FileStream.WriteByte(4);    // Data block size
@@ -266,6 +275,7 @@ namespace Moments.Encoder
 		// Writes Image Descriptor.
 		protected void WriteImageDesc()
 		{
+			Debug.Log("Write Image Description");
 			m_FileStream.WriteByte(0x2c); // Image separator
 			WriteShort(0);                // Image position x,y = 0,0
 			WriteShort(0);
@@ -291,6 +301,7 @@ namespace Moments.Encoder
 		// Writes Logical Screen Descriptor.
 		protected void WriteLSD()
 		{
+			Debug.Log("Write Logical Screen Descriptor");
 			// Logical screen size
 			WriteShort(m_Width);
 			WriteShort(m_Height);
@@ -308,6 +319,7 @@ namespace Moments.Encoder
 		// Writes Netscape application extension to define repeat count.
 		protected void WriteNetscapeExt()
 		{
+			Debug.Log("Writing Netscape extension");
 			m_FileStream.WriteByte(0x21);    // Extension introducer
 			m_FileStream.WriteByte(0xff);    // App extension label
 			m_FileStream.WriteByte(11);      // Block size
@@ -318,9 +330,9 @@ namespace Moments.Encoder
 			m_FileStream.WriteByte(0);       // Block terminator
 		}
 
-		// Write color table.
 		protected void WritePalette()
 		{
+			Debug.Log("Writing colour palette");
 			m_FileStream.Write(m_ColorTab, 0, m_ColorTab.Length);
 			int n = (3 * 256) - m_ColorTab.Length;
 
@@ -331,6 +343,7 @@ namespace Moments.Encoder
 		// Encodes and writes pixel data.
 		protected void WritePixels()
 		{
+			Debug.Log("Writing encoded pixels");
 			LzwEncoder encoder = new LzwEncoder(m_Width, m_Height, m_IndexedPixels, m_ColorDepth);
 			encoder.Encode(m_FileStream);
 		}

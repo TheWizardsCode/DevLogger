@@ -100,5 +100,25 @@ namespace WizardsCode.DevLogger
                 return sb.ToString();
             }
         }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("Filename: " + Filename);
+            sb.AppendLine("Product Name: " + productName);
+            sb.AppendLine("Scene Name: " + sceneName);
+            sb.AppendLine("Window Name: " + windowName);
+            sb.AppendLine("Width: " + _width);
+            sb.AppendLine("Height: " + _height);
+            sb.AppendLine("Encoding: " + encoding);
+            sb.AppendLine("AbsoluteSaveFolder: " + AbsoluteSaveFolder);
+            sb.AppendLine("Image Path: " + ImagePath);
+            sb.AppendLine("Preview Image Path: " + PreviewImagePath);
+            sb.AppendLine("IsImageSaved: " + IsImageSaved);
+            sb.AppendLine("IsSelected: " + IsSelected);
+            sb.AppendLine("Version: " + version);
+            sb.AppendLine("TimeStamp: " + _timestampAsString);
+            return sb.ToString();
+        }
     }
 }

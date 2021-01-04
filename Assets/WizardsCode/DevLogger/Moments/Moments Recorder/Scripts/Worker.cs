@@ -52,6 +52,7 @@ namespace Moments
 
 		internal void Start()
 		{
+			Debug.Log("Encoder worker is starting");
 			m_Thread.Start();
 		}
 
@@ -61,6 +62,7 @@ namespace Moments
 
 			for (int i = 0; i < m_Frames.Count; i++)
 			{
+				Debug.Log("Encoding frame " + i);
 				GifFrame frame = m_Frames[i];
 				m_Encoder.AddFrame(frame);
 
@@ -72,6 +74,7 @@ namespace Moments
 			}
 
 			m_Encoder.Finish();
+			Debug.Log("Encoding finished, calling the OnFileSaved callback.");
 
 			if (m_OnFileSaved != null)
 				m_OnFileSaved(m_Id, m_FilePath);
