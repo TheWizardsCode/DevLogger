@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.Rendering.PostProcessing;
 using UnityEngine.SceneManagement;
 using WizardsCode.EditorUtils;
@@ -169,10 +170,16 @@ namespace WizardsCode.DevLogger
                         EditorGUILayout.LabelField("Starting Recording");
                         break;
                     case RecorderState.Recording:
-                        if (GUILayout.Button("Save Animated GIF"))
+                        if (GraphicsSettings.currentRenderPipeline == null)
                         {
-                            Debug.Log("Save Animated Gif button pressed");
-                            CaptureGif();
+                            if (GUILayout.Button("Save Animated GIF"))
+                            {
+                                Debug.Log("Save Animated Gif button pressed");
+                                CaptureGif();
+                            }
+                        } else
+                        {
+                            GUILayout.Label("Capturing a GIF is not currently supported in HDRP/URP");
                         }
                         break;
                     case RecorderState.PreProcessing:
@@ -180,22 +187,25 @@ namespace WizardsCode.DevLogger
                         break;
                 }
 
-                EditorGUILayout.BeginHorizontal();
-                GUILayout.Label("Buffer (in seconds)");
-                bufferSize = int.Parse(GUILayout.TextField(bufferSize.ToString()));
-                EditorGUILayout.EndHorizontal();
+                if (GraphicsSettings.currentRenderPipeline == null)
+                {
+                    EditorGUILayout.BeginHorizontal();
+                    GUILayout.Label("Buffer (in seconds)");
+                    bufferSize = int.Parse(GUILayout.TextField(bufferSize.ToString()));
+                    EditorGUILayout.EndHorizontal();
 
-                EditorGUILayout.BeginHorizontal();
-                GUILayout.Label("Quality (lower is better)");
-                quality = int.Parse(GUILayout.TextField(quality.ToString()));
-                EditorGUILayout.EndHorizontal();
+                    EditorGUILayout.BeginHorizontal();
+                    GUILayout.Label("Quality (lower is better)");
+                    quality = int.Parse(GUILayout.TextField(quality.ToString()));
+                    EditorGUILayout.EndHorizontal();
 
-                EditorGUILayout.BeginHorizontal();
-                GUILayout.Label("Width");
-                width = int.Parse(GUILayout.TextField(width.ToString()));
-                EditorGUILayout.EndHorizontal();
+                    EditorGUILayout.BeginHorizontal();
+                    GUILayout.Label("Width");
+                    width = int.Parse(GUILayout.TextField(width.ToString()));
+                    EditorGUILayout.EndHorizontal();
 
-                EditorGUILayout.EndVertical();
+                    EditorGUILayout.EndVertical();
+                }
             }
             else
             {
