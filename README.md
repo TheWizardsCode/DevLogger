@@ -96,12 +96,6 @@ Click the "View Devlog" button to open a Markdown version of your devlog.
 
 You can also view all the entries in your current DevLog. You can reorder and edit and delete entries here. If you select an entry you will be presented with the option to tweet and/or post to discord from this tab. Note that these buttons will only appear if these services are correctly configured, see below for more details.
 
-### Twitter
-
-To use Twitter you need to setup keys to allow the application to access your twitter account. If this is not setup yet the UI will present the fields to enter these keys. See below for instructions on how to create these tokens.
-
-Once configured this section will allow you to post the short description with hashtags (see above) and up to 4 images or 1 animated gif to Twitter. Note animated gifs have a limit of 15Mb so keep them small. We'd love someone to integrate a service such as Giphy.com :-)
-
 ## Schedule Tab
 
 You can setup a schedule for publishing your tweets and discord posts here. This is not fully integrated into the editor yet. At the time of writing you need
