@@ -143,6 +143,23 @@ namespace WizardsCode.DevLogger
             }
             EditorGUILayout.EndScrollView();
 
+            EditorGUILayout.BeginVertical();
+            if (GUILayout.Button("Open Media Folder"))
+            {
+                string path = Settings.CaptureFileFolderPath;
+                if (Settings.OrganizeCapturesByProject)
+                {
+                    path += Path.DirectorySeparatorChar + Application.productName;
+                }
+
+                if (Settings.OrganizeCapturesByScene)
+                {
+                    path += Path.DirectorySeparatorChar + SceneManager.GetActiveScene().name;
+                }
+                System.Diagnostics.Process.Start("Explorer.exe", string.Format("/open, \"{0}\"", path.Replace(@"/", @"\")));
+            }
+            EditorGUILayout.EndVertical();
+
             Skin.EndSection();
 
             Skin.StartSection("Capture");
@@ -299,8 +316,6 @@ namespace WizardsCode.DevLogger
 
         private void ImageSelectionGUI()
         {
-            EditorGUILayout.BeginVertical();
-
             EditorGUILayout.BeginHorizontal();
             for (int i = ScreenCaptures.captures.Count - 1; i >= 0; i--)
             {
@@ -324,22 +339,6 @@ namespace WizardsCode.DevLogger
                 EditorGUILayout.EndVertical();
             }
             EditorGUILayout.EndHorizontal();
-
-            if (GUILayout.Button("Open Media Folder"))
-            {
-                string path = Settings.CaptureFileFolderPath;
-                if (Settings.OrganizeCapturesByProject)
-                {
-                    path += Path.DirectorySeparatorChar + Application.productName;
-                }
-
-                if (Settings.OrganizeCapturesByScene)
-                {
-                    path += Path.DirectorySeparatorChar + SceneManager.GetActiveScene().name;
-                }
-                System.Diagnostics.Process.Start("Explorer.exe", string.Format("/open, \"{0}\"", path.Replace(@"/", @"\")));
-            }
-            EditorGUILayout.EndVertical();
         }
 
         private void AddToLatestCaptures(DevLogScreenCapture screenCapture)
