@@ -30,6 +30,7 @@ namespace WizardsCode.DevLogger
         [SerializeField] int fps = 16; // Height in pixels
         [SerializeField] int bufferSize = 10; // Number of seconds to record
         [SerializeField] int repeat = 0; // -1: no repeat, 0: infinite, >0: repeat count
+        [SerializeField] int framesPerColorSample = 6; // the number of frames between redefining the color pallete, smaller is better
         [SerializeField] int quality = 15; // Quality of color quantization, lower = better but slower (min 1, max 100)
 
         public MediaPanel(DevLogScreenCaptureCollection captures, Camera camera)
@@ -181,7 +182,6 @@ namespace WizardsCode.DevLogger
                 switch (Recorder.State)
                 {
                     case RecorderState.Paused: // We are paused so start recording. This allows saving of the last X seconds
-                        int framesPerColorSample = 6; //TODO allow the user to configure this.
                         Recorder.Setup(preserveAspect, width, width / 2, fps, bufferSize, repeat, quality, framesPerColorSample);
                         Recorder.Record();
 
@@ -215,6 +215,11 @@ namespace WizardsCode.DevLogger
                     EditorGUILayout.BeginHorizontal();
                     GUILayout.Label("Quality (lower is better)");
                     quality = int.Parse(GUILayout.TextField(quality.ToString()));
+                    EditorGUILayout.EndHorizontal();
+
+                    EditorGUILayout.BeginHorizontal();
+                    GUILayout.Label("Frames per Color Sample (lower is better)");
+                    framesPerColorSample = int.Parse(GUILayout.TextField(framesPerColorSample.ToString()));
                     EditorGUILayout.EndHorizontal();
 
                     EditorGUILayout.BeginHorizontal();
