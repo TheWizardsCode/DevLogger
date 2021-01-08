@@ -78,3 +78,6 @@ Screenshots/
 Assets/Generated.meta
 Assets/Generated
 !Assets/*PackageManifestConfig.asset
+
+# DevLogger Generated Files
+DevLog/ScreenCaptures/

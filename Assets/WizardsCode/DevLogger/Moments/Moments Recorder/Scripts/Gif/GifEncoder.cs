@@ -4,10 +4,12 @@
  * 
  * Original code by Kevin Weiner, FM Software.
  * Adapted by Thomas Hourdel.
+ * Extended slightly by Paul Kopetko
  */
 
 using System;
 using System.IO;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Moments.Encoder
@@ -33,6 +35,9 @@ namespace Moments.Encoder
 		protected bool m_IsFirstFrame = true;
 		protected bool m_IsSizeSet = false;           // If false, get size from first frame
 		protected int m_SampleInterval = 10;          // Default sample interval for quantizer
+		protected int m_FramesPerColorSample = 6;     // Default sample rate (in frames per sample) of color palette
+
+		protected NeuQuant nq;
 
 		/// <summary>
 		/// Default constructor. Repeat will be set to -1 and Quality to 10.
@@ -78,6 +83,55 @@ namespace Moments.Encoder
 		}
 
 		/// <summary>
+		/// Sets color palette sample rate in frames per sample.
+		/// </summary>
+		/// <param name="fps">Frame rate</param>
+		public void SetFramesPerColorSample(int frames)
+		{
+			m_FramesPerColorSample = frames;
+		}
+
+		/// <summary>
+		/// Builds a colour map out of the combined colours from several frames.
+		/// </summary>
+		/// <param name="frames">List of frames to sample colour palette from</param>
+		public void BuildPalette(ref List<GifFrame> frames)
+		{
+
+			// Do not build the color palette here if user wants separate palettes created per frame
+			if (m_FramesPerColorSample == 0)
+			{
+				return;
+			}
+
+			// Initialize a large image
+			Byte[] combinedPixels = new Byte[3 * frames[0].Width * frames[0].Height * (1 + frames.Count / m_FramesPerColorSample)];
+
+			int count = 0;
+
+			// Stich the large image together out of pixels from several frames
+			for (int i = 0; i < frames.Count; i += m_FramesPerColorSample)
+			{
+				Color32[] p = frames[i].Data;
+				// Texture data is layered down-top, so flip it
+				for (int th = frames[i].Height - 1; th >= 0; th--)
+				{
+					for (int tw = 0; tw < frames[i].Width; tw++)
+					{
+						Color32 color = p[th * frames[i].Width + tw];
+						combinedPixels[count] = color.r; count++;
+						combinedPixels[count] = color.g; count++;
+						combinedPixels[count] = color.b; count++;
+					}
+				}
+			}
+
+			// Run the quantizer over our stitched together image and create reduced palette
+			nq = new NeuQuant(combinedPixels, combinedPixels.Length, (int)m_SampleInterval);
+			m_ColorTab = nq.Process();
+		}
+
+		/// <summary>
 		/// Adds next GIF frame. The frame is not written immediately, but is actually deferred
 		/// until the next frame is received so that timing data can be inserted. Invoking
 		/// <code>Finish()</code> flushes all frames.
@@ -85,7 +139,6 @@ namespace Moments.Encoder
 		/// <param name="frame">GifFrame containing frame to write.</param>
 		public void AddFrame(GifFrame frame)
 		{
-			Debug.Log("Adding a frame to the Gif.");
 			if ((frame == null))
 				throw new ArgumentNullException("Can't add a null frame to the gif.");
 
@@ -102,7 +155,6 @@ namespace Moments.Encoder
 
 			if (m_IsFirstFrame)
 			{
-				Debug.Log("This is the first frame.");
 				WriteLSD();
 				WritePalette();
 
@@ -171,8 +223,6 @@ namespace Moments.Encoder
 			if (!m_HasStarted)
 				throw new InvalidOperationException("Can't finish a non-started gif.");
 
-			Debug.Log("Finalizing GIF Encoding");
-
 			m_HasStarted = false;
 
 			try
@@ -185,7 +235,6 @@ namespace Moments.Encoder
 			}
 			catch (IOException e)
 			{
-				Debug.LogError("IO problem writing encoding GIF: " + e.Message);
 				throw e;
 			}
 
@@ -202,7 +251,6 @@ namespace Moments.Encoder
 		// Sets the GIF frame size.
 		protected void SetSize(int w, int h)
 		{
-			Debug.Log("GIF size set to " + w + " x " + h);
 			m_Width = w;
 			m_Height = h;
 			m_IsSizeSet = true;
@@ -211,7 +259,6 @@ namespace Moments.Encoder
 		// Extracts image pixels into byte array "pixels".
 		protected void GetImagePixels()
 		{
-			Debug.Log("Extracting image pixels into an array for encoding");
 			m_Pixels = new Byte[3 * m_CurrentFrame.Width * m_CurrentFrame.Height];
 			Color32[] p = m_CurrentFrame.Data;
 			int count = 0;
@@ -229,15 +276,20 @@ namespace Moments.Encoder
 			}
 		}
 
-		// Analyzes image colors and creates color map.
+		// Maps image colors to the color map
 		protected void AnalyzePixels()
 		{
-			Debug.Log("Analyzing pixels and creating color palette");
+
 			int len = m_Pixels.Length;
 			int nPix = len / 3;
 			m_IndexedPixels = new byte[nPix];
-			NeuQuant nq = new NeuQuant(m_Pixels, len, (int)m_SampleInterval);
-			m_ColorTab = nq.Process(); // Create reduced palette
+
+			// Analyze image colors and create color map (original, expensive, Moments Recorder behaviour)
+			if (m_FramesPerColorSample == 0)
+			{
+				nq = new NeuQuant(m_Pixels, len, (int)m_SampleInterval);
+				m_ColorTab = nq.Process(); // Create reduced palette
+			}
 
 			// Map image pixels to new palette
 			int k = 0;
@@ -256,7 +308,6 @@ namespace Moments.Encoder
 		// Writes Graphic Control Extension.
 		protected void WriteGraphicCtrlExt()
 		{
-			Debug.Log("Write graphics control extension");
 			m_FileStream.WriteByte(0x21); // Extension introducer
 			m_FileStream.WriteByte(0xf9); // GCE label
 			m_FileStream.WriteByte(4);    // Data block size
@@ -275,7 +326,6 @@ namespace Moments.Encoder
 		// Writes Image Descriptor.
 		protected void WriteImageDesc()
 		{
-			Debug.Log("Write Image Description");
 			m_FileStream.WriteByte(0x2c); // Image separator
 			WriteShort(0);                // Image position x,y = 0,0
 			WriteShort(0);
@@ -301,7 +351,6 @@ namespace Moments.Encoder
 		// Writes Logical Screen Descriptor.
 		protected void WriteLSD()
 		{
-			Debug.Log("Write Logical Screen Descriptor");
 			// Logical screen size
 			WriteShort(m_Width);
 			WriteShort(m_Height);
@@ -319,7 +368,6 @@ namespace Moments.Encoder
 		// Writes Netscape application extension to define repeat count.
 		protected void WriteNetscapeExt()
 		{
-			Debug.Log("Writing Netscape extension");
 			m_FileStream.WriteByte(0x21);    // Extension introducer
 			m_FileStream.WriteByte(0xff);    // App extension label
 			m_FileStream.WriteByte(11);      // Block size
@@ -330,9 +378,9 @@ namespace Moments.Encoder
 			m_FileStream.WriteByte(0);       // Block terminator
 		}
 
+		// Write color table.
 		protected void WritePalette()
 		{
-			Debug.Log("Writing colour palette");
 			m_FileStream.Write(m_ColorTab, 0, m_ColorTab.Length);
 			int n = (3 * 256) - m_ColorTab.Length;
 
@@ -343,7 +391,6 @@ namespace Moments.Encoder
 		// Encodes and writes pixel data.
 		protected void WritePixels()
 		{
-			Debug.Log("Writing encoded pixels");
 			LzwEncoder encoder = new LzwEncoder(m_Width, m_Height, m_IndexedPixels, m_ColorDepth);
 			encoder.Encode(m_FileStream);
 		}

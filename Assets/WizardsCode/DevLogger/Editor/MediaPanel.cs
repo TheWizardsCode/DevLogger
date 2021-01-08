@@ -181,7 +181,8 @@ namespace WizardsCode.DevLogger
                 switch (Recorder.State)
                 {
                     case RecorderState.Paused: // We are paused so start recording. This allows saving of the last X seconds
-                        Recorder.Setup(preserveAspect, width, width / 2, fps, bufferSize, repeat, quality);
+                        int framesPerColorSample = 6; //TODO allow the user to configure this.
+                        Recorder.Setup(preserveAspect, width, width / 2, fps, bufferSize, repeat, quality, framesPerColorSample);
                         Recorder.Record();
 
                         EditorGUILayout.LabelField("Starting Recording");

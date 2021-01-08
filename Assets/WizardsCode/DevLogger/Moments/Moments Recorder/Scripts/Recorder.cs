@@ -69,6 +69,9 @@ namespace Moments
 		[SerializeField, Min(0.1f)]
 		float m_BufferSize = 3f;
 
+		[SerializeField, Range(0, 60)]
+		int m_FramesPerColorSample = 6;
+
 		#endregion
 
 		#region Public fields
@@ -79,12 +82,11 @@ namespace Moments
 		public RecorderState State { get; private set; }
 
 		/// <summary>
-		/// The folder and filename to save the gif to.
+		/// The folder and filename to save the gif to. No trailing slash.
 		/// </summary>
 		public string SavePath { get; set; }
 
-		/// <
-		/// summary>
+		/// <summary>
 		/// Sets the worker threads priority. This will only affect newly created threads (on save).
 		/// </summary>
 		public ThreadPriority WorkerPriority = ThreadPriority.BelowNormal;
@@ -97,8 +99,8 @@ namespace Moments
 			get
 			{
 				float mem = m_FramePerSecond * m_BufferSize;
-					  mem *= m_Width * m_Height * 4;
-					  mem /= 1024 * 1024;
+				mem *= m_Width * m_Height * 4;
+				mem /= 1024 * 1024;
 				return mem;
 			}
 		}
@@ -154,7 +156,10 @@ namespace Moments
 		/// 256 colors allowed by the GIF specification). Lower values (minimum = 1) produce better
 		/// colors, but slow processing significantly. Higher values will speed up the quantization
 		/// pass at the cost of lower image quality (maximum = 100).</param>
-		public void Setup(bool autoAspect, int width, int height, int fps, float bufferSize, int repeat, int quality)
+		/// <param name="framesPerColorSample">Sample every n-th frame in a recording for color
+		/// mapping purposes. If framesPerColorSample is set to 0, Moments uses its default behaviour
+		/// and creates a brand new color palette every frame.</param>
+		public void Setup(bool autoAspect, int width, int height, int fps, float bufferSize, int repeat, int quality, int framesPerColorSample)
 		{
 			if (State == RecorderState.PreProcessing)
 			{
@@ -176,6 +181,7 @@ namespace Moments
 			m_ReflectionUtils.ConstrainMin(x => x.m_BufferSize, bufferSize);
 			m_ReflectionUtils.ConstrainMin(x => x.m_Repeat, repeat);
 			m_ReflectionUtils.ConstrainRange(x => x.m_Quality, quality);
+			m_ReflectionUtils.ConstrainRange(x => x.m_FramesPerColorSample, framesPerColorSample);
 
 			// Ready to go
 			Init();
@@ -208,7 +214,7 @@ namespace Moments
 
 			State = RecorderState.Recording;
 		}
-
+		
 		/// <summary>
 		/// Clears all saved frames from memory and starts fresh.
 		/// </summary>
@@ -239,11 +245,9 @@ namespace Moments
 		/// will be generated. You don't need to add the .gif extension to the name. Recording will
 		/// be paused and won't resume automatically. You can use the <code>OnPreProcessingDone</code>
 		/// callback to be notified when the pre-processing step has finished.
-		/// </summary>
-		/// <param name="filename">File name without extension</param>
+		/// </summary
 		public void Save()
 		{
-			Debug.Log("Attempting to start saving stills for the GIF");
 			if (State == RecorderState.PreProcessing)
 			{
 				Debug.LogWarning("Attempting to save during the pre-processing step.");
@@ -252,15 +256,16 @@ namespace Moments
 
 			if (m_Frames.Count == 0)
 			{
-				Debug.LogWarning("Nothing to save. Maybe you forgot to start the recorder?");
+				Debug.LogWarning("Nothing to save. Maybe you forgot to start the recorder ?");
 				return;
 			}
 
 			State = RecorderState.PreProcessing;
+
 			SavePreview();
 			Debug.Log("Starting the GIF pre-process coroutine");
 			StartCoroutine(PreProcess());
-		}
+	     }
 
 		private void SavePreview()
 		{
@@ -270,31 +275,26 @@ namespace Moments
 			RenderTexture[] frames = m_Frames.ToArray();
 			RenderTexture.active = frames[(int)frames.Length / 2];
 
-			Debug.Log("Creating the capture texture");
 			Texture2D target = new Texture2D(m_Width, m_Height, TextureFormat.ARGB32, false);
 			target.hideFlags = HideFlags.HideAndDontSave;
 			target.wrapMode = TextureWrapMode.Clamp;
 			target.filterMode = FilterMode.Bilinear;
 			target.anisoLevel = 0;
 
-			Debug.Log("Reading the pixels into the capture texture");
 			target.ReadPixels(new Rect(0, 0, m_Width, m_Height), 0, 0);
 			target.Apply();
-
+			
 			RenderTexture.active = oldRT;
-
-			Debug.Log("Encoding the texture to PNG");
-			byte[] bytes = target.EncodeToPNG();
-			Debug.Log("Writing the image to disk");
+			
+		    byte[] bytes = target.EncodeToPNG();
 			System.IO.File.WriteAllBytes(SavePath.Replace(".gif", ".png"), bytes);
 			Flush(target);
 		}
+			#endregion
 
-		#endregion
+			#region Unity events
 
-		#region Unity events
-
-		void Awake()
+			void Awake()
 		{
 			m_ReflectionUtils = new ReflectionUtils<Recorder>(this);
 			m_Frames = new Queue<RenderTexture>();
@@ -361,11 +361,11 @@ namespace Moments
 			// Make sure the output folder is set or use the default one
 			if (string.IsNullOrEmpty(SavePath))
 			{
-                #if UNITY_EDITOR
-                SavePath = Application.dataPath; // Defaults to the asset folder in the editor for faster access to the gif file
-                #else
-				SaveFolder = Application.persistentDataPath;
-				#endif
+#if UNITY_EDITOR
+				SavePath = Application.dataPath; // Defaults to the asset folder in the editor for faster access to the gif file
+#else
+				SavePath = Application.persistentDataPath;
+#endif
 			}
 		}
 
@@ -380,31 +380,30 @@ namespace Moments
 
 		void Flush(UnityObject obj)
 		{
-			#if UNITY_EDITOR
+#if UNITY_EDITOR
 			if (Application.isPlaying)
 				Destroy(obj);
 			else
 				DestroyImmediate(obj);
-			#else
+#else
             UnityObject.Destroy(obj);
-			#endif
+#endif
 		}
 
 		// Pre-processing coroutine to extract frame data and send everything to a separate worker thread
 		IEnumerator PreProcess()
 		{
-			Debug.Log("Creating GifFrames list for " + m_Frames.Count + " frames.");
 			List<GifFrame> frames = new List<GifFrame>(m_Frames.Count);
 
-			Debug.Log("Creating a temporary texture to read RenderTexture data");
+			// Get a temporary texture to read RenderTexture data
 			Texture2D temp = new Texture2D(m_Width, m_Height, TextureFormat.RGB24, false);
 			temp.hideFlags = HideFlags.HideAndDontSave;
 			temp.wrapMode = TextureWrapMode.Clamp;
 			temp.filterMode = FilterMode.Bilinear;
 			temp.anisoLevel = 0;
 
-			Debug.Log("Starting to process frames");
 			int frameIndex = 0;
+			// Process the frame queue
 			while (m_Frames.Count > 0)
 			{
 				frameIndex++;
@@ -414,17 +413,17 @@ namespace Moments
 				yield return null;
 			}
 
-			Debug.Log("Disposing of the temporary texture");
+			// Dispose the temporary texture
 			Flush(temp);
 
-			Debug.Log("Switch recorder state to pause, to prevent overwriting data.");
+			// Switch the state to pause, let the user choose to keep recording or not
 			State = RecorderState.Paused;
 
-			Debug.Log("Pre-processing is complete, executing the callback");
+			// Callback
 			if (OnPreProcessingDone != null)
 				OnPreProcessingDone();
 
-			Debug.Log("Setup a worker thread to encode the GIF");
+			// Setup a worker thread and let it do its magic
 			GifEncoder encoder = new GifEncoder(m_Repeat, m_Quality);
 			encoder.SetDelay(Mathf.RoundToInt(m_TimePerFrame * 1000f));
 			Worker worker = new Worker(WorkerPriority)
@@ -435,7 +434,6 @@ namespace Moments
 				m_OnFileSaved = OnFileSaved,
 				m_OnFileSaveProgress = OnFileSaveProgress
 			};
-			Debug.Log("Starting the worker thread to encode the GIF");
 			worker.Start();
 		}
 
@@ -443,8 +441,6 @@ namespace Moments
 		// Should be fast enough for low-res textures but will tank the framerate at higher res
 		GifFrame ToGifFrame(RenderTexture source, Texture2D target)
 		{
-			Debug.Log("Reading pixels into the render texture");
-
 			RenderTexture.active = source;
 			target.ReadPixels(new Rect(0, 0, source.width, source.height), 0, 0);
 			target.Apply();
@@ -453,6 +449,6 @@ namespace Moments
 			return new GifFrame() { Width = target.width, Height = target.height, Data = target.GetPixels32() };
 		}
 
-        #endregion
-    }
+		#endregion
+	}
 }
