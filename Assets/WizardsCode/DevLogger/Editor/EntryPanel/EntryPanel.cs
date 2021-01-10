@@ -22,17 +22,27 @@ namespace WizardsCode.DevLogger
         [SerializeField] string gitCommit = "";
         [SerializeField] string newMetaDataItem;
 
-        public EntryPanel(DevLogEntries entries, DevLogScreenCaptureCollection screenCaptures)
+        public EntryPanel(DevLogEntries entries)
         {
             this.entries = entries;
-            ScreenCaptures = screenCaptures;
         }
 
         internal DevLogEntries entries { get; set; }
-        internal DevLogScreenCaptureCollection ScreenCaptures { get; set; }
+        internal DevLogScreenCaptureCollection ScreenCaptures
+        {
+            get
+            {
+                if (m_ScreenCaptures == null)
+                {
+                    m_ScreenCaptures = AssetDatabase.LoadAssetAtPath(Settings.ScreenCaptureScriptableObjectPath, typeof(DevLogScreenCaptureCollection)) as DevLogScreenCaptureCollection;
+                }
+                return m_ScreenCaptures;
+            }
+        }
 
         bool m_IsAssetManagerPresent = false;
         float m_TimeOfNextCheckForAssetManager = 0;
+        private DevLogScreenCaptureCollection m_ScreenCaptures;
 
         internal void Populate(string hash, string description)
         {
@@ -87,7 +97,8 @@ namespace WizardsCode.DevLogger
 
         }
 
-        private void MetaDataGUI() {
+        private void MetaDataGUI()
+        {
             EditorGUILayout.BeginHorizontal();
 
             EditorGUILayout.BeginVertical();
@@ -125,10 +136,11 @@ namespace WizardsCode.DevLogger
 #endif
         }
 
-        internal void DevLogPostingGUI() {
+        internal void DevLogPostingGUI()
+        {
             if (!string.IsNullOrEmpty(shortText))
             {
-                EditorGUILayout.BeginHorizontal();                
+                EditorGUILayout.BeginHorizontal();
                 if (GUILayout.Button("Post Devlog Only"))
                 {
                     AppendDevlog();
@@ -170,7 +182,7 @@ namespace WizardsCode.DevLogger
             {
                 if (items.GetItem(i).IsSelected) entry.metaData.Add(items.GetItem(i).name);
             }
-            
+
             if (withTweet)
             {
                 entry.tweeted = true;

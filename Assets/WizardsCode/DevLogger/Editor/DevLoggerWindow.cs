@@ -53,7 +53,7 @@ namespace WizardsCode.DevLogger
             m_MediaPanel = new MediaPanel(m_ScreenCaptures, 
                 m_CaptureCamera);
 
-            m_EntryPanel = new EntryPanel(m_DevLogEntries, m_ScreenCaptures);
+            m_EntryPanel = new EntryPanel(m_DevLogEntries);
             m_TwitterPanel = new TwitterPanel();
             m_DiscordPanel = new DiscordPanel();
             m_SchedulingPanel = new SchedulingPanel(m_DevLogEntries);
