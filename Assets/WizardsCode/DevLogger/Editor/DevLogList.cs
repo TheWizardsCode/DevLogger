@@ -22,20 +22,14 @@ namespace WizardsCode.DevLogger {
         
         DevLogEntries allEntries;
         List<DevLogEntry> validEntries;
-        public int index => base.index;
         
         public DevLogList(DevLogEntries elements, DevLogEntry.Status status) 
-            : base(Enumerable.ToList(elements.GetEntries().Where(l => l.status == status)), typeof(DevLogEntry), true, true, true, true)
+            : base(elements.GetEntries(status), typeof(DevLogEntry), true, true, true, true)
         {
             allEntries = elements;
-            IEnumerable<DevLogEntry> filteredEntries = allEntries.GetEntries().Where(l => l.status == status);
-            if (filteredEntries != null)
-            {
-                validEntries = Enumerable.ToList(filteredEntries);
-                this.list = validEntries;
-            } else {
-                validEntries = new List<DevLogEntry>();
-            }
+            
+            validEntries = elements.GetEntries(status);
+            this.list = elements.GetEntries(status);
 
             title = status.ToString();
         }

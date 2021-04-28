@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using WizardsCode.DevLogger;
 
@@ -25,6 +26,16 @@ namespace WizardsCode.DevLogger
         internal List<DevLogEntry> GetEntries()
         {
             return m_Entries;
+        }
+
+        /// <summary>
+        /// Get all the elements in this set of entries that are of a specified status.
+        /// </summary>
+        /// <param name="status">The status we want to retrieve.</param>
+        /// <returns>A list of entries with the given status</returns>
+        internal List<DevLogEntry> GetEntries(DevLogEntry.Status status)
+        {
+            return (List<DevLogEntry>)Enumerable.ToList(m_Entries.Where(l => l.status == status));
         }
 
         /// <summary>
