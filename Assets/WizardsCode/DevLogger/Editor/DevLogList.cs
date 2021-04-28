@@ -37,7 +37,6 @@ namespace WizardsCode.DevLogger {
         internal void SaveReorderedList(ReorderableList list)
         {
             EditorUtility.SetDirty(allEntries);
-            DevLogMarkdown.Rewrite(allEntries);
             AssetDatabase.SaveAssets();
         }
 

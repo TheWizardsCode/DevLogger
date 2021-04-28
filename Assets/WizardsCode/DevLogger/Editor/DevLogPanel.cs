@@ -37,6 +37,7 @@ namespace WizardsCode.DevLogger
             {
                 if (GUILayout.Button("View Devlog", GUILayout.Height(30)))
                 {
+                    DevLogMarkdown.Write(entries);
                     string filepath = DevLogMarkdown.GetAbsoluteProjectDirectory() + DevLogMarkdown.GetRelativeCurrentFilePath();
                     System.Diagnostics.Process.Start(filepath);
                 }

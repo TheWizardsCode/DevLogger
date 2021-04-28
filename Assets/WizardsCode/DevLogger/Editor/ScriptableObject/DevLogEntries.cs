@@ -14,7 +14,6 @@ namespace WizardsCode.DevLogger
 
         internal void AddEntry(DevLogEntry entry)
         {
-            DevLogMarkdown.Append(entry);
             m_Entries.Add(entry);
         }
 
