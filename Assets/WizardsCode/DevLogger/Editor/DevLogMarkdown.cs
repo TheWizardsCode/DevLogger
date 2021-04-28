@@ -89,14 +89,56 @@ namespace WizardsCode.DevLogger
             return GetAbsoluteProjectDirectory() + STORAGE_DIRECTORY;
         }
 
-        /// <summary>
-        /// Rewrite the markdown file because the data structure backing it has changed in a significant way.
-        /// Note if you are simply appending to the DevLog there is no need to call this method, which rewrites
-        /// the whole file. This is necessary when an entry is deleted or changed, or when the order of entries
-        /// is changed in some way.
-        /// </summary>
-        internal static void Write(DevLogEntries entries)
+        internal static void WriteTaskLog(DevLogEntries entries)
         {
+            //TODO tasklog and devlog should have their own filenames
+            if (File.Exists(GetRelativeCurrentFilePath()))
+            {
+                File.Delete(GetRelativeCurrentFilePath());
+            }
+
+            StringBuilder sb = new StringBuilder();
+
+            Directory.CreateDirectory(STORAGE_DIRECTORY);
+
+            if (!File.Exists(GetRelativeCurrentFilePath()))
+            {
+                sb.Append(GetDevLogIntro());
+            }
+
+            sb.AppendLine("## In Progress Features");
+            sb.AppendLine();
+            for (int i = 0; i < entries.GetEntries().Count; i++)
+            {
+                if (entries.GetEntry(i).status == DevLogEntry.Status.InProgress)
+                {
+                    sb.Append(GetMarkdown(entries.GetEntry(i)));
+                }
+            }
+
+            if (entries.GetEntries(DevLogEntry.Status.ToDo).Count > 0)
+            {
+                sb.AppendLine("## To Do Features");
+                sb.AppendLine();
+                for (int i = 0; i < entries.GetEntries().Count; i++)
+                {
+                    if (entries.GetEntry(i).status == DevLogEntry.Status.ToDo)
+                    {
+                        sb.Append(GetMarkdown(entries.GetEntry(i)));
+                    }
+                }
+            }
+
+            using (StreamWriter file = File.AppendText(GetRelativeCurrentFilePath()))
+            {
+                file.Write(sb.ToString());
+                file.Close();
+            }
+        }
+
+        internal static void WriteDevLog(DevLogEntries entries)
+        {
+            //TODO tasklog and devlog should have their own filenames
             if (File.Exists(GetRelativeCurrentFilePath()))
             {
                 File.Delete(GetRelativeCurrentFilePath());

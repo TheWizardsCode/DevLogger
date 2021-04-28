@@ -92,7 +92,7 @@ namespace WizardsCode.DevLogger
             shortText = EditorGUILayout.TextArea(shortText, GUILayout.Height(35));
 
             EditorGUILayout.LabelField("Long Entry (optional)");
-            detailScrollPosition = GUILayout.BeginScrollView(detailScrollPosition, GUILayout.MaxHeight(300), GUILayout.ExpandHeight(false));
+            detailScrollPosition = GUILayout.BeginScrollView(detailScrollPosition);
             detailText = EditorGUILayout.TextArea(detailText, GUILayout.ExpandHeight(true));
             GUILayout.EndScrollView();
         }

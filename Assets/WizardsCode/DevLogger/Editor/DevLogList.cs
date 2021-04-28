@@ -22,7 +22,7 @@ namespace WizardsCode.DevLogger {
         
         DevLogEntries allEntries;
         List<DevLogEntry> validEntries;
-        
+
         public DevLogList(DevLogEntries elements, DevLogEntry.Status status) 
             : base(elements.GetEntries(status), typeof(DevLogEntry), true, true, true, true)
         {
@@ -38,6 +38,13 @@ namespace WizardsCode.DevLogger {
         {
             EditorUtility.SetDirty(allEntries);
             AssetDatabase.SaveAssets();
+        }
+
+        internal void OnSelect(ReorderableList list)
+        {
+            DevLogEntry entry = validEntries[list.index];
+            EditorGUIUtility.PingObject(entry);
+            Selection.activeObject = entry;
         }
 
         internal float ElementHeightCallback(int index)

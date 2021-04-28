@@ -35,12 +35,20 @@ namespace WizardsCode.DevLogger
             }
             else
             {
-                if (GUILayout.Button("View Devlog", GUILayout.Height(30)))
+                EditorGUILayout.BeginHorizontal();
+                if (GUILayout.Button("View Tasks", GUILayout.Height(30)))
                 {
-                    DevLogMarkdown.Write(entries);
+                    DevLogMarkdown.WriteTaskLog(entries);
                     string filepath = DevLogMarkdown.GetAbsoluteProjectDirectory() + DevLogMarkdown.GetRelativeCurrentFilePath();
                     System.Diagnostics.Process.Start(filepath);
                 }
+                if (GUILayout.Button("View Devlog", GUILayout.Height(30)))
+                {
+                    DevLogMarkdown.WriteDevLog(entries);
+                    string filepath = DevLogMarkdown.GetAbsoluteProjectDirectory() + DevLogMarkdown.GetRelativeCurrentFilePath();
+                    System.Diagnostics.Process.Start(filepath);
+                }
+                EditorGUILayout.EndHorizontal();
 
                 if (doneList.index >= 0)
                 {
@@ -125,6 +133,7 @@ namespace WizardsCode.DevLogger
             list.drawHeaderCallback = list.DrawHeader;
             list.elementHeightCallback = list.ElementHeightCallback;
             list.onReorderCallback = list.SaveReorderedList;
+            list.onSelectCallback = list.OnSelect;
             list.displayAdd = false;
 
             return list;
