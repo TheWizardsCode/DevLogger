@@ -16,6 +16,7 @@ namespace WizardsCode.DevLogger
     {
         [SerializeField] Vector2 windowScrollPos = Vector2.zero;
         [SerializeField] internal string shortText = "";
+        [SerializeField] internal DevLogEntry.Status status;
         private Vector2 detailScrollPosition;
         [SerializeField] internal string detailText = "";
         [SerializeField] bool isSocial = false;
@@ -53,7 +54,6 @@ namespace WizardsCode.DevLogger
         public void OnGUI()
         {
             //windowScrollPos = EditorGUILayout.BeginScrollView(windowScrollPos);
-
             Skin.StartSection("Log Entry", false);
             LogEntryGUI();
             Skin.EndSection();
@@ -61,7 +61,6 @@ namespace WizardsCode.DevLogger
             Skin.StartSection("Meta Data", false);
             MetaDataGUI();
             Skin.EndSection();
-
             //EditorGUILayout.EndScrollView();
         }
 
@@ -86,6 +85,8 @@ namespace WizardsCode.DevLogger
 
         private void LogEntryGUI()
         {
+            status = (DevLogEntry.Status)EditorGUILayout.EnumPopup("Status", status, GUILayout.Height(35));
+            
             EditorStyles.textField.wordWrap = true;
             EditorGUILayout.LabelField(EntryPanelSettings.guiShortTextLabel);
             shortText = EditorGUILayout.TextArea(shortText, GUILayout.Height(35));
@@ -94,7 +95,6 @@ namespace WizardsCode.DevLogger
             detailScrollPosition = GUILayout.BeginScrollView(detailScrollPosition, GUILayout.MaxHeight(300), GUILayout.ExpandHeight(false));
             detailText = EditorGUILayout.TextArea(detailText, GUILayout.ExpandHeight(true));
             GUILayout.EndScrollView();
-
         }
 
         private void MetaDataGUI()
@@ -163,6 +163,8 @@ namespace WizardsCode.DevLogger
         {
             DevLogEntry entry = ScriptableObject.CreateInstance<DevLogEntry>();
             entry.name = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString();
+
+            entry.status = status;
 
             entry.shortDescription = shortText;
             StringBuilder text = new StringBuilder(entry.shortDescription);

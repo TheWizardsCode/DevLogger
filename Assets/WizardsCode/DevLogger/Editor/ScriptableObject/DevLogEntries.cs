@@ -16,6 +16,7 @@ namespace WizardsCode.DevLogger
             DevLogMarkdown.Append(entry);
             m_Entries.Add(entry);
         }
+
         internal DevLogEntry GetEntry(int index)
         {
             return m_Entries[index];
@@ -33,6 +34,7 @@ namespace WizardsCode.DevLogger
         /// <returns></returns>
         internal List<DevLogEntry> GetAvailableSocialEntries()
         {
+            // TODO is LINQ faster?
             List<DevLogEntry>  results = new List<DevLogEntry>();
             for (int i = 0; i < m_Entries.Count; i++)
             {

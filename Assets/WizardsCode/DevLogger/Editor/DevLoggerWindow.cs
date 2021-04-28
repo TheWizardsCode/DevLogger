@@ -191,8 +191,9 @@ namespace WizardsCode.DevLogger
                         SettingsTabUI();
                         break;
                 }
-            } catch (InvalidCastException)
+            } catch (InvalidCastException e)
             {
+                //TODO Don't silently catch errors
                 // this is a workaround. An exception is thrown when a new scene is loaded.
                 Repaint();
             }
