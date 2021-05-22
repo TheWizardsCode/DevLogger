@@ -177,6 +177,8 @@ namespace WizardsCode.DevLogger
                     case 1:
                         if (m_DevLogPanel == null) m_DevLogPanel = new DevLogPanel(m_DevLogEntries);
 
+                        DevLogList.isDirty = true;
+
                         m_DevLogPanel.ScreenCaptures = m_ScreenCaptures;
                         m_DevLogPanel.entries = m_DevLogEntries;
                         m_DevLogPanel.OnGUI();
