@@ -209,7 +209,7 @@ namespace WizardsCode.DevLogger
         {
             if (!DiscordSettings.IsConfigured) return false;
 
-            if (!string.IsNullOrEmpty(m_EntryPanel.shortText))
+            if (!string.IsNullOrEmpty(m_EntryPanel.shortText) && m_MediaPanel.hasSelectedImages)
             {
                 if (GUILayout.Button("Post to Devlog and Discord"))
                 {
@@ -246,7 +246,7 @@ namespace WizardsCode.DevLogger
         {
             if (!TwitterSettings.IsConfigured) return false;
 
-            if (!string.IsNullOrEmpty(TweetText) && TweetText.Length <= 280)
+            if (!string.IsNullOrEmpty(TweetText) && TweetText.Length <= 280 && m_MediaPanel.hasSelectedImages)
             {
                 if (GUILayout.Button("Post DevLog and Tweet"))
                 {
@@ -269,7 +269,7 @@ namespace WizardsCode.DevLogger
             string m_StatusText = "";
             bool isTweeted = false;
 
-            if (m_MediaPanel.ScreenCaptures != null && m_MediaPanel.ScreenCaptures.SelectedCount > 0) // Images to post
+            if (m_MediaPanel.hasSelectedImages) // Images to post
             {
                 List<string> mediaFilePaths = new List<string>();
                 //TODO only allowed 4 still or 1 animated GIF

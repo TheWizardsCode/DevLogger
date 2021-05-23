@@ -106,6 +106,13 @@ namespace WizardsCode.DevLogger
             }
         }
 
+        public bool hasSelectedImages { 
+            get
+            {
+                return ScreenCaptures != null && ScreenCaptures.SelectedCount > 0;
+            }
+        }
+
         internal void OnImageSelection()
         {
             if (removeRecorder)
