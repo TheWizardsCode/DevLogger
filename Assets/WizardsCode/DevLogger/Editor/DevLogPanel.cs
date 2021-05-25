@@ -17,12 +17,13 @@ namespace WizardsCode.DevLogger
         DevLogList doneList;
         Vector2 listScrollPosition;
 
+        internal DevLogEntries entries { get; set; }
+
         public DevLogPanel(DevLogEntries entries)
         {
             this.entries = entries;
         }
 
-        internal DevLogEntries entries { get; set; }
         internal DevLogScreenCaptureCollection ScreenCaptures { get; set; }
 
         public void OnGUI()
@@ -36,13 +37,13 @@ namespace WizardsCode.DevLogger
             else
             {
                 EditorGUILayout.BeginHorizontal();
-                if (GUILayout.Button("View Tasks", GUILayout.Height(30)))
+                if (GUILayout.Button("View Tasks Markdown", GUILayout.Height(30)))
                 {
                     DevLogMarkdown.WriteTaskLog(entries);
                     string filepath = DevLogMarkdown.GetAbsoluteProjectDirectory() + DevLogMarkdown.GetRelativeCurrentFilePath();
                     System.Diagnostics.Process.Start(filepath);
                 }
-                if (GUILayout.Button("View Devlog", GUILayout.Height(30)))
+                if (GUILayout.Button("View Devlog Markdown", GUILayout.Height(30)))
                 {
                     DevLogMarkdown.WriteDevLog(entries);
                     string filepath = DevLogMarkdown.GetAbsoluteProjectDirectory() + DevLogMarkdown.GetRelativeCurrentFilePath();
@@ -91,6 +92,10 @@ namespace WizardsCode.DevLogger
                 {
                     todoList.DoLayoutList();
                 }
+                if (ideaList.count > 0)
+                {
+                    ideaList.DoLayoutList();
+                }
                 if (testingList.count > 0)
                 {
                     testingList.DoLayoutList();
@@ -98,10 +103,6 @@ namespace WizardsCode.DevLogger
                 if (doneList.count > 0)
                 {
                     doneList.DoLayoutList();
-                }
-                if (ideaList.count > 0)
-                {
-                    ideaList.DoLayoutList();
                 }
                 EditorGUILayout.EndScrollView();
             }

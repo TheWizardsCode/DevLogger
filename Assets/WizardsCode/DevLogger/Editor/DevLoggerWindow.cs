@@ -19,7 +19,7 @@ namespace WizardsCode.DevLogger
         DiscordPanel m_DiscordPanel;
         SchedulingPanel m_SchedulingPanel;
         GitPanel m_GitPanel;
-        MediaPanel m_MediaPanel;
+        public MediaPanel mediaPanel;
         DevLogPanel m_DevLogPanel;
         DevLogScreenCaptureCollection m_ScreenCaptures;
         DevLogEntries m_DevLogEntries;
@@ -50,7 +50,7 @@ namespace WizardsCode.DevLogger
                 m_CaptureCamera = Camera.main;
             }
             
-            m_MediaPanel = new MediaPanel(m_ScreenCaptures, 
+            mediaPanel = new MediaPanel(m_ScreenCaptures, 
                 m_CaptureCamera);
 
             m_EntryPanel = new EntryPanel(m_DevLogEntries);
@@ -63,7 +63,7 @@ namespace WizardsCode.DevLogger
         private void OnEnable()
         {
             EditorApplication.update += Update;
-            m_MediaPanel.OnEnable();
+            mediaPanel.OnEnable();
             if (m_SchedulingPanel == null)
             {
                 // For some reason the scheduling panel is occasionally set to null, this resets it
@@ -81,18 +81,18 @@ namespace WizardsCode.DevLogger
         private void OnDisable()
         {
             EditorApplication.update -= Update;
-            m_MediaPanel.OnEnable();
+            mediaPanel.OnEnable();
             m_SchedulingPanel.OnDisable();
         }
 
         private void OnImageSelection()
         {
-            m_MediaPanel.OnImageSelection();
+            mediaPanel.OnImageSelection();
         }
 
         void Update()
         {
-            m_MediaPanel.Update();
+            mediaPanel.Update();
             if (m_SchedulingPanel == null)
             {
                 m_SchedulingPanel = new SchedulingPanel(m_DevLogEntries);
@@ -121,7 +121,7 @@ namespace WizardsCode.DevLogger
         {
             if (startCapture)
             {
-                m_MediaPanel.CaptureGif();
+                mediaPanel.CaptureGif();
                 startCapture = false;
             }
         }
@@ -137,7 +137,7 @@ namespace WizardsCode.DevLogger
                         if (m_DevLogEntries != null && m_ScreenCaptures != null) // We are correctly configured
                         {
                             entryScrollPosition = EditorGUILayout.BeginScrollView(entryScrollPosition);
-                            m_MediaPanel.ScreenCaptures = m_ScreenCaptures;
+                            mediaPanel.ScreenCaptures = m_ScreenCaptures;
                             m_EntryPanel.entries = m_DevLogEntries;
                             m_EntryPanel.OnGUI();
 
@@ -164,9 +164,9 @@ namespace WizardsCode.DevLogger
 
                             EditorGUILayout.Space();
 
-                            m_MediaPanel.CaptureCamera = m_CaptureCamera;
-                            m_MediaPanel.ScreenCaptures = m_ScreenCaptures;
-                            m_MediaPanel.OnGUI();
+                            mediaPanel.CaptureCamera = m_CaptureCamera;
+                            mediaPanel.ScreenCaptures = m_ScreenCaptures;
+                            mediaPanel.OnGUI();
                             EditorGUILayout.EndScrollView();
                         }
                         else
@@ -209,7 +209,7 @@ namespace WizardsCode.DevLogger
         {
             if (!DiscordSettings.IsConfigured) return false;
 
-            if (!string.IsNullOrEmpty(m_EntryPanel.shortText) && m_MediaPanel.hasSelectedImages)
+            if (!string.IsNullOrEmpty(m_EntryPanel.shortText) && mediaPanel.hasSelectedImages)
             {
                 if (GUILayout.Button("Post to Devlog and Discord"))
                 {
@@ -220,7 +220,7 @@ namespace WizardsCode.DevLogger
                     }
                     else
                     {
-                        message = new Message(DiscordSettings.Username, m_EntryPanel.shortText + m_EntryPanel.GetSelectedMetaData(false), m_EntryPanel.detailText, m_MediaPanel.ScreenCaptures);
+                        message = new Message(DiscordSettings.Username, m_EntryPanel.shortText + m_EntryPanel.GetSelectedMetaData(false), m_EntryPanel.detailText, mediaPanel.ScreenCaptures);
                     }
 
                     DevLogEntry entry = m_EntryPanel.AppendDevlog(false, true);
@@ -246,7 +246,7 @@ namespace WizardsCode.DevLogger
         {
             if (!TwitterSettings.IsConfigured) return false;
 
-            if (!string.IsNullOrEmpty(TweetText) && TweetText.Length <= 280 && m_MediaPanel.hasSelectedImages)
+            if (!string.IsNullOrEmpty(TweetText) && TweetText.Length <= 280 && mediaPanel.hasSelectedImages)
             {
                 if (GUILayout.Button("Post DevLog and Tweet"))
                 {
@@ -269,15 +269,15 @@ namespace WizardsCode.DevLogger
             string m_StatusText = "";
             bool isTweeted = false;
 
-            if (m_MediaPanel.hasSelectedImages) // Images to post
+            if (mediaPanel.hasSelectedImages) // Images to post
             {
                 List<string> mediaFilePaths = new List<string>();
                 //TODO only allowed 4 still or 1 animated GIF
-                for (int i = 0; i < m_MediaPanel.ScreenCaptures.Count; i++)
+                for (int i = 0; i < mediaPanel.ScreenCaptures.Count; i++)
                 {
-                    if (m_MediaPanel.ScreenCaptures.captures[i].IsSelected)
+                    if (mediaPanel.ScreenCaptures.captures[i].IsSelected)
                     {
-                        DevLogScreenCapture capture = m_MediaPanel.ScreenCaptures.captures[i];
+                        DevLogScreenCapture capture = mediaPanel.ScreenCaptures.captures[i];
                         mediaFilePaths.Add(capture.ImagePath);
                     }
                 }
