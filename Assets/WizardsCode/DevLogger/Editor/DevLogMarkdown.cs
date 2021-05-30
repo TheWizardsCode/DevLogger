@@ -180,6 +180,21 @@ namespace WizardsCode.DevLogger
                 }
             }
 
+            if (entries.GetEntries(DevLogEntry.Status.Social).Count > 0)
+            {
+                sb.AppendLine("## Social Amplification");
+                sb.AppendLine("The following posts were sent to one or more social channel during this development cycle. These posts do not represent specific features, but signify key development stages we felt were worth sharing.");
+                sb.AppendLine();
+                sb.AppendLine();
+                for (int i = 0; i < entries.GetEntries().Count; i++)
+                {
+                    if (entries.GetEntry(i).status == DevLogEntry.Status.Social)
+                    {
+                        sb.Append(GetMarkdown(entries.GetEntry(i)));
+                    }
+                }
+            }
+
             using (StreamWriter file = File.AppendText(GetRelativeCurrentFilePath()))
             {
                 file.Write(sb.ToString());

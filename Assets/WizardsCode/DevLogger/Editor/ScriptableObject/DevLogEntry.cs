@@ -10,7 +10,7 @@ namespace WizardsCode.DevLogger
     /// </summary>
     public class DevLogEntry : ScriptableObject
     {
-        public enum Status { Idea = 0, ToDo = 10, InProgress = 20, Testing = 30, Done = 40 }
+        public enum Status { Idea = 0, ToDo = 10, InProgress = 20, Testing = 30, Done = 40, Social = 50 }
         [SerializeField, Tooltip("The current status of this entry.")]
         public Status status = Status.Idea;
         [SerializeField, Tooltip("The date and time the log entry was created.")]

@@ -8,7 +8,7 @@ The following features have been tested and, to the best of our knowledge, work 
 
 When exporting the DevLog markdown only show two sections, the released section and the Beta section. Only Done items appear in the released section while Testing items appear in the Beta section.
 
-Monday 24 May 2021, 17:47
+Thursday 27 May 2021, 20:32
 
 ### tt
 
@@ -22,7 +22,7 @@ When viewing the DevLog panel we should see entries grouped according to their c
   * Done
   * Idea
 
-Monday 24 May 2021, 17:47
+Thursday 27 May 2021, 20:32
 
 ## Beta Features
 The following features are currently being tested. They may not work as intended, please let us know if you find a problem, like the feature or do not like a feature.
@@ -32,5 +32,13 @@ The following features are currently being tested. They may not work as intended
 
 The status field on the DevLogEntry will allow DevLog entries to act as task lists in a Kanban style.
 
-Monday 24 May 2021, 17:47
+Thursday 27 May 2021, 20:32
+
+## Social Amplification
+The following posts were sent to one or more social channel during this development cycle. These posts do not represent specific features, but signify key development stages we felt were worth sharing.
+
+
+### This is a test entry for the new social status for devlog entries
+
+![Screenshot](E:\WizardsCode\DevLogger\DevLog\WizardsCode.DevLogger.DevLoggerWindow_DevLogger__v1.0_132639292650000000.png)
 
