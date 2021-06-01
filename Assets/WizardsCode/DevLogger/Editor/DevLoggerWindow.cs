@@ -32,6 +32,8 @@ namespace WizardsCode.DevLogger
         private Vector2 entryScrollPosition;
         static EditorWindow window;
 
+        public DevLogEntry currentEntry { get; set; }
+
         [UnityEditor.MenuItem("Tools/Wizards Code/Dev Logger")]
         public static void ShowWindow()
         {
@@ -49,8 +51,8 @@ namespace WizardsCode.DevLogger
             {
                 m_CaptureCamera = Camera.main;
             }
-            
-            mediaPanel = new MediaPanel(m_ScreenCaptures, 
+
+            mediaPanel = new MediaPanel(m_ScreenCaptures,
                 m_CaptureCamera);
 
             m_EntryPanel = new EntryPanel(m_DevLogEntries);
@@ -71,6 +73,12 @@ namespace WizardsCode.DevLogger
                 m_SchedulingPanel = new SchedulingPanel(m_DevLogEntries);
             }
             m_SchedulingPanel.OnEnable();
+        }
+
+        internal void EditCurrentEntry()
+        {
+            m_EntryPanel.EditEntry(currentEntry);
+            SwitchToEntryTab();
         }
 
         internal void SwitchToEntryTab()
@@ -127,20 +135,15 @@ namespace WizardsCode.DevLogger
         }
 
         void OnGUI()
-        {            
+        {
             try
             {
                 selectedTab = GUILayout.Toolbar(selectedTab, toolbarLabels);
                 switch (selectedTab)
                 {
                     case 0:
-                        if (m_DevLogEntries != null && m_ScreenCaptures != null) // We are correctly configured
+                        if (m_DevLogEntries != null && m_ScreenCaptures != null) // Check we are correctly configured
                         {
-                            entryScrollPosition = EditorGUILayout.BeginScrollView(entryScrollPosition);
-                            mediaPanel.ScreenCaptures = m_ScreenCaptures;
-                            m_EntryPanel.entries = m_DevLogEntries;
-                            m_EntryPanel.OnGUI();
-
                             Skin.StartSection("Posting", false);
 
                             m_EntryPanel.DevLogPostingGUI();
@@ -150,7 +153,7 @@ namespace WizardsCode.DevLogger
                             {
                                 canPostToAll = DiscordPostingGUI();
                                 canPostToAll &= TwitterPostingGUI();
-                                
+
                                 if (canPostToAll)
                                 {
                                     if (GUILayout.Button("Post to All"))
@@ -161,6 +164,11 @@ namespace WizardsCode.DevLogger
                                 }
                             }
                             Skin.EndSection();
+
+                            entryScrollPosition = EditorGUILayout.BeginScrollView(entryScrollPosition);
+                            mediaPanel.ScreenCaptures = m_ScreenCaptures;
+                            m_EntryPanel.entries = m_DevLogEntries;
+                            m_EntryPanel.OnGUI();
 
                             EditorGUILayout.Space();
 
@@ -207,7 +215,7 @@ namespace WizardsCode.DevLogger
         /// <returns>True if it is possible to post to Discord.</returns>
         private bool DiscordPostingGUI()
         {
-            if (!DiscordSettings.IsConfigured) return false;
+            if (!DiscordSettings.IsConfigured || m_EntryPanel.isNewEntry) return false;
 
             if (!string.IsNullOrEmpty(m_EntryPanel.shortText) && mediaPanel.hasSelectedImages)
             {
@@ -223,8 +231,8 @@ namespace WizardsCode.DevLogger
                         message = new Message(DiscordSettings.Username, m_EntryPanel.shortText + m_EntryPanel.GetSelectedMetaData(false), m_EntryPanel.detailText, mediaPanel.ScreenCaptures);
                     }
 
-                    DevLogEntry entry = m_EntryPanel.AppendDevlog(false, true);
-                    Discord.PostEntry(entry);
+                    currentEntry = m_EntryPanel.AppendDevlogEntry(false, true);
+                    Discord.PostEntry(currentEntry);
                 }
                 return true;
             } else
@@ -244,7 +252,7 @@ namespace WizardsCode.DevLogger
         /// <returns>True if it is possible to post to Twitter.</returns>
         private bool TwitterPostingGUI()
         {
-            if (!TwitterSettings.IsConfigured) return false;
+            if (!TwitterSettings.IsConfigured || m_EntryPanel.isNewEntry) return false;
 
             if (!string.IsNullOrEmpty(TweetText) && TweetText.Length <= 280 && mediaPanel.hasSelectedImages)
             {
@@ -310,10 +318,10 @@ namespace WizardsCode.DevLogger
 
             if (isTweeted)
             {
-                return m_EntryPanel.AppendDevlog(true);
+                return m_EntryPanel.AppendDevlogEntry(true);
             } else
             {
-                return m_EntryPanel.AppendDevlog();
+                return m_EntryPanel.AppendDevlogEntry();
             }
         }
 

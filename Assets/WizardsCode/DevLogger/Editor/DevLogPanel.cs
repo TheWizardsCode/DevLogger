@@ -19,9 +19,12 @@ namespace WizardsCode.DevLogger
 
         internal DevLogEntries entries { get; set; }
 
+        private DevLoggerWindow devLoggerWindow;
+
         public DevLogPanel(DevLogEntries entries)
         {
             this.entries = entries;
+            devLoggerWindow = EditorWindow.GetWindow(typeof(DevLoggerWindow)) as DevLoggerWindow;
         }
 
         internal DevLogScreenCaptureCollection ScreenCaptures { get; set; }

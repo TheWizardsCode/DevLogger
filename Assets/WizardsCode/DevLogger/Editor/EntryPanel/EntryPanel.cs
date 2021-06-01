@@ -23,12 +23,19 @@ namespace WizardsCode.DevLogger
         [SerializeField] string gitCommit = "";
         [SerializeField] string newMetaDataItem;
 
+        internal bool isNewEntry;
+
         public EntryPanel(DevLogEntries entries)
         {
             this.entries = entries;
+
+            devLogWindow = EditorWindow.GetWindow(typeof(DevLoggerWindow)) as DevLoggerWindow;
         }
 
         internal DevLogEntries entries { get; set; }
+
+        private DevLoggerWindow devLogWindow;
+
         internal DevLogScreenCaptureCollection ScreenCaptures
         {
             get
@@ -55,6 +62,19 @@ namespace WizardsCode.DevLogger
         {
             //windowScrollPos = EditorGUILayout.BeginScrollView(windowScrollPos);
             Skin.StartSection("Log Entry", false);
+            if (GUILayout.Button("New Entry"))
+            {
+                isNewEntry = true;
+                windowScrollPos = Vector2.zero;
+                shortText = "";
+                status = DevLogEntry.Status.Idea;
+                detailScrollPosition = Vector2.zero;
+                detailText = "";
+                isSocial = false;
+                gitCommit = "";
+                newMetaDataItem = "";
+            }
+
             LogEntryGUI();
             Skin.EndSection();
 
@@ -141,9 +161,18 @@ namespace WizardsCode.DevLogger
             if (!string.IsNullOrEmpty(shortText))
             {
                 EditorGUILayout.BeginHorizontal();
-                if (GUILayout.Button("Post Devlog Only"))
+                if (isNewEntry)
                 {
-                    AppendDevlog();
+                    if (GUILayout.Button("Post Devlog Only"))
+                    {
+                        AppendDevlogEntry();
+                    }
+                } else
+                {
+                    if (GUILayout.Button("Update Devlog"))
+                    {
+                        UpdateDevLogEntry();
+                    }
                 }
                 EditorGUILayout.EndHorizontal();
             }
@@ -153,13 +182,85 @@ namespace WizardsCode.DevLogger
             }
         }
 
+        internal void EditEntry(DevLogEntry entry)
+        {
+            isNewEntry = false;
+            windowScrollPos = Vector2.zero;
+            status = entry.status;
+            detailScrollPosition = Vector2.zero;
+            shortText = entry.shortDescription;
+            detailText = entry.longDescription;
+            isSocial = entry.isSocial;
+            gitCommit = entry.commitHash;
+
+            MetaDataItems items = EntryPanelSettings.GetSuggestedMetaDataItems();
+            for (int i = 0; i < items.Count; i++)
+            {
+                if (devLogWindow.currentEntry.metaData.Contains(items.GetItem(i).name))
+                {
+                    items.GetItem(i).IsSelected = true;
+                }
+            }
+
+            List<string> mediaFilePaths = new List<string>();
+            for (int i = 0; i < ScreenCaptures.Count; i++)
+            {
+                DevLogScreenCapture capture = ScreenCaptures.captures[i];
+                if (devLogWindow.currentEntry.captures.Contains(capture))
+                {
+                    ScreenCaptures.captures[i].IsSelected = true;
+                }
+            }
+        }
+
+        public void UpdateDevLogEntry()
+        {
+            devLogWindow.currentEntry.status = status;
+
+            devLogWindow.currentEntry.shortDescription = shortText;
+            devLogWindow.currentEntry.isSocial = isSocial;
+
+            devLogWindow.currentEntry.commitHash = gitCommit;
+            
+            MetaDataItems items = EntryPanelSettings.GetSuggestedMetaDataItems();
+            for (int i = 0; i < items.Count; i++)
+            {
+                if (!items.GetItem(i).IsSelected)
+                {
+                    devLogWindow.currentEntry.metaData.Remove(items.GetItem(i).name);
+                } 
+                else if (items.GetItem(i).IsSelected && !devLogWindow.currentEntry.metaData.Contains(items.GetItem(i).name))
+                {
+                    devLogWindow.currentEntry.metaData.Add(items.GetItem(i).name);
+                }
+            }
+
+            List<string> mediaFilePaths = new List<string>();
+            for (int i = 0; i < ScreenCaptures.Count; i++)
+            {
+                DevLogScreenCapture capture = ScreenCaptures.captures[i];
+                if (!ScreenCaptures.captures[i].IsSelected)
+                {
+                    devLogWindow.currentEntry.captures.Remove(capture);
+                } else if (ScreenCaptures.captures[i].IsSelected && !devLogWindow.currentEntry.captures.Contains(capture))
+                {
+                    devLogWindow.currentEntry.captures.Add(capture);
+                    ScreenCaptures.captures[i].IsSelected = false;
+                }
+            }
+            devLogWindow.currentEntry.longDescription = detailText;
+
+            EditorUtility.SetDirty(entries);
+            AssetDatabase.SaveAssets();
+        }
+
         /// <summary>
         /// Append a devlog entry.
         /// </summary>
         /// <param name="withTweet">If true record that the entry was tweeted at the current time.</param>
         /// <param name="withDiscord">If true record that the entry was posted to discord at the current time.</param>
         /// <returns></returns>
-        public DevLogEntry AppendDevlog(bool withTweet = false, bool withDiscord = false)
+        public DevLogEntry AppendDevlogEntry(bool withTweet = false, bool withDiscord = false)
         {
             DevLogEntry entry = ScriptableObject.CreateInstance<DevLogEntry>();
             entry.name = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString();

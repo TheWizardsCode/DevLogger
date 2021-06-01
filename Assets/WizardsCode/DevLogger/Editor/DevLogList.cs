@@ -19,7 +19,7 @@ namespace WizardsCode.DevLogger {
         public static bool isDirty = false;
 
         string title;
-        
+        private DevLoggerWindow devLoggerWindow;
         DevLogEntries allEntries;
         List<DevLogEntry> validEntries;
 
@@ -32,6 +32,8 @@ namespace WizardsCode.DevLogger {
             this.list = elements.GetEntries(status);
 
             title = status.ToString();
+
+            devLoggerWindow = EditorWindow.GetWindow(typeof(DevLoggerWindow)) as DevLoggerWindow;
         }
         
         internal void SaveReorderedList(ReorderableList list)
@@ -59,6 +61,7 @@ namespace WizardsCode.DevLogger {
             height += EditorGUIUtility.singleLineHeight;// Social Flag
             height += EditorGUIUtility.singleLineHeight;// Tweeted
             height += EditorGUIUtility.singleLineHeight;// Discord
+            height += EditorGUIUtility.singleLineHeight;// Buttons
             height += 10; // space
             return height;
         }
@@ -147,6 +150,14 @@ namespace WizardsCode.DevLogger {
             {
                 Rect timeRect = new Rect(fieldRect.x + 20, fieldRect.y, fieldRect.width - 50, fieldRect.height);
                 EditorGUI.LabelField(timeRect, "most recent" + entry.lastDiscordPostPrettyTime);
+            }
+
+            labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight, labelRect.width, labelRect.height);
+            fieldRect = new Rect(fieldRect.x, labelRect.y, fieldRect.width, EditorGUIUtility.singleLineHeight);
+            if (GUI.Button(fieldRect, "Edit"))
+            {
+                devLoggerWindow.currentEntry = entry;
+                devLoggerWindow.EditCurrentEntry();
             }
         }
     }
