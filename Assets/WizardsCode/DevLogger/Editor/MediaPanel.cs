@@ -426,11 +426,15 @@ namespace WizardsCode.DevLogger
                 int width = (int)window.position.width;
                 int height = (int)window.position.height;
                 Vector2 position = window.position.position;
-                position.y += 18;
-
-                if (windowName.EndsWith("SceneView") || windowName.EndsWith("GameView"))
+                
+                if (window.maximized && Settings.TrimTabsWhenMaximized)
                 {
-                    position.y += 18;
+                    position.y += 18; // trim the tabs
+                }
+
+                if (windowName.EndsWith("SceneView") || (windowName.EndsWith("GameView") && Settings.TrimGameViewToolbar))
+                {
+                    position.y += 18; // trim the toolbar
                     height -= 18;
                 }
 

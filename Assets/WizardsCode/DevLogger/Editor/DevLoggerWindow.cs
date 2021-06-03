@@ -371,18 +371,22 @@ namespace WizardsCode.DevLogger
 
             Skin.EndSection();
 
-
-            Skin.StartSection("Camera", false);
+            Skin.StartSection("Capturing", false);
             if (!m_CaptureCamera) m_CaptureCamera = Camera.main;
             if (!m_CaptureCamera)
             {
                 EditorGUILayout.LabelField("No main camera in scene, please tag a camera as MainCamera or select a camera here.");
             }
-
+            
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.PrefixLabel("Camera for captures");
             m_CaptureCamera = (Camera)EditorGUILayout.ObjectField(m_CaptureCamera, typeof(Camera), true);
             EditorGUILayout.EndHorizontal();
+
+            Settings.TrimTabsWhenMaximized = EditorGUILayout.ToggleLeft("Trim tabs from the window when it is maximized", Settings.TrimTabsWhenMaximized);
+            Settings.TrimSceneViewToolbar = EditorGUILayout.ToggleLeft("Trim the Toolbar from Scene View", Settings.TrimSceneViewToolbar);
+            Settings.TrimGameViewToolbar = EditorGUILayout.ToggleLeft("Trim the Toolbar from Game View", Settings.TrimGameViewToolbar);
+
             Skin.EndSection();
 
             Skin.StartSection("Dev Log Objects", false);

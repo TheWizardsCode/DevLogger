@@ -48,6 +48,24 @@ namespace WizardsCode.DevLogger
             set { EditorPrefs.SetString(ScreenCaptureScriptableObjectPathKey, value); }
         }
 
+        public static bool TrimSceneViewToolbar
+        {
+            get { return EditorPrefs.GetBool(TrimSceneViewToolbarPathKey, true); }
+            set { EditorPrefs.SetBool(TrimSceneViewToolbarPathKey, value); }
+        }
+
+        public static bool TrimGameViewToolbar
+        {
+            get { return EditorPrefs.GetBool(TrimGameViewToolbarPathKey, true); }
+            set { EditorPrefs.SetBool(TrimGameViewToolbarPathKey, value); }
+        }
+
+        public static bool TrimTabsWhenMaximized
+        {
+            get { return EditorPrefs.GetBool(TrimTabsWhenMaximizedPathKey, true); }
+            set { EditorPrefs.SetBool(TrimTabsWhenMaximizedPathKey, value); }
+        }
+
         public static void Reset()
         {
             EditorPrefs.DeleteKey(CapturesFolderPathKey);
@@ -75,6 +93,21 @@ namespace WizardsCode.DevLogger
         static string ScreenCaptureScriptableObjectPathKey
         {
             get { return "DevLogScreenCapturesObjectPath_" + Application.productName; }
+        }
+
+        static string TrimSceneViewToolbarPathKey
+        {
+            get { return "DevLogTrimSceneViewToolbar_" + Application.productName; }
+        }
+
+        static string TrimGameViewToolbarPathKey
+        {
+            get { return "DevLogTrimGameViewToolbar_" + Application.productName; }
+        }
+
+        static string TrimTabsWhenMaximizedPathKey
+        {
+            get { return "DevLogTrimTabsWhenMaximized_" + Application.productName; }
         }
         #endregion
     }
