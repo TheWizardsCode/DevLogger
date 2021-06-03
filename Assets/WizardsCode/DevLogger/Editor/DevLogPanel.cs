@@ -15,6 +15,7 @@ namespace WizardsCode.DevLogger
         DevLogList inProgressList;
         DevLogList testingList;
         DevLogList doneList;
+        DevLogList socialList;
         Vector2 listScrollPosition;
 
         internal DevLogEntries entries { get; set; }
@@ -115,6 +116,10 @@ namespace WizardsCode.DevLogger
                 {
                     doneList.DoLayoutList();
                 }
+                if (socialList.count > 0)
+                {
+                    socialList.DoLayoutList();
+                }
                 EditorGUILayout.EndScrollView();
             }
         }
@@ -129,6 +134,7 @@ namespace WizardsCode.DevLogger
                 inProgressList = ConfigureList(DevLogEntry.Status.InProgress);
                 testingList = ConfigureList(DevLogEntry.Status.Testing);
                 doneList = ConfigureList(DevLogEntry.Status.Done);
+                socialList = ConfigureList(DevLogEntry.Status.Social);
 
                 lastEntriesList = entries;
             }
