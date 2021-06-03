@@ -215,7 +215,7 @@ namespace WizardsCode.DevLogger
         /// <returns>True if it is possible to post to Discord.</returns>
         private bool DiscordPostingGUI()
         {
-            if (!DiscordSettings.IsConfigured || m_EntryPanel.isNewEntry) return false;
+            if (!DiscordSettings.IsConfigured || !m_EntryPanel.isNewEntry) return false;
 
             if (!string.IsNullOrEmpty(m_EntryPanel.shortText) && mediaPanel.hasSelectedImages)
             {
@@ -252,7 +252,7 @@ namespace WizardsCode.DevLogger
         /// <returns>True if it is possible to post to Twitter.</returns>
         private bool TwitterPostingGUI()
         {
-            if (!TwitterSettings.IsConfigured || m_EntryPanel.isNewEntry) return false;
+            if (!TwitterSettings.IsConfigured || !m_EntryPanel.isNewEntry) return false;
 
             if (!string.IsNullOrEmpty(TweetText) && TweetText.Length <= 280 && mediaPanel.hasSelectedImages)
             {
