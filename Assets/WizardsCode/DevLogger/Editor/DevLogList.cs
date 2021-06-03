@@ -65,7 +65,6 @@ namespace WizardsCode.DevLogger {
             height += 10; // space
             return height;
         }
-        
         internal void DrawHeader(Rect rect)
         {
             EditorGUI.LabelField(rect, title);

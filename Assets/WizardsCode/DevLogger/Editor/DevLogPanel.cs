@@ -133,6 +133,7 @@ namespace WizardsCode.DevLogger
         private DevLogList ConfigureList(DevLogEntry.Status status)
         {
             DevLogList list = new DevLogList(entries, status);
+
             list.drawElementCallback = list.DrawLogListElement;
             list.drawHeaderCallback = list.DrawHeader;
             list.elementHeightCallback = list.ElementHeightCallback;

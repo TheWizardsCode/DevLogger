@@ -23,18 +23,27 @@ namespace WizardsCode.DevLogger
         [SerializeField] string gitCommit = "";
         [SerializeField] string newMetaDataItem;
 
-        internal bool isNewEntry;
+        internal bool isNewEntry = true;
+
+        private DevLoggerWindow m_DevLogWindow;
+        internal DevLoggerWindow devLogWindow
+        {
+            get
+            {
+                if (m_DevLogWindow == null)
+                {
+                    m_DevLogWindow = EditorWindow.GetWindow(typeof(DevLoggerWindow)) as DevLoggerWindow;
+                }
+                return m_DevLogWindow;
+            }
+        }
 
         public EntryPanel(DevLogEntries entries)
         {
             this.entries = entries;
-
-            devLogWindow = EditorWindow.GetWindow(typeof(DevLoggerWindow)) as DevLoggerWindow;
         }
 
         internal DevLogEntries entries { get; set; }
-
-        private DevLoggerWindow devLogWindow;
 
         internal DevLogScreenCaptureCollection ScreenCaptures
         {
