@@ -29,9 +29,17 @@ namespace WizardsCode.DevLogger
 
         internal DevLogScreenCaptureCollection ScreenCaptures { get; set; }
 
+        float timeToUpdateLists = 0;
         public void OnGUI()
         {
-            ConfigureReorderableDevLogLists();
+            if (timeToUpdateLists <= 0)
+            {
+                ConfigureReorderableDevLogLists();
+                timeToUpdateLists = 1;
+            } else
+            {
+                timeToUpdateLists -= Time.deltaTime;
+            }
 
             if (doneList == null)
             {
