@@ -246,6 +246,19 @@ namespace WizardsCode.DevLogger
             get { return m_EntryPanel.shortText + m_EntryPanel.GetSelectedMetaData(); }
         }
 
+        internal void DeleteEntry(DevLogEntry entry)
+        {
+            if (EditorUtility.DisplayDialog("Delete DevLog Entry?",
+                "Are you sure you want delete the entry '" + entry.title
+                + "'?", "Delete", "Cancel"))
+            {
+                m_EntryPanel.entries.RemoveEntry(entry);
+                AssetDatabase.RemoveObjectFromAsset(entry);
+                EditorUtility.SetDirty(m_EntryPanel.entries);
+                AssetDatabase.SaveAssets();
+            }
+        }
+
         /// <summary>
         /// Display the GUI for posting to DevLog pluse Twitter.
         /// </summary>

@@ -54,5 +54,10 @@ namespace WizardsCode.DevLogger
             }
             return results;
         }
+
+        internal void RemoveEntry(DevLogEntry entry)
+        {
+            m_Entries.Remove(entry);
+        }
     }
 }

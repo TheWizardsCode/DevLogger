@@ -8,7 +8,7 @@ The following features have been tested and, to the best of our knowledge, work 
 
 When exporting the DevLog markdown only show two sections, the released section and the Beta section. Only Done items appear in the released section while Testing items appear in the Beta section.
 
-Wednesday 2 June 2021, 20:51
+Wednesday 2 June 2021, 21:10
 
 ### tt
 
@@ -22,7 +22,7 @@ When viewing the DevLog panel we should see entries grouped according to their c
   * Done
   * Idea
 
-Wednesday 2 June 2021, 20:51
+Wednesday 2 June 2021, 21:10
 
 ### Allow DevLog entries to be edited in the Entry panel
 
@@ -32,7 +32,7 @@ We might want to do more than edit basic information for a dev log entry. For ex
 2. When editing an existing entry the devlog button should say "update" rather than "post"
 
 
-Wednesday 2 June 2021, 20:51
+Wednesday 2 June 2021, 21:10
 
 ## Beta Features
 The following features are currently being tested. They may not work as intended, please let us know if you find a problem, like the feature or do not like a feature.
@@ -42,17 +42,13 @@ The following features are currently being tested. They may not work as intended
 
 The status field on the DevLogEntry will allow DevLog entries to act as task lists in a Kanban style.
 
-Wednesday 2 June 2021, 20:51
+Wednesday 2 June 2021, 21:10
 
-## Social Amplification
-The following posts were sent to one or more social channel during this development cycle. These posts do not represent specific features, but signify key development stages we felt were worth sharing.
+### Add a new Status Type of "Social"
 
+The status type of Social is only used for posting to social channels, it is not part of the project planning cycle.
 
-### This is a test entry for the new social status for devlog entries
+Social items appear in their own section in the markdown devlog
 
-![Screenshot](E:\WizardsCode\DevLogger\DevLog\WizardsCode.DevLogger.DevLoggerWindow_DevLogger__v1.0_132639292650000000.png)
-
-### Make the headings in the DevLog Panel collapsable
-
-### Testing Social category
+Wednesday 2 June 2021, 21:10
 

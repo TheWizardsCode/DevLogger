@@ -151,12 +151,19 @@ namespace WizardsCode.DevLogger {
                 EditorGUI.LabelField(timeRect, "most recent" + entry.lastDiscordPostPrettyTime);
             }
 
+            float width = fieldRect.width / 2;
             labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight, labelRect.width, labelRect.height);
-            fieldRect = new Rect(fieldRect.x, labelRect.y, fieldRect.width, EditorGUIUtility.singleLineHeight);
+            fieldRect = new Rect(fieldRect.x, labelRect.y, width, EditorGUIUtility.singleLineHeight);
             if (GUI.Button(fieldRect, "Edit"))
             {
                 devLoggerWindow.currentEntry = entry;
                 devLoggerWindow.EditCurrentEntry();
+            }
+
+            fieldRect = new Rect(fieldRect.x + width, labelRect.y, fieldRect.width / 2, EditorGUIUtility.singleLineHeight);
+            if (GUI.Button(fieldRect, "Delete"))
+            {
+                devLoggerWindow.DeleteEntry(entry);
             }
         }
     }
