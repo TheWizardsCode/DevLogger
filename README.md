@@ -9,9 +9,10 @@ DevLogger is a Unity Plugin that helps you keep a DevLog while working on your p
 See [below](#using-devlogger) for usage guide
 
   * Capture in-game screenshots
-  * Capture in-game animated GIFs (HDRP and URP not supported)
+  * Capture in-game animated GIFs (HDRP and URP not currently supported)
   * Capture in-editor windows image (scene view, hierarchy window etc.)
   * Post timed notes, with or without images, to a markdown DevLog
+  * Create and manage tasks in your project 
   * Manage hashtags
   * Create Dev Log entries from Git commits
   * Post updates, with or without images (with or without animated GIFs), to Twitter
@@ -60,9 +61,24 @@ Once these steps are completed the Entry UI will be displayed.
 
 The entry tab is where you will spend most of your time. It consists of the following sections:
 
+### Posting
+
+Once you have a valid entry created your avialable posting options, for DevLog, Discord and Twitter will appear here.
+
 ### Log Entry
 
-This has the short and long text for your log entry. Bear in mind that the short entry will be used when posting to Twitter. The long entry will be used in the Dev Log and on Discord posts.
+Here you can create a new blank entry and enter short and long text for your log entry. You can also use this section for editing entries already posted to your log. We'll come back to that later.
+
+The `Status` value is used to indicate that current status of this develog entry. You can use the status' for whatever purpose you desire, but here's how we use them:
+
+  * Idea - Usually quick notes capturing an idea that comes to you during development. These are not typically full rounded out, just a quick note and maybe a screenshot capturing the thought.
+  * ToDo - When an idea grows into something that seems to be fully formed we make it a ToDo item. ToDo items are things we intend to implement but have not scheduled yet.
+  * In Progress - This is what we are working on right now.
+  * Testing - We think this work is done but it needs thorough play testing. Typically these items will be shipped in beta builds for our early adopters offering feedback.
+  * Done - Done and released to the main game.
+  * Social - These are typically informational items used to inform our players about progress we made. We used to use DevLog entries for this but we started to use it more for planning and design notes and this we needed a separate DevLog item that only had the essential information and the pretty screenshots. 
+
+Bear in mind that the short entry will be used when posting to Twitter. The long entry will be used in the Dev Log and on Discord posts.
 
 ### Meta Data
 
@@ -71,10 +87,6 @@ The meta data section allows you to define Hashtags, URLs, Git commit hashes and
 To add a new item simply type a freeform value into the textbox and click "Add".
 
 There is also a checkbox to indicate if this entry should be used in social amplification. This relates to scheduled social posts, see below for more.
-
-### Posting
-
-This section is where you will find buttons for posting to your dev log and social accoutns. If an option is currently valid the button for it will appear here. At the time of writing the actions potentially available are Post to the DevLog, Twitter and Discord. 
 
 ### Media
 
@@ -92,11 +104,15 @@ Note it takes a short while for animated gifs to be processed, they will not app
 
 ## DevLog Tab
 
-Click the "View Devlog" button to open a Markdown version of your devlog.  
+Click the "View Tasks Markdown" button to open a Markdown version of your Idea, Tasks and Inprogress items. Click the "View DevLog Markdown" to see your Testing, Done and Social items in markdown form.
 
-You can also view all the entries in your current DevLog. You can reorder and edit and delete entries here. If you select an entry you will be presented with the option to tweet and/or post to discord from this tab. Note that these buttons will only appear if these services are correctly configured, see below for more details.
+The main part of this panel shows a list of all your items grouped by category. You can reorder and edit description and meta data here, as well as delete entries. You can also click the "Edit" button to open up the entry in the main Entry Panel where you can add/remove screenshots and more.
+
+Selecting an entry tahat matches the social criteria (e.g. has screenshots) enables buttons that at the top of the panel with the option to tweet and/or post to discord from this tab. Note that these buttons will only appear if these services are correctly configured, see below for more details.
 
 ## Schedule Tab
+
+This is a Work In Progress and not fully operational. Feedback welcome.
 
 You can setup a schedule for publishing your tweets and discord posts here. This is not fully integrated into the editor yet. At the time of writing you need
 to create a Schedule Entry using `Create -> Wizards Code -> Dev Log Scheduled Event`. These will automatically appear in the Schedule tab. From there you can 
@@ -112,13 +128,15 @@ You can have as many scheduled events as you desire.
 
 ## Git Tab
 
-The Git tab enables you to view the git logs for this project. This is only tested on Windows, we welcome reports and patches for other platforms.
+The Git tab enables you to view the git logs for this project and quickly create DevLog entries from them. This is only tested on Windows, we welcome reports and patches for other platforms.
 
 You can click a button on the log entries to copy the data over to the DevLog entry fields where you can complete a DevLog entry.
 
 ## Settings Tab
 
 Here you can setup the DevLogger tool. We covered the database items above in the installation section. The camera field defines which camera is used to capture GIFs. This will default to the main camera, but you can override it if you so desire.
+
+There are three options for trimming items from screenshots. These are here to allow you to include or exclude certain elements and also to ensure that you can use tools like the excellent Full Screen asset without compromising your screenshots.
 
 ### Discord Settings
 
