@@ -76,7 +76,7 @@ The `Status` value is used to indicate that current status of this develog entry
   * In Progress - This is what we are working on right now.
   * Testing - We think this work is done but it needs thorough play testing. Typically these items will be shipped in beta builds for our early adopters offering feedback.
   * Done - Done and released to the main game.
-  * Social - These are typically informational items used to inform our players about progress we made. We used to use DevLog entries for this but we started to use it more for planning and design notes and this we needed a separate DevLog item that only had the essential information and the pretty screenshots. 
+  * Social - These are typically informational items used to inform our players about progress we made. We used to use DevLog entries for this but we started to add more planning and design notes and thus we needed a separate DevLog item that only had the essential information and the pretty screenshots. 
 
 Bear in mind that the short entry will be used when posting to Twitter. The long entry will be used in the Dev Log and on Discord posts.
 
