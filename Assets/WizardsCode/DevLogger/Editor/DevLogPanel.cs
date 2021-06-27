@@ -8,6 +8,10 @@ using WizardsCode.Social;
 
 namespace WizardsCode.DevLogger
 {
+    /**
+     * The panel in the main window used for displaying the items in the current devlog.
+     * This panbel groups and lists items of different status and allows the user to view and edit them.
+     */
     public class DevLogPanel
     {
         DevLogList ideaList;

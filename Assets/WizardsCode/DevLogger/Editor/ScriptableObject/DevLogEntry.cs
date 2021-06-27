@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace WizardsCode.DevLogger
 {
@@ -20,6 +21,8 @@ namespace WizardsCode.DevLogger
         [SerializeField, Tooltip("The long description of this entry used as the detail for a Dev Log entry.")]
         [TextArea(6, 12)]
         public string longDescription = "";
+        [SerializeField, Tooltip("Any assets that are relevant to this entry.")]
+        public List<Object> assets = new List<Object>();
         [SerializeField, Tooltip("The meta data such as links and hashtags associated with this entry.")]
         public List<string> metaData = new List<string>();
         [SerializeField, Tooltip("A list of the screen captures for this entry")]

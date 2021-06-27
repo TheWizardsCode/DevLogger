@@ -5,11 +5,12 @@ using System.Text;
 using UnityEditor;
 using UnityEngine;
 using WizardsCode.EditorUtils;
+using Object = UnityEngine.Object;
 
 namespace WizardsCode.DevLogger
 {
     /// <summary>
-    /// The GUI Panel for a new DevLog Entry
+    /// The GUI Panel for a new DevLog Entry. This displays a single DevLog Entry.
     /// </summary>
     [Serializable]
     public class EntryPanel
@@ -19,8 +20,10 @@ namespace WizardsCode.DevLogger
         [SerializeField] internal DevLogEntry.Status status;
         private Vector2 detailScrollPosition;
         [SerializeField] internal string detailText = "";
+        [SerializeField] List<Object> assets = new List<Object>();
         [SerializeField] bool isSocial = false;
         [SerializeField] string gitCommit = "";
+        [SerializeField] Object newAssetDataItem;
         [SerializeField] string newMetaDataItem;
 
         internal bool isNewEntry = true;
@@ -79,12 +82,17 @@ namespace WizardsCode.DevLogger
                 status = DevLogEntry.Status.Idea;
                 detailScrollPosition = Vector2.zero;
                 detailText = "";
+                assets = new List<Object>();
                 isSocial = false;
                 gitCommit = "";
                 newMetaDataItem = "";
             }
 
             LogEntryGUI();
+            Skin.EndSection();
+
+            Skin.StartSection("Assets", false);
+            AssetsDataGUI();
             Skin.EndSection();
 
             Skin.StartSection("Meta Data", false);
@@ -124,6 +132,33 @@ namespace WizardsCode.DevLogger
             detailScrollPosition = GUILayout.BeginScrollView(detailScrollPosition);
             detailText = EditorGUILayout.TextArea(detailText, GUILayout.ExpandHeight(true));
             GUILayout.EndScrollView();
+        }
+        
+        private void AssetsDataGUI()
+        {
+            EditorGUILayout.BeginHorizontal();
+
+            EditorGUILayout.BeginVertical();
+            for (int i = 0; i < assets.Count; i++)
+            {
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.LabelField("Asset " + i);
+                assets[i] = EditorGUILayout.ObjectField(assets[i], typeof(Object), true);
+                EditorGUILayout.EndHorizontal();
+            }
+
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField(EntryPanelSettings.guiNewAssetLabel);
+            newAssetDataItem = EditorGUILayout.ObjectField(newAssetDataItem, typeof(Object), true);
+            if (newAssetDataItem != null)
+            {
+                assets.Add(newAssetDataItem);
+                newAssetDataItem = null;
+            }
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.EndVertical();
+            
+            EditorGUILayout.EndHorizontal();
         }
 
         private void MetaDataGUI()
@@ -199,6 +234,7 @@ namespace WizardsCode.DevLogger
             detailScrollPosition = Vector2.zero;
             shortText = entry.shortDescription;
             detailText = entry.longDescription;
+            assets = entry.assets;
             isSocial = entry.isSocial;
             gitCommit = entry.commitHash;
 
@@ -227,6 +263,7 @@ namespace WizardsCode.DevLogger
             devLogWindow.currentEntry.status = status;
 
             devLogWindow.currentEntry.shortDescription = shortText;
+            devLogWindow.currentEntry.assets = assets;
             devLogWindow.currentEntry.isSocial = isSocial;
 
             devLogWindow.currentEntry.commitHash = gitCommit;
@@ -278,6 +315,8 @@ namespace WizardsCode.DevLogger
 
             entry.shortDescription = shortText;
             StringBuilder text = new StringBuilder(entry.shortDescription);
+
+            entry.assets = assets;
 
             entry.isSocial = isSocial;
 

@@ -12,6 +12,7 @@ namespace WizardsCode.DevLogger
         #region GUI
         static internal GUIContent guiShortTextLabel = new GUIContent("Short Descrption (required)", "The title of the DevLog entry. Also used as for Tweet content.");
         static internal GUIContent guiLongTextLabel = new GUIContent("Long Descrption", "The main body of the devlog. This will also be included in Discord posts.");
+        static internal GUIContent guiNewAssetLabel = new GUIContent("Add Asset", "Add a new asset that is relevant to this devlog entry.");
         static internal GUIContent guiSocialLabel = new GUIContent("Use for social?", "Should this be used for social amplificaton?");
         static internal GUIContent guiGitCommitLabel = new GUIContent("Git Commit Hash", "The hash of the Git commit this devlog relates to.");
         static internal GUIContent guiNewMetaDataLabel = new GUIContent("New Meta Data Label", "Add a new Meta Data label that can be optionally applied to this and future DevLog entries.");

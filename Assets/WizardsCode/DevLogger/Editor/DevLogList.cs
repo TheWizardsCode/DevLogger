@@ -55,6 +55,7 @@ namespace WizardsCode.DevLogger {
             height += EditorGUIUtility.singleLineHeight;// Title
             height += EditorGUIUtility.singleLineHeight;// Date
             height += EditorGUIUtility.singleLineHeight * listDescriptionLines; // descrption
+            height += EditorGUIUtility.singleLineHeight * validEntries[index].assets.Count; // Assets
             height += EditorGUIUtility.singleLineHeight * validEntries[index].metaData.Count; // meta data
             height += EditorGUIUtility.singleLineHeight * validEntries[index].captures.Count; // capture
             height += EditorGUIUtility.singleLineHeight;// Commit Hash
@@ -98,6 +99,16 @@ namespace WizardsCode.DevLogger {
             EditorGUI.PrefixLabel(labelRect, new GUIContent("Created"));
             fieldRect = new Rect(fieldRect.x, labelRect.y, fieldRect.width, labelRect.height);
             EditorGUI.LabelField(fieldRect, entry.created.ToString("dd MMM yyyy"));
+
+            if (validEntries[index].assets.Count != 0) {
+                for (int i = 0; i < entry.assets.Count; i++)
+                {
+                    labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight, labelRect.width, labelRect.height);
+                    EditorGUI.PrefixLabel(labelRect, new GUIContent("Asset " + i));
+                    fieldRect = new Rect(fieldRect.x, labelRect.y, fieldRect.width, EditorGUIUtility.singleLineHeight);
+                    EditorGUI.LabelField(fieldRect, entry.assets[i].name);
+                }
+            }
 
             labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight, labelRect.width, labelRect.height);
             if (validEntries[index].metaData.Count != 0)
