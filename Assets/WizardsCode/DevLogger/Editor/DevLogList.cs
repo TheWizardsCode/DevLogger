@@ -103,10 +103,16 @@ namespace WizardsCode.DevLogger {
             if (validEntries[index].assets.Count != 0) {
                 for (int i = 0; i < entry.assets.Count; i++)
                 {
-                    labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight, labelRect.width, labelRect.height);
-                    EditorGUI.PrefixLabel(labelRect, new GUIContent("Asset " + i));
-                    fieldRect = new Rect(fieldRect.x, labelRect.y, fieldRect.width, EditorGUIUtility.singleLineHeight);
-                    EditorGUI.LabelField(fieldRect, entry.assets[i].name);
+                    if (entry.assets[i] != null)
+                    {
+                        labelRect = new Rect(labelRect.x, labelRect.y + EditorGUIUtility.singleLineHeight, labelRect.width, labelRect.height);
+                        EditorGUI.PrefixLabel(labelRect, new GUIContent("Asset " + i));
+                        fieldRect = new Rect(fieldRect.x, labelRect.y, fieldRect.width, EditorGUIUtility.singleLineHeight);
+                        EditorGUI.LabelField(fieldRect, entry.assets[i].name);
+                    } else
+                    {
+                        entry.assets.RemoveAt(i);
+                    }
                 }
             }
 

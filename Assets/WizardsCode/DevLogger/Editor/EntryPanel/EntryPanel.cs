@@ -141,10 +141,16 @@ namespace WizardsCode.DevLogger
             EditorGUILayout.BeginVertical();
             for (int i = 0; i < assets.Count; i++)
             {
-                EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.LabelField("Asset " + i);
-                assets[i] = EditorGUILayout.ObjectField(assets[i], typeof(Object), true);
-                EditorGUILayout.EndHorizontal();
+                if (assets[i] != null)
+                {
+                    EditorGUILayout.BeginHorizontal();
+                    EditorGUILayout.LabelField("Asset " + i);
+                    assets[i] = EditorGUILayout.ObjectField(assets[i], typeof(Object), true);
+                    EditorGUILayout.EndHorizontal();
+                } else
+                {
+                    assets.RemoveAt(i);
+                }
             }
 
             EditorGUILayout.BeginHorizontal();
@@ -202,28 +208,25 @@ namespace WizardsCode.DevLogger
 
         internal void DevLogPostingGUI()
         {
-            if (!string.IsNullOrEmpty(shortText))
+            GUI.enabled = !string.IsNullOrEmpty(shortText);
+            
+            EditorGUILayout.BeginHorizontal();
+            if (isNewEntry)
             {
-                EditorGUILayout.BeginHorizontal();
-                if (isNewEntry)
+                if (GUILayout.Button("Post to Devlog Only"))
                 {
-                    if (GUILayout.Button("Post Devlog Only"))
-                    {
-                        AppendDevlogEntry();
-                    }
-                } else
-                {
-                    if (GUILayout.Button("Update Devlog"))
-                    {
-                        UpdateDevLogEntry();
-                    }
+                    AppendDevlogEntry();
                 }
-                EditorGUILayout.EndHorizontal();
-            }
-            else
+            } else
             {
-                EditorGUILayout.LabelField("No valid actions at this time.");
+                if (GUILayout.Button("Update Devlog"))
+                {
+                    UpdateDevLogEntry();
+                }
             }
+            EditorGUILayout.EndHorizontal();
+
+            GUI.enabled = true;
         }
 
         internal void EditEntry(DevLogEntry entry)

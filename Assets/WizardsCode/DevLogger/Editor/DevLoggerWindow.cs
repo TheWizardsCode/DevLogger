@@ -146,8 +146,6 @@ namespace WizardsCode.DevLogger
                         {
                             Skin.StartSection("Posting", false);
 
-                            m_EntryPanel.DevLogPostingGUI();
-
                             bool canPostToAll;
                             if (!string.IsNullOrEmpty(m_EntryPanel.shortText))
                             {
@@ -164,6 +162,8 @@ namespace WizardsCode.DevLogger
                                 }
                             }
                             Skin.EndSection();
+
+                            m_EntryPanel.DevLogPostingGUI();
 
                             entryScrollPosition = EditorGUILayout.BeginScrollView(entryScrollPosition);
                             mediaPanel.ScreenCaptures = m_ScreenCaptures;
