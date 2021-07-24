@@ -145,25 +145,24 @@ namespace WizardsCode.DevLogger
                         if (m_DevLogEntries != null && m_ScreenCaptures != null) // Check we are correctly configured
                         {
                             Skin.StartSection("Posting", false);
-
-                            bool canPostToAll;
-                            if (!string.IsNullOrEmpty(m_EntryPanel.shortText))
-                            {
-                                canPostToAll = DiscordPostingGUI();
-                                canPostToAll &= TwitterPostingGUI();
-
-                                if (canPostToAll)
-                                {
-                                    if (GUILayout.Button("Post to All"))
-                                    {
-                                        DevLogEntry entry = PostToDevLogAndTwitter();
-                                        Discord.PostEntry(entry);
-                                    }
-                                }
-                            }
-                            Skin.EndSection();
+                            GUILayout.BeginHorizontal();
 
                             m_EntryPanel.DevLogPostingGUI();
+
+                            bool canPostToAll;
+                            canPostToAll = DiscordPostingGUI();
+                            canPostToAll &= TwitterPostingGUI();
+
+                            GUI.enabled = canPostToAll;
+                            if (GUILayout.Button("Post to All"))
+                            {
+                                DevLogEntry entry = PostToDevLogAndTwitter();
+                                Discord.PostEntry(entry);
+                            }
+                            GUI.enabled = true;
+
+                            GUILayout.EndHorizontal();
+                            Skin.EndSection();
 
                             entryScrollPosition = EditorGUILayout.BeginScrollView(entryScrollPosition);
                             mediaPanel.ScreenCaptures = m_ScreenCaptures;
@@ -217,28 +216,27 @@ namespace WizardsCode.DevLogger
         {
             if (!DiscordSettings.IsConfigured || !m_EntryPanel.isNewEntry) return false;
 
-            if (!string.IsNullOrEmpty(m_EntryPanel.shortText) && mediaPanel.hasSelectedImages)
+            bool canPost = !string.IsNullOrEmpty(m_EntryPanel.shortText) && mediaPanel.hasSelectedImages;
+            
+            GUI.enabled = canPost;
+            if (GUILayout.Button("Post to DevLog and Discord"))
             {
-                if (GUILayout.Button("Post to Devlog and Discord"))
+                Message message;
+                if (string.IsNullOrEmpty(m_EntryPanel.detailText))
                 {
-                    Message message;
-                    if (string.IsNullOrEmpty(m_EntryPanel.detailText))
-                    {
-                        message = new Message(DiscordSettings.Username, m_EntryPanel.shortText + m_EntryPanel.GetSelectedMetaData(false), m_ScreenCaptures);
-                    }
-                    else
-                    {
-                        message = new Message(DiscordSettings.Username, m_EntryPanel.shortText + m_EntryPanel.GetSelectedMetaData(false), m_EntryPanel.detailText, mediaPanel.ScreenCaptures);
-                    }
-
-                    currentEntry = m_EntryPanel.AppendDevlogEntry(false, true);
-                    Discord.PostEntry(currentEntry);
+                    message = new Message(DiscordSettings.Username, m_EntryPanel.shortText + m_EntryPanel.GetSelectedMetaData(false), m_ScreenCaptures);
                 }
-                return true;
-            } else
-            {
-                return false;
+                else
+                {
+                    message = new Message(DiscordSettings.Username, m_EntryPanel.shortText + m_EntryPanel.GetSelectedMetaData(false), m_EntryPanel.detailText, mediaPanel.ScreenCaptures);
+                }
+
+                currentEntry = m_EntryPanel.AppendDevlogEntry(false, true);
+                Discord.PostEntry(currentEntry);
             }
+            GUI.enabled = true;
+
+            return canPost;
         }
 
         private string TweetText
@@ -267,18 +265,17 @@ namespace WizardsCode.DevLogger
         {
             if (!TwitterSettings.IsConfigured || !m_EntryPanel.isNewEntry) return false;
 
-            if (!string.IsNullOrEmpty(TweetText) && TweetText.Length <= 280 && mediaPanel.hasSelectedImages)
+            bool canPost = !string.IsNullOrEmpty(TweetText) && TweetText.Length <= 280 && mediaPanel.hasSelectedImages;
+
+            GUI.enabled = canPost;
+            if (GUILayout.Button("Post to DevLog and Tweet"))
             {
-                if (GUILayout.Button("Post DevLog and Tweet"))
-                {
-                    PostToDevLogAndTwitter();
-                    EditorGUILayout.EndHorizontal();
-                }
-                return true;
-            } else
-            {
-                return false;
+                PostToDevLogAndTwitter();
+                EditorGUILayout.EndHorizontal();
             }
+            GUI.enabled = true;
+
+            return canPost;
         }
 
         /// <summary>

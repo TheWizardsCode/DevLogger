@@ -213,7 +213,7 @@ namespace WizardsCode.DevLogger
             EditorGUILayout.BeginHorizontal();
             if (isNewEntry)
             {
-                if (GUILayout.Button("Post to Devlog Only"))
+                if (GUILayout.Button("Post to DevLog Only"))
                 {
                     AppendDevlogEntry();
                 }
