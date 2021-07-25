@@ -407,7 +407,7 @@ namespace Moments
 			while (m_Frames.Count > 0)
 			{
 				frameIndex++;
-				Debug.Log("Processing frame: " + frameIndex);
+				// Debug.Log("Processing frame: " + frameIndex);
 				GifFrame frame = ToGifFrame(m_Frames.Dequeue(), temp);
 				frames.Add(frame);
 				yield return null;

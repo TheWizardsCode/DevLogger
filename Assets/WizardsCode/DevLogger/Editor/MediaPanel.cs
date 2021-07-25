@@ -33,13 +33,22 @@ namespace WizardsCode.DevLogger
         [SerializeField] int framesPerColorSample = 6; // the number of frames between redefining the color pallete, smaller is better
         [SerializeField] int quality = 15; // Quality of color quantization, lower = better but slower (min 1, max 100)
 
-        public MediaPanel(DevLogScreenCaptureCollection captures, Camera camera)
+        public MediaPanel(DevLogScreenCaptureCollection captures)
         {
             ScreenCaptures = captures;
-            CaptureCamera = camera;
         }
 
-        internal Camera CaptureCamera { get; set; }
+        internal Camera CaptureCamera { 
+            get {
+                Camera current = Camera.main;
+                if (current == null)
+                {
+                    Debug.LogError("It appears you do not currently have a camera tagged as `MainCamera`. DevLogger uses this to discover the camera to use for capturing GIFs this function will be disabled until you identify a main camera in your scene.");
+                }
+
+                return current;
+            } 
+        }
 
         internal DevLogScreenCaptureCollection ScreenCaptures { get; set; }
         internal string CapturesFolderPath(DevLogScreenCapture capture) {
@@ -60,49 +69,42 @@ namespace WizardsCode.DevLogger
 
             return path;
         }
-        
-        internal void OnEnable()
-        {
-            CaptureCamera = AssetDatabase.LoadAssetAtPath(EditorPrefs.GetString("DevLogCaptureCamera_" + Application.productName), typeof(Camera)) as Camera;
-        }
-
-        internal void OnDisable()
-        {
-            EditorPrefs.SetString("DevLogCaptureCamera_" + Application.productName, AssetDatabase.GetAssetPath(CaptureCamera));
-        }
             
         private Recorder Recorder
         {
             get
             {
-                if (!CaptureCamera)
-                {
-                    CaptureCamera = Camera.main;
-                }
-
                 if (_recorder == null && CaptureCamera)
                 {
                     _recorder = CaptureCamera.GetComponent<Recorder>();
-                    if (_recorder == null)
-                    {
-                        _recorder = CaptureCamera.gameObject.AddComponent<Recorder>();
-                        _recorder.Init();
-
-                        PostProcessLayer pp = Camera.main.GetComponent<PostProcessLayer>();
-                        if (pp != null)
-                        {
-                            originalFinalBlitToCameraTarget = pp.finalBlitToCameraTarget;
-                            pp.finalBlitToCameraTarget = false;
-                        }
-                        removeRecorder = true;
-                    }
-                    else
-                    {
-                        removeRecorder = false;
-                    }
                 }
 
                 return _recorder;
+            }
+        }
+
+        private void AddRecorderToCamera()
+        {
+            if (_recorder == null && CaptureCamera)
+            {
+                _recorder = CaptureCamera.GetComponent<Recorder>();
+                if (_recorder == null)
+                {
+                    _recorder = CaptureCamera.gameObject.AddComponent<Recorder>();
+                    _recorder.Init();
+
+                    PostProcessLayer pp = Camera.main.GetComponent<PostProcessLayer>();
+                    if (pp != null)
+                    {
+                        originalFinalBlitToCameraTarget = pp.finalBlitToCameraTarget;
+                        pp.finalBlitToCameraTarget = false;
+                    }
+                    removeRecorder = true;
+                }
+                else
+                {
+                    removeRecorder = false;
+                }
             }
         }
 
@@ -174,52 +176,119 @@ namespace WizardsCode.DevLogger
             EditorGUILayout.BeginHorizontal();
             if (Application.isPlaying)
             {
-                if (GUILayout.Button("Scene View"))
-                {
-                    CaptureWindowScreenshot("UnityEditor.SceneView");
-                }
+                RuntimeCaptureGUI();
+            }
+            else
+            {
+                EditorCaptureGUI();
+            }
+            EditorGUILayout.EndHorizontal();
+            Skin.EndSection();
+        }
 
-                if (GUILayout.Button("Game View"))
-                {
-                    CaptureWindowScreenshot("UnityEditor.GameView");
-                }
+        private void EditorCaptureGUI()
+        {
+            EditorGUILayout.BeginVertical();
+            EditorGUILayout.BeginHorizontal();
 
-                EditorGUILayout.BeginVertical();
+            // Buttons to capture primary windows
+            string[] primaryWindowTitles = { "Hierarchy", "Inspector", "Project", "Scene", "Game", "Console" };
+            GUILayoutOption layoutOption = GUILayout.Height(60);
+            if (GUILayout.Button("Hierarchy", layoutOption))
+            {
+                CaptureWindowScreenshot("UnityEditor.SceneHierarchyWindow");
+            }
 
-                if (Recorder != null)
+            if (GUILayout.Button("Inspector", layoutOption))
+            {
+                CaptureWindowScreenshot("UnityEditor.InspectorWindow");
+            }
+
+            if (GUILayout.Button("Project", layoutOption))
+            {
+                CaptureWindowScreenshot("UnityEditor.ProjectBrowser");
+            }
+
+            if (GUILayout.Button("Scene View", layoutOption))
+            {
+                CaptureWindowScreenshot("UnityEditor.SceneView");
+            }
+
+            if (GUILayout.Button("Game View", layoutOption))
+            {
+                CaptureWindowScreenshot("UnityEditor.GameView");
+            }
+
+            if (GUILayout.Button("Console", layoutOption))
+            {
+                CaptureWindowScreenshot("UnityEditor.ConsoleWindow");
+            }
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.Space();
+
+            EditorGUILayout.BeginHorizontal();
+            // Buttons to capture secondary windows
+            string[] excludedWindowTitles = { "Asset Store" };
+            EditorWindow[] allWindows = Resources.FindObjectsOfTypeAll<EditorWindow>();
+            foreach (EditorWindow window in allWindows)
+            {
+                if (!primaryWindowTitles.Contains<string>(window.titleContent.text) && !excludedWindowTitles.Contains<string>(window.titleContent.text))
                 {
-                    switch (Recorder.State)
+                    if (GUILayout.Button(window.titleContent.text))
                     {
-                        case RecorderState.Paused: // We are paused so start recording. This allows saving of the last X seconds
-                            Recorder.Setup(preserveAspect, width, width / 2, fps, bufferSize, repeat, quality, framesPerColorSample);
-                            Recorder.Record();
-
-                            EditorGUILayout.LabelField("Starting Recording");
-                            break;
-                        case RecorderState.Recording:
-                            if (GraphicsSettings.currentRenderPipeline == null)
-                            {
-                                if (GUILayout.Button("Save Animated GIF"))
-                                {
-                                    Debug.Log("Save Animated Gif button pressed");
-                                    CaptureGif();
-                                }
-                            }
-                            else
-                            {
-                                GUILayout.Label("Capturing a GIF is not currently supported in HDRP/URP");
-                            }
-                            break;
-                        case RecorderState.PreProcessing:
-                            EditorGUILayout.LabelField("Processing");
-                            break;
+                        CaptureWindowScreenshot(window.GetType().FullName);
                     }
-                } else
+                }
+            }
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.EndVertical();
+        }
+
+        private void RuntimeCaptureGUI()
+        {
+            if (GUILayout.Button("Scene View"))
+            {
+                CaptureWindowScreenshot("UnityEditor.SceneView");
+            }
+
+            if (GUILayout.Button("Game View"))
+            {
+                CaptureWindowScreenshot("UnityEditor.GameView");
+            }
+
+            EditorGUILayout.BeginVertical();
+
+            if (Recorder != null)
+            {
+                switch (Recorder.State)
                 {
-                    Debug.LogError("You do not appear to have a `Camera.main` set in your scene. Either tag a camera as `MainCamera` or manually configure the capture camera in the settings tab. Until you do this you will be unable to capture GIFs");
+                    case RecorderState.Paused: // We are paused so start recording. This allows saving of the last X seconds
+                        Recorder.Setup(preserveAspect, width, width / 2, fps, bufferSize, repeat, quality, framesPerColorSample);
+                        Recorder.Record();
+
+                        EditorGUILayout.LabelField("Starting Recording");
+                        break;
+                    case RecorderState.Recording:
+                        if (GraphicsSettings.currentRenderPipeline == null)
+                        {
+                            if (GUILayout.Button("Save Animated GIF"))
+                            {
+                                CaptureGif();
+                            }
+                        }
+                        else
+                        {
+                            GUILayout.Label("Capturing a GIF is not currently supported in HDRP/URP");
+                        }
+                        break;
+                    case RecorderState.PreProcessing:
+                        EditorGUILayout.LabelField("Processing");
+                        break;
                 }
 
-                if (GraphicsSettings.currentRenderPipeline == null && Recorder.State == RecorderState.Recording)
+                if (GraphicsSettings.currentRenderPipeline == null && Recorder != null && Recorder.State == RecorderState.Recording)
                 {
                     EditorGUILayout.BeginHorizontal();
                     GUILayout.Label("Buffer (in seconds)");
@@ -247,71 +316,17 @@ namespace WizardsCode.DevLogger
                     }
 
                     EditorGUILayout.EndVertical();
-                }
-            }
-            else
-            {
-                EditorGUILayout.BeginVertical();
-                EditorGUILayout.BeginHorizontal();
-
-                // Buttons to capture primary windows
-                string[] primaryWindowTitles = { "Hierarchy", "Inspector", "Project", "Scene", "Game", "Console" };
-                GUILayoutOption layoutOption = GUILayout.Height(60);
-                if (GUILayout.Button("Hierarchy", layoutOption))
-                {
-                    CaptureWindowScreenshot("UnityEditor.SceneHierarchyWindow");
-                }
-
-                if (GUILayout.Button("Inspector", layoutOption))
-                {
-                    CaptureWindowScreenshot("UnityEditor.InspectorWindow");
-                }
-
-                if (GUILayout.Button("Project", layoutOption))
-                {
-                    CaptureWindowScreenshot("UnityEditor.ProjectBrowser");
-                }
-
-                if (GUILayout.Button("Scene View", layoutOption))
-                {
-                    CaptureWindowScreenshot("UnityEditor.SceneView");
-                }
-
-                if (GUILayout.Button("Game View", layoutOption))
-                {
-                    CaptureWindowScreenshot("UnityEditor.GameView");
-                }
-
-                if (GUILayout.Button("Console", layoutOption))
-                {
-                    CaptureWindowScreenshot("UnityEditor.ConsoleWindow");
-                }
-                EditorGUILayout.EndHorizontal();
-                
-                EditorGUILayout.Space();
-
-                EditorGUILayout.BeginHorizontal();
-                // Buttons to capture secondary windows
-                string[] excludedWindowTitles = { "Asset Store" };
-                EditorWindow[] allWindows = Resources.FindObjectsOfTypeAll<EditorWindow>();
-                foreach (EditorWindow window in allWindows)
-                {
-                    if (!primaryWindowTitles.Contains<string>(window.titleContent.text) && !excludedWindowTitles.Contains<string>(window.titleContent.text))
-                    {
-                        if (GUILayout.Button(window.titleContent.text))
-                        {
-                            CaptureWindowScreenshot(window.GetType().FullName);
-                        }
                     }
                 }
-                EditorGUILayout.EndHorizontal();
-
-                EditorGUILayout.EndVertical();
+            else
+            {
+                if (GUILayout.Button("Start Buffering for GIF"))
+                {
+                    AddRecorderToCamera();
+                }
             }
-            EditorGUILayout.EndHorizontal();
-            Skin.EndSection();
         }
-        
+
         internal void CaptureGif()
         {
             currentScreenCapture = ScriptableObject.CreateInstance<DevLogScreenCapture>();
@@ -325,7 +340,7 @@ namespace WizardsCode.DevLogger
             currentScreenCapture.name = Application.productName + " v" + Application.version + currentScreenCapture.timestamp.ToLongDateString();
             currentScreenCapture.AbsoluteSaveFolder = CapturesFolderPath(currentScreenCapture);
 
-            Debug.Log("Created ScreenCapture object:\n" + currentScreenCapture.ToString());
+            // Debug.Log("Created ScreenCapture object:\n" + currentScreenCapture.ToString());
 
             Recorder.OnPreProcessingDone = OnPreProcessingDone;
             Recorder.OnFileSaved = OnFileSaved;

@@ -23,7 +23,6 @@ namespace WizardsCode.DevLogger
         DevLogPanel m_DevLogPanel;
         DevLogScreenCaptureCollection m_ScreenCaptures;
         DevLogEntries m_DevLogEntries;
-        Camera m_CaptureCamera;
 
         private static bool startCapture;
 
@@ -47,13 +46,8 @@ namespace WizardsCode.DevLogger
 
             //TODO this needs to be done in OnEnable to avoid edge case bugs on an upgrade
             m_ScreenCaptures = AssetDatabase.LoadAssetAtPath(Settings.ScreenCaptureScriptableObjectPath, typeof(DevLogScreenCaptureCollection)) as DevLogScreenCaptureCollection;
-            if (m_CaptureCamera == null)
-            {
-                m_CaptureCamera = Camera.main;
-            }
 
-            mediaPanel = new MediaPanel(m_ScreenCaptures,
-                m_CaptureCamera);
+            mediaPanel = new MediaPanel(m_ScreenCaptures);
 
             m_EntryPanel = new EntryPanel(m_DevLogEntries);
             m_TwitterPanel = new TwitterPanel();
@@ -65,7 +59,6 @@ namespace WizardsCode.DevLogger
         private void OnEnable()
         {
             EditorApplication.update += Update;
-            mediaPanel.OnEnable();
             if (m_SchedulingPanel == null)
             {
                 // For some reason the scheduling panel is occasionally set to null, this resets it
@@ -89,7 +82,6 @@ namespace WizardsCode.DevLogger
         private void OnDisable()
         {
             EditorApplication.update -= Update;
-            mediaPanel.OnEnable();
             m_SchedulingPanel.OnDisable();
         }
 
@@ -171,7 +163,6 @@ namespace WizardsCode.DevLogger
 
                             EditorGUILayout.Space();
 
-                            mediaPanel.CaptureCamera = m_CaptureCamera;
                             mediaPanel.ScreenCaptures = m_ScreenCaptures;
                             mediaPanel.OnGUI();
                             EditorGUILayout.EndScrollView();
@@ -369,16 +360,6 @@ namespace WizardsCode.DevLogger
             Skin.EndSection();
 
             Skin.StartSection("Capturing", false);
-            if (!m_CaptureCamera) m_CaptureCamera = Camera.main;
-            if (!m_CaptureCamera)
-            {
-                EditorGUILayout.LabelField("No main camera in scene, please tag a camera as MainCamera or select a camera here.");
-            }
-            
-            EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.PrefixLabel("Camera for captures");
-            m_CaptureCamera = (Camera)EditorGUILayout.ObjectField(m_CaptureCamera, typeof(Camera), true);
-            EditorGUILayout.EndHorizontal();
 
             Settings.TrimTabsWhenMaximized = EditorGUILayout.ToggleLeft("Trim tabs from the window when it is maximized", Settings.TrimTabsWhenMaximized);
             Settings.TrimSceneViewToolbar = EditorGUILayout.ToggleLeft("Trim the Toolbar from Scene View", Settings.TrimSceneViewToolbar);
