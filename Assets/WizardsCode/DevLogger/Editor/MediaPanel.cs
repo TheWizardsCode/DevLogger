@@ -186,30 +186,37 @@ namespace WizardsCode.DevLogger
 
                 EditorGUILayout.BeginVertical();
 
-                switch (Recorder.State)
+                if (Recorder != null)
                 {
-                    case RecorderState.Paused: // We are paused so start recording. This allows saving of the last X seconds
-                        Recorder.Setup(preserveAspect, width, width / 2, fps, bufferSize, repeat, quality, framesPerColorSample);
-                        Recorder.Record();
+                    switch (Recorder.State)
+                    {
+                        case RecorderState.Paused: // We are paused so start recording. This allows saving of the last X seconds
+                            Recorder.Setup(preserveAspect, width, width / 2, fps, bufferSize, repeat, quality, framesPerColorSample);
+                            Recorder.Record();
 
-                        EditorGUILayout.LabelField("Starting Recording");
-                        break;
-                    case RecorderState.Recording:
-                        if (GraphicsSettings.currentRenderPipeline == null)
-                        {
-                            if (GUILayout.Button("Save Animated GIF"))
+                            EditorGUILayout.LabelField("Starting Recording");
+                            break;
+                        case RecorderState.Recording:
+                            if (GraphicsSettings.currentRenderPipeline == null)
                             {
-                                Debug.Log("Save Animated Gif button pressed");
-                                CaptureGif();
+                                if (GUILayout.Button("Save Animated GIF"))
+                                {
+                                    Debug.Log("Save Animated Gif button pressed");
+                                    CaptureGif();
+                                }
                             }
-                        } else
-                        {
-                            GUILayout.Label("Capturing a GIF is not currently supported in HDRP/URP");
-                        }
-                        break;
-                    case RecorderState.PreProcessing:
-                        EditorGUILayout.LabelField("Processing");
-                        break;
+                            else
+                            {
+                                GUILayout.Label("Capturing a GIF is not currently supported in HDRP/URP");
+                            }
+                            break;
+                        case RecorderState.PreProcessing:
+                            EditorGUILayout.LabelField("Processing");
+                            break;
+                    }
+                } else
+                {
+                    Debug.LogError("You do not appear to have a `Camera.main` set in your scene. Either tag a camera as `MainCamera` or manually configure the capture camera in the settings tab. Until you do this you will be unable to capture GIFs");
                 }
 
                 if (GraphicsSettings.currentRenderPipeline == null && Recorder.State == RecorderState.Recording)
