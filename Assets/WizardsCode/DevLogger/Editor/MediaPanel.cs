@@ -314,8 +314,6 @@ namespace WizardsCode.DevLogger
                     {
                         Recorder.Init();
                     }
-
-                    EditorGUILayout.EndVertical();
                     }
                 }
             else
@@ -325,6 +323,8 @@ namespace WizardsCode.DevLogger
                     AddRecorderToCamera();
                 }
             }
+
+            EditorGUILayout.EndVertical();
         }
 
         internal void CaptureGif()
