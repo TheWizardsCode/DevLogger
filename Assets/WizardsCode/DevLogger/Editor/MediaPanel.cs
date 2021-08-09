@@ -404,15 +404,7 @@ namespace WizardsCode.DevLogger
         }
 
         /// <summary>
-        /// Captures a screenshot of the desired editor window. To get a list of all the
-        /// windows available in the editor use:
-        /// ```
-        /// EditorWindow[] allWindows = Resources.FindObjectsOfTypeAll<EditorWindow>();
-        ///        foreach (EditorWindow window in allWindows)
-        ///        {
-        ///          Debug.Log(window);
-        ///        }
-        ///```
+        /// Captures a screenshot of the desired editor window. T
         /// </summary>
         /// <param name="windowName">The name of the window to be captured, for example:
         /// </param>
@@ -456,7 +448,7 @@ namespace WizardsCode.DevLogger
 
                 if (windowName.EndsWith("SceneView") || (windowName.EndsWith("GameView") && Settings.TrimGameViewToolbar))
                 {
-                    position.y += 18; // trim the toolbar
+                    position.y += 38; // trim the toolbar
                     height -= 18;
                 }
 
