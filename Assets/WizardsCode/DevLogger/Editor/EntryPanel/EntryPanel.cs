@@ -195,7 +195,7 @@ namespace WizardsCode.DevLogger
             gitCommit = EditorGUILayout.TextField(EntryPanelSettings.guiGitCommitLabel, gitCommit);
             EditorGUILayout.EndVertical();
             EditorGUILayout.EndHorizontal();
-
+            /*
 #if DOUBTECH_ASSET_MANAGER
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Add Credits from Asset Manager"))
@@ -204,6 +204,7 @@ namespace WizardsCode.DevLogger
             }
             EditorGUILayout.EndHorizontal();
 #endif
+            */
         }
 
         internal void DevLogPostingGUI()
