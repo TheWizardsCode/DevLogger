@@ -33,6 +33,8 @@ namespace WizardsCode.DevLogger
         [SerializeField] int framesPerColorSample = 6; // the number of frames between redefining the color pallete, smaller is better
         [SerializeField] int quality = 15; // Quality of color quantization, lower = better but slower (min 1, max 100)
 
+        private bool reportedMissingMainCamera = false;
+
         public MediaPanel(DevLogScreenCaptureCollection captures)
         {
             ScreenCaptures = captures;
@@ -41,9 +43,10 @@ namespace WizardsCode.DevLogger
         internal Camera CaptureCamera { 
             get {
                 Camera current = Camera.main;
-                if (current == null)
+                if (current == null && !reportedMissingMainCamera)
                 {
                     Debug.LogError("It appears you do not currently have a camera tagged as `MainCamera`. DevLogger uses this to discover the camera to use for capturing GIFs this function will be disabled until you identify a main camera in your scene.");
+                    reportedMissingMainCamera = true;
                 }
 
                 return current;
