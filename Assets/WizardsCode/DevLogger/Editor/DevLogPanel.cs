@@ -141,6 +141,8 @@ namespace WizardsCode.DevLogger
                 socialList = ConfigureList(DevLogEntry.Status.Social);
 
                 lastEntriesList = entries;
+
+                EditorUtility.SetDirty(entries);
             }
             else if (entries == null)
             {
@@ -151,14 +153,6 @@ namespace WizardsCode.DevLogger
         private DevLogList ConfigureList(DevLogEntry.Status status)
         {
             DevLogList list = new DevLogList(entries, status);
-
-            list.drawElementCallback = list.DrawLogListElement;
-            list.drawHeaderCallback = list.DrawHeader;
-            list.elementHeightCallback = list.ElementHeightCallback;
-            list.onReorderCallback = list.SaveReorderedList;
-            list.onSelectCallback = list.OnSelect;
-            list.displayAdd = false;
-
             return list;
         }
     }

@@ -33,6 +33,14 @@ namespace WizardsCode.DevLogger {
 
             title = status.ToString();
 
+            drawElementCallback = DrawLogListElement;
+            drawHeaderCallback = DrawHeader;
+            elementHeightCallback = ElementHeightCallback;
+            onReorderCallback = SaveReorderedList;
+            onSelectCallback = OnSelect;
+            displayAdd = false;
+            onChangedCallback = SaveReorderedList;
+
             devLoggerWindow = EditorWindow.GetWindow(typeof(DevLoggerWindow)) as DevLoggerWindow;
         }
         
