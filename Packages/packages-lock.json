@@ -7,6 +7,12 @@
       "dependencies": {},
       "hash": "7bd34d8b47b8ac0ec9381290246e8b59da3904ca"
     },
+    "com.rowlan.photosession": {
+      "version": "file:E:/PhotoSession/Assets/PhotoSession",
+      "depth": 0,
+      "source": "local",
+      "dependencies": {}
+    },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
       "depth": 0,
