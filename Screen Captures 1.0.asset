@@ -1,0 +1,303 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-6723677625067802617
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 666102f216d105742a44e712852bead6, type: 3}
+  m_Name: DevLogger v1.0 SampleScene
+  m_EditorClassIdentifier: 
+  encoding: 1
+  windowName: UnityEditor.GameView
+  productName: DevLogger
+  version: 1.0
+  sceneName: SampleScene
+  _width: 0
+  _height: 0
+  _timestampAsString: 8/9/2021 8:51:42 AM
+  IsImageSaved: 1
+  IsSelected: 1
+  AbsoluteSaveFolder: E:/WizardsCode/DevLogger/DevLog\
+--- !u!114 &-6025592079700910227
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 666102f216d105742a44e712852bead6, type: 3}
+  m_Name: DevLogger v1.0 SampleScene
+  m_EditorClassIdentifier: 
+  encoding: 1
+  windowName: UnityEditor.GameView
+  productName: DevLogger
+  version: 1.0
+  sceneName: SampleScene
+  _width: 0
+  _height: 0
+  _timestampAsString: 8/9/2021 8:49:50 AM
+  IsImageSaved: 1
+  IsSelected: 1
+  AbsoluteSaveFolder: E:/WizardsCode/DevLogger/DevLog\
+--- !u!114 &-4377264686589533742
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 666102f216d105742a44e712852bead6, type: 3}
+  m_Name: DevLogger v1.0Friday, August 6, 2021
+  m_EditorClassIdentifier: 
+  encoding: 0
+  windowName: In_Game_Footage
+  productName: DevLogger
+  version: 1.0
+  sceneName: SampleScene
+  _width: 0
+  _height: 0
+  _timestampAsString: 8/6/2021 10:02:16 PM
+  IsImageSaved: 1
+  IsSelected: 0
+  AbsoluteSaveFolder: E:/WizardsCode/DevLogger/DevLog\
+--- !u!114 &-4273568610592549356
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 666102f216d105742a44e712852bead6, type: 3}
+  m_Name: DevLogger v1.0 SampleScene
+  m_EditorClassIdentifier: 
+  encoding: 1
+  windowName: UnityEditor.GameView
+  productName: DevLogger
+  version: 1.0
+  sceneName: SampleScene
+  _width: 0
+  _height: 0
+  _timestampAsString: 8/9/2021 8:53:56 AM
+  IsImageSaved: 1
+  IsSelected: 1
+  AbsoluteSaveFolder: E:/WizardsCode/DevLogger/DevLog\
+--- !u!114 &-1610528895203309688
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 666102f216d105742a44e712852bead6, type: 3}
+  m_Name: DevLogger v1.0 SampleScene
+  m_EditorClassIdentifier: 
+  encoding: 1
+  windowName: UnityEditor.GameView
+  productName: DevLogger
+  version: 1.0
+  sceneName: SampleScene
+  _width: 0
+  _height: 0
+  _timestampAsString: 8/9/2021 8:52:17 AM
+  IsImageSaved: 1
+  IsSelected: 1
+  AbsoluteSaveFolder: E:/WizardsCode/DevLogger/DevLog\
+--- !u!114 &-521066378759881068
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 666102f216d105742a44e712852bead6, type: 3}
+  m_Name: DevLogger v1.0 SampleScene
+  m_EditorClassIdentifier: 
+  encoding: 1
+  windowName: UnityEditor.GameView
+  productName: DevLogger
+  version: 1.0
+  sceneName: SampleScene
+  _width: 0
+  _height: 0
+  _timestampAsString: 8/9/2021 8:55:43 AM
+  IsImageSaved: 1
+  IsSelected: 1
+  AbsoluteSaveFolder: E:/WizardsCode/DevLogger/DevLog\
+--- !u!114 &-516348536730801079
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 666102f216d105742a44e712852bead6, type: 3}
+  m_Name: DevLogger v1.0 SampleScene
+  m_EditorClassIdentifier: 
+  encoding: 1
+  windowName: UnityEditor.GameView
+  productName: DevLogger
+  version: 1.0
+  sceneName: SampleScene
+  _width: 0
+  _height: 0
+  _timestampAsString: 8/9/2021 8:54:21 AM
+  IsImageSaved: 1
+  IsSelected: 1
+  AbsoluteSaveFolder: E:/WizardsCode/DevLogger/DevLog\
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db016f0823fba874aa23c273ca7ee1ae, type: 3}
+  m_Name: Screen Captures 1.0
+  m_EditorClassIdentifier: 
+  captures:
+  - {fileID: 2186063615188816529}
+  - {fileID: 925282386721060082}
+  - {fileID: 754406287565213792}
+  - {fileID: -4377264686589533742}
+  - {fileID: 8516942619579441417}
+  - {fileID: -6025592079700910227}
+  - {fileID: 1584520281685201834}
+  - {fileID: -6723677625067802617}
+  - {fileID: -1610528895203309688}
+  - {fileID: -4273568610592549356}
+  - {fileID: -516348536730801079}
+  - {fileID: -521066378759881068}
+--- !u!114 &754406287565213792
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 666102f216d105742a44e712852bead6, type: 3}
+  m_Name: DevLogger v1.0Sunday, July 25, 2021
+  m_EditorClassIdentifier: 
+  encoding: 0
+  windowName: In_Game_Footage
+  productName: DevLogger
+  version: 1.0
+  sceneName: SampleScene
+  _width: 0
+  _height: 0
+  _timestampAsString: 7/25/2021 12:55:43 PM
+  IsImageSaved: 1
+  IsSelected: 0
+  AbsoluteSaveFolder: E:/WizardsCode/DevLogger/DevLog\
+--- !u!114 &925282386721060082
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 666102f216d105742a44e712852bead6, type: 3}
+  m_Name: DevLogger v1.0Sunday, July 25, 2021
+  m_EditorClassIdentifier: 
+  encoding: 0
+  windowName: In_Game_Footage
+  productName: DevLogger
+  version: 1.0
+  sceneName: SampleScene
+  _width: 0
+  _height: 0
+  _timestampAsString: 7/25/2021 12:52:44 PM
+  IsImageSaved: 1
+  IsSelected: 0
+  AbsoluteSaveFolder: E:/WizardsCode/DevLogger/DevLog\
+--- !u!114 &1584520281685201834
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 666102f216d105742a44e712852bead6, type: 3}
+  m_Name: DevLogger v1.0 SampleScene
+  m_EditorClassIdentifier: 
+  encoding: 1
+  windowName: UnityEditor.GameView
+  productName: DevLogger
+  version: 1.0
+  sceneName: SampleScene
+  _width: 0
+  _height: 0
+  _timestampAsString: 8/9/2021 8:50:59 AM
+  IsImageSaved: 1
+  IsSelected: 1
+  AbsoluteSaveFolder: E:/WizardsCode/DevLogger/DevLog\
+--- !u!114 &2186063615188816529
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 666102f216d105742a44e712852bead6, type: 3}
+  m_Name: DevLogger v1.0Sunday, July 25, 2021
+  m_EditorClassIdentifier: 
+  encoding: 0
+  windowName: In_Game_Footage
+  productName: DevLogger
+  version: 1.0
+  sceneName: SampleScene
+  _width: 0
+  _height: 0
+  _timestampAsString: 7/25/2021 12:42:10 PM
+  IsImageSaved: 1
+  IsSelected: 0
+  AbsoluteSaveFolder: E:/WizardsCode/DevLogger/DevLog\
+--- !u!114 &8516942619579441417
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 666102f216d105742a44e712852bead6, type: 3}
+  m_Name: DevLogger v1.0 SampleScene
+  m_EditorClassIdentifier: 
+  encoding: 1
+  windowName: UnityEditor.GameView
+  productName: DevLogger
+  version: 1.0
+  sceneName: SampleScene
+  _width: 0
+  _height: 0
+  _timestampAsString: 8/9/2021 8:49:09 AM
+  IsImageSaved: 1
+  IsSelected: 0
+  AbsoluteSaveFolder: E:/WizardsCode/DevLogger/DevLog\
