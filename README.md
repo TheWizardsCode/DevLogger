@@ -27,7 +27,7 @@ This is the easiest way of installing the code:
   1. `Window -> Package Manager`
   2. Click the '+" in the top left
   3. Select 'Add package from Git URL'
-  4. Paste in `https://github.com/TheWizardsCode/DevLogger.git#release/stable`
+  4. Paste in `https://github.com/TheWizardsCode/DevLogger.git`
   
 # Installation Of Development Code
 
