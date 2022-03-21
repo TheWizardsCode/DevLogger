@@ -4,7 +4,6 @@ using System.Linq;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
-using WizardsCode.Social;
 
 namespace WizardsCode.DevLogger
 {
@@ -14,6 +13,7 @@ namespace WizardsCode.DevLogger
      */
     public class DevLogPanel
     {
+        DevLogList bugList;
         DevLogList ideaList;
         DevLogList todoList;
         DevLogList inProgressList;
@@ -104,6 +104,10 @@ namespace WizardsCode.DevLogger
                 {
                     inProgressList.DoLayoutList();
                 }
+                if (bugList.count > 0)
+                {
+                    bugList.DoLayoutList();
+                }
                 if (todoList.count > 0)
                 {
                     todoList.DoLayoutList();
@@ -133,6 +137,7 @@ namespace WizardsCode.DevLogger
         {
             if (DevLogList.isDirty || entries != lastEntriesList)
             {
+                bugList = ConfigureList(DevLogEntry.Status.Bug);
                 ideaList = ConfigureList(DevLogEntry.Status.Idea);
                 todoList = ConfigureList(DevLogEntry.Status.ToDo);
                 inProgressList = ConfigureList(DevLogEntry.Status.InProgress);

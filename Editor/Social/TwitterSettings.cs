@@ -2,7 +2,6 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
-using WizardsCode.Social;
 
 namespace WizardsCode.DevLogger
 {

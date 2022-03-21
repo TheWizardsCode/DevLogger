@@ -8,7 +8,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
-namespace WizardsCode.Social {
+namespace WizardsCode.DevLogger {
     public class OAuthHelper {
         //-----------------------------------------------------------------------
         // <copyright file="WebRequestBuilder.cs" company="Patrick 'Ricky' Smith">

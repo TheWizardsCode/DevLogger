@@ -9,7 +9,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using WizardsCode.DevLogger;
 
-namespace WizardsCode.Social
+namespace WizardsCode.DevLogger
 {
     [ExecuteInEditMode]
     public class Twitter
@@ -344,7 +344,9 @@ namespace WizardsCode.Social
 
         /// <summary>
         /// Upload a large media file to twitter, e.g. a GIF or MPG.
+        /// See https://developer.twitter.com/en/docs/twitter-ads-api/creatives/guides/media-library.
         /// </summary>
+        /// 
         /// <param name="filePath">The fully qualified path to the media file to upload.</param>
         /// <param name="response">The response from Twitter.</param>
         /// <returns>A media ID for this upload, or if the upload fails null.</returns>
@@ -354,10 +356,20 @@ namespace WizardsCode.Social
 
             // POST media/upload (INIT)
             Dictionary<string, string> mediaParameters = new Dictionary<string, string>();
-            mediaParameters.Add("command", "INIT");
-            mediaParameters.Add("media_type", "image/gif");
-            mediaParameters.Add("total_bytes", bytes.Length.ToString());
-            mediaParameters.Add("media_category", "tweet_gif");
+            if (filePath.ToLower().EndsWith(".gif"))
+            {
+                mediaParameters.Add("command", "INIT");
+                mediaParameters.Add("total_bytes", bytes.Length.ToString());
+                mediaParameters.Add("media_type", "image/gif");
+                mediaParameters.Add("media_category", "tweet_gif");
+            } else if (filePath.ToLower().EndsWith(".mp4"))
+            {
+                mediaParameters.Add("command", "INIT");
+                mediaParameters.Add("total_bytes", bytes.Length.ToString());
+                mediaParameters.Add("media_type", "video/mp4");
+                mediaParameters.Add("media_category", "tweet_video");
+                // mediaParameters.Add("media_category", "amplify");
+            }
 
             WWWForm mediaForm = new WWWForm();
             AddParametersToForm(mediaParameters, mediaForm);

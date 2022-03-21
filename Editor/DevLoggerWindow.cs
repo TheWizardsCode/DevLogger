@@ -4,7 +4,6 @@ using UnityEditor;
 using UnityEngine;
 using WizardsCode.EditorUtils;
 using WizardsCode.Git;
-using WizardsCode.Social;
 
 namespace WizardsCode.DevLogger
 {
